@@ -6,7 +6,7 @@ import losses as ls
 import numpy as np
 import random
 ROOT_DIR = '/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl'
-from torchvision.datasets import FashionMNIST, EMNIST, CIFAR10
+from typing import List, Dict, Optional
 
 def set_seeds(seed_value=1):
     """Set seeds for reproducibility."""
@@ -16,6 +16,26 @@ def set_seeds(seed_value=1):
     random.seed(seed_value)
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
+
+@dataclass
+class TrainerConfig:
+    """Configuration for training parameters."""
+    dataset_name: str
+    device: str
+    learning_rate: float
+    batch_size: int
+    epochs: int = 5
+    rounds: int = 20
+    personalization_params: Optional[Dict] = None
+
+
+LR_RATES_TRY = {'EMNIST':[5e-3, 1e-3, 5e-4, 1e-4, 8e-5],
+            'CIFAR':[5e-3, 1e-3, 5e-4, 1e-4],
+            "FMNIST":[1e-3, 5e-4, 1e-4, 8e-5],
+            "ISIC":[1e-3, 5e-3, 1e-4],
+            "Sentiment":[1e-3, 5e-4, 1e-4,8e-5],
+            "Heart":[5e-1, 1e-1, 5e-2, 1e-2, 5e-3],
+            "mimic": [5e-4, 1e-4, 3e-4, 8e-5]}
 
 NUM_SITES_DICT = {'EMNIST':5,
             'CIFAR':5,
@@ -48,7 +68,7 @@ DATALOADER_DICT = {'EMNIST':dp.EMNISTDataset,
             "ISIC":dp.ISICDataset,
             "Sentiment": dp.SentimentDataset,
             "Heart": dp.HeartDataset,
-            "mimic":dp.mimicDataset}
+            "mimic":dp.MIMICDataset}
 
 MODEL_DICT = {'EMNIST':mod.EMNIST,
             'CIFAR':mod.CIFAR,
@@ -197,11 +217,3 @@ PARTITION_DICT = {'EMNIST': False,
                     "Sentiment": True,
                     "Heart": True,
                     "mimic":True}
-
-DATA_DICT = {'EMNIST': EMNIST(f'{ROOT_DIR}/data/EMNIST', split = 'byclass', download = False),
-                    'CIFAR':CIFAR10(f'{ROOT_DIR}/data/CIFAR10', download = False),
-                    "FMNIST":FashionMNIST(f'{ROOT_DIR}/data/FMNIST', download = False),
-                    "ISIC":None,
-                    "Sentiment": None,
-                    "Heart": None,
-                    "mimic":None}

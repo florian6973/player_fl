@@ -379,32 +379,31 @@ class Heart(torch.nn.Module):
 
 #HYPERNETWORK
 class HyperNetwork(nn.Module):
-    def __init__(self, embedding_dim, hidden_dim, layers, num_clients):
-        super(HyperNetwork, self).__init__()
-        # Embedding layer for clients
-        self.num_clients = num_clients
+    """Hypernetwork for generating layer-wise aggregation weights across all clients."""
+    def __init__(self, embedding_dim: int, hidden_dim: int, model: nn.Module, num_clients: int):
+        super().__init__()
         self.embedding_dim = embedding_dim
-        self.client_embeddings = nn.Embedding(1, embedding_dim)
-
-        # Hypernetwork layers
         self.hidden_dim = hidden_dim
-        self.layers = layers
-        self.num_layers = len(layers)
-        self.fc_hyper = nn.Sequential(
-            nn.Linear(self.embedding_dim, self.hidden_dim),
-            nn.ReLU(),
-            nn.Linear(self.hidden_dim, self.hidden_dim),
-            nn.ReLU(),
-        )
-        self.fc_output = nn.Linear(hidden_dim, self.num_layers * self.num_clients)
-
-    def forward(self):
-        model_device = next(self.parameters()).device
-        client_embedding = self.client_embeddings(torch.tensor([0], dtype=torch.long, device=model_device))
-        hyper_output = self.fc_hyper(client_embedding)
-
-        weight_matrix = self.fc_output(hyper_output)
-        weight_matrix = weight_matrix.view(-1, self.num_layers, self.num_clients)
-        weight_matrix_softmax = F.softmax(weight_matrix, dim=2)
-
-        return weight_matrix_softmax.squeeze(0)
+        self.num_clients = num_clients
+        
+        # Create layer-specific MLPs for each model layer
+        self.layer_networks = nn.ModuleDict()
+        for name, _ in model.named_parameters():
+            layer_name = name.split('.')[0]
+            if layer_name not in self.layer_networks:
+                self.layer_networks[layer_name] = nn.Sequential(
+                    nn.Linear(embedding_dim, hidden_dim),
+                    nn.ReLU(),
+                    nn.Linear(hidden_dim, hidden_dim),
+                    nn.ReLU(),
+                    nn.Linear(hidden_dim, num_clients),  # Output weights for all clients
+                    nn.Softmax(dim=-1)  # Softmax over client dimension
+                )
+    
+    def forward(self, embedding):
+        """Generate layer-wise aggregation weights across all clients."""
+        weights = {}
+        for layer_name, network in self.layer_networks.items():
+            # Returns tensor of shape [num_clients]
+            weights[layer_name] = network(embedding)
+        return weights

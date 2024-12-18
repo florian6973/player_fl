@@ -10,20 +10,9 @@ from torch.utils.data  import DataLoader
 from dataclasses import dataclass, field
 from typing import List, Dict, Optional
 from helper import *
-from itertools import combinations
-from functools import partial
+from configs import *
 from sklearn.metrics import f1_score, matthews_corrcoef, balanced_accuracy_score
 
-@dataclass
-class TrainerConfig:
-    """Configuration for training parameters."""
-    dataset_name: str
-    device: str
-    learning_rate: float
-    batch_size: int
-    epochs: int = 5
-    rounds: int = 20
-    personalization_params: Optional[Dict] = None
 
 
 @dataclass
@@ -252,24 +241,10 @@ class Client:
 
 class FedProxClient(Client):
     """FedProx client implementation."""
-    def __init__(self, 
-                 config: TrainerConfig, 
-                 data: SiteData, 
-                 model: nn.Module,
-                 optimizer: torch.optim.Optimizer,
-                 criterion: nn.Module,
-                 metrics_calculator: MetricsCalculator,
-                 personal_model: bool = True):
-        super().__init__(
-            config=config,
-            data=data,
-            model=model,
-            optimizer=optimizer,
-            criterion=criterion,
-            metrics_calculator=metrics_calculator,
-            personal_model=personal_model
-        )
-        self.reg_param = config.personalization_params['reg_param']
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.reg_param = self.config.personalization_params['reg_param']
+
     def train_epoch(self, personal=False):
         state = self.global_state  # FedProx only uses global model
         model = move_model_to_device(state.model.train(), self.device)
@@ -312,24 +287,9 @@ class FedProxClient(Client):
 
 class PFedMeClient(Client):
     """PFedMe client implementation with proximal regularization."""
-    def __init__(self, 
-                 config: TrainerConfig, 
-                 data: SiteData, 
-                 model: nn.Module,
-                 optimizer: torch.optim.Optimizer,
-                 criterion: nn.Module,
-                 metrics_calculator: MetricsCalculator,
-                 personal_model: bool = True):
-        super().__init__(
-            config=config,
-            data=data,
-            model=model,
-            optimizer=optimizer,
-            criterion=criterion,
-            metrics_calculator=metrics_calculator,
-            personal_model=personal_model
-        )
-        self.reg_param = config.personalization_params['reg_param']
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.reg_param = self.config.personalization_params['reg_param']
 
     def train_epoch(self, personal=True):
         """Train for one epoch with proximal term regularization."""
@@ -384,24 +344,9 @@ class PFedMeClient(Client):
 
 class DittoClient(Client):
     """Ditto client implementation."""
-    def __init__(self, 
-                 config: TrainerConfig, 
-                 data: SiteData, 
-                 model: nn.Module,
-                 optimizer: torch.optim.Optimizer,
-                 criterion: nn.Module,
-                 metrics_calculator: MetricsCalculator,
-                 personal_model: bool = True):
-        super().__init__(
-            config=config,
-            data=data,
-            model=model,
-            optimizer=optimizer,
-            criterion=criterion,
-            metrics_calculator=metrics_calculator,
-            personal_model=personal_model
-        )
-        self.reg_param = config.personalization_params['reg_param']
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.reg_param = self.config.personalization_params['reg_param']
 
     def train_epoch(self, personal=False):
         if not personal:
@@ -448,193 +393,132 @@ class DittoClient(Client):
 
 class LocalAdaptationClient(Client):
     """Client that performs additional local training after federation."""
-    def __init__(self, 
-                 config: TrainerConfig, 
-                 data: SiteData, 
-                 model: nn.Module,
-                 optimizer: torch.optim.Optimizer,
-                 criterion: nn.Module,
-                 metrics_calculator: MetricsCalculator,
-                 personal_model: bool = False):
-        super().__init__(
-            config=config,
-            data=data,
-            model=model,
-            optimizer=optimizer,
-            criterion=criterion,
-            metrics_calculator=metrics_calculator,
-            personal_model=personal_model
-        )
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
+class LayerClient(Client):
+    """Client for layer-wise federated learning."""
+    def __init__(self, *args, **kwargs):
+        self.layers_to_include = kwargs['config'].personalization_params['layers_to_include']
+        super().__init__(*args, **kwargs)
 
-class Server:
-    """Base server class for federated learning."""
-    def __init__(self, config: TrainerConfig, model: nn.Module):
-        self.config = config
-        self.device = config.device
-        self.clients = {}
-        self.global_model = copy.deepcopy(model)
-        self.best_model = copy.deepcopy(model)
-        self.best_loss = float('inf')
+    def set_model_state(self, state_dict, personal = False):
+        """Selectively load state dict only for federated layers."""
+        state = self.personal_state if personal else self.global_state
+        selective_load_state_dict(state.model, state_dict, self.layers_to_include)
+
+class BABUClient(LayerClient):
+    """Client implementation for BABU."""
+    def set_layer_learning_rates(self, train_head: bool = False):
+        """Set learning rates based on whether training head or body."""
+        lr = self.config.learning_rate
+        for param_group in self.global_state.optimizer.param_groups:
+            params_in_federated_layers = any(
+                layer in name 
+                for layer, param in param_group['params'] 
+                for name, _ in self.global_state.model.named_parameters() 
+                if param is _
+            )
+            # If training head: federated layers (body) get lr=0, others get normal lr
+            # If training body: federated layers get normal lr, others get lr=0
+            param_group['lr'] = 0.0 if params_in_federated_layers == train_head else lr
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Initialize with body training
+        self.set_layer_learning_rates(train_head=False)
+
+    def train_head(self):
+        """Train only the head of the model."""
+        self.set_layer_learning_rates(train_head=True)
+        try:
+            return self.train(personal=False)
+        finally:
+            self.set_layer_learning_rates(train_head=False)
+
+class FedLPClient(Client):
+    """Client for FedLP with layer-wise probabilistic participation."""
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Get layer-preserving rates (LPRs) for each layer
+        self.layer_preserving_rates = self.config.personalization_params['layer_preserving_rates']
         
-        # Track metrics
-        self.train_losses = []
-        self.val_losses = []
-        self.val_scores = []
-        self.test_losses = []
-        self.test_scores = []
-
-    def add_client(self, client_id, client: Client):
-        """Add a client to the federation."""
-        self.clients[client_id] = client
-        self._update_client_weights()
-
-    def _update_client_weights(self):
-        """Update client weights based on dataset sizes."""
-        total_samples = sum(client.data.num_samples for client in self.clients.values())
-        for client in self.clients.values():
-            client.data.weight = client.data.num_samples / total_samples
-
-    def train_round(self, personal = False):
-        """Run one round of training."""
-        # Train all clients
-        train_loss = 0
-        val_loss = 0
-        val_score = 0
-
-        for client in self.clients.values():
-            # Train and validate
-            client_train_loss = client.train(personal)
-            client_val_loss, client_val_score = client.validate(personal)
-            
-            # Weight metrics by client dataset size
-            train_loss += client_train_loss * client.data.weight
-            val_loss += client_val_loss * client.data.weight
-            val_score += client_val_score * client.data.weight
-
-        # Track metrics
-        self.train_losses.append(train_loss)
-        self.val_losses.append(val_loss)
-        self.val_scores.append(val_score)
-
-        # Aggregate and distribute
-        self.aggregate_models(personal)
-        self.distribute_global_model()
-
-        # Update best model if improved
-        if val_loss < self.best_loss:
-            self.best_loss = val_loss
-            self.best_model = copy.deepcopy(self.global_model)
-
-        return train_loss, val_loss, val_score
-
-    def test_global(self, personal = False):
-        """Test the global model across all clients."""
-        test_loss = 0
-        test_score = 0
-
-        for client in self.clients.values():
-            client_loss, client_score = client.test(personal)
-            test_loss += client_loss * client.data.weight
-            test_score += client_score * client.data.weight
-
-        self.test_losses.append(test_loss)
-        self.test_scores.append(test_score)
-
-        return test_loss, test_score
-
-class FLServer(Server):
-    """Base federated learning server with FedAvg implementation."""
-    def aggregate_models(self, personal = False):
-        """Standard FedAvg aggregation."""
-        # Reset global model parameters
-        for param in self.global_model.parameters():
-            param.data.zero_()
-            
-        # Aggregate parameters
-        for client in self.clients.values():
-            client_model = client.personal_state.model if personal else client.global_state.model
-            for g_param, c_param in zip(self.global_model.parameters(), client_model.parameters()):
-                g_param.data.add_(c_param.data * client.data.weight)
-
-    def distribute_global_model(self):
-        """Distribute global model to all clients."""
-        global_state = self.global_model.state_dict()
-        for client in self.clients.values():
-            client.set_model_state(global_state)
-
-class FedAvgServer(FLServer):
-    """Standard FedAvg implementation."""
-    pass
-
-class FedProxServer(FLServer):
-    """FedProx server implementation."""
-    pass  # Uses standard FedAvg behavior
-
-class PFedMeServer(FLServer):
-    """PFedMe server implementation."""
-    def train_round(self, personal = True):
-        return super().train_round(personal)
+    def generate_layer_indicators(self):
+        """Generate binary indicators for each layer based on LPRs."""
+        indicators = {}
+        for layer_name, prob in self.layer_preserving_rates.items():
+            # Bernoulli trial for each layer
+            indicators[layer_name] = 1 if random.random() < prob else 0
+        return indicators
+        
+    def get_pruned_model_state(self):
+        """Get model state with pruned layers based on indicators."""
+        indicators = self.generate_layer_indicators()
+        state_dict = self.global_state.model.state_dict()
+        pruned_state = {}
+        
+        for name, param in state_dict.items():
+            # Get layer name from parameter name
+            layer_name = name.split('.')[0]
+            if layer_name in indicators and indicators[layer_name]:
+                pruned_state[name] = param
+                
+        return pruned_state, indicators
     
-    def test_global(self, personal = True):
-        return super().test_global(personal)
 
-class DittoServer(FLServer):
-    """Ditto server implementation."""
-    def train_round(self, personal = True):
-        return super().train_round(personal)
-    
-    def test_global(self, personal = True):
-        return super().test_global(personal)
+class FedLAMAClient(Client):
+    """Client for FedLAMA."""
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
-class LocalAdaptationServer(FLServer):
-    """Local adaptation server implementation."""
-    def train_round(self, personal = False, final_round = False):
-        """Run one round of training with optional final round behavior."""
-        # Use parent class training logic
-        train_loss, val_loss, val_score = super().train_round(personal)
 
-        if final_round:
-            train_loss = 0
-            val_loss = 0
-            val_score = 0
-            # Restore best models to clients for final evaluation
-            for client in self.clients.values():
-                client_train_loss = client.train(personal)
-                client_val_loss, client_val_score = client.validate(personal)
+class pFedLAClient(Client):
+    """pFedLA client implementation using hypernetwork for layer-wise aggregation."""
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Initialize client embedding vector
+        self.embedding_dim = self.config.personalization_params.get('embedding_dim', 32)
+        # Store original parameters for computing updates
+        self.initial_params = copy.deepcopy(self.global_state.model.state_dict())
+        
+    def train_epoch(self, personal: bool = False):
+        """Train for one epoch and track parameter changes."""
+        state = self.global_state  # pFedLA only uses global model
+        model = state.model.train().to(self.device)
+        total_loss = 0.0
+        
+        try:
+            for batch_x, batch_y in self.data.train_loader:
+                batch_x = batch_x.to(self.device)
+                batch_y = batch_y.to(self.device)
+                
+                state.optimizer.zero_grad()
+                outputs = model(batch_x)
+                loss = state.criterion(outputs, batch_y)
+                loss.backward()
+                
+                if self.config.clip_grad:
+                    torch.nn.utils.clip_grad_norm_(
+                        model.parameters(), 
+                        self.config.clip_value
+                    )
+                
+                state.optimizer.step()
+                total_loss += loss.item()
+                
+            avg_loss = total_loss / len(self.data.train_loader)
+            state.train_losses.append(avg_loss)
+            return avg_loss
             
-            # Weight metrics by client dataset size
-            train_loss += client_train_loss * client.data.weight
-            val_loss += client_val_loss * client.data.weight
-            val_score += client_val_score * client.data.weight
+        finally:
+            model.to('cpu')
+            if self.device == 'cuda':
+                torch.cuda.empty_cache()
 
-
-        return train_loss, val_loss, val_score
-
-
-def compute_proximal_term(model_params, reference_params, mu: float) -> torch.Tensor:
-    """Calculate proximal term between two sets of model parameters."""
-    proximal_term = 0.0
-    for param, ref_param in zip(model_params, reference_params):
-        proximal_term += (mu / 2) * torch.norm(param - ref_param) ** 2
-    return proximal_term
-
-def add_gradient_regularization(model_params, reference_params, reg_param: float):
-    """Add regularization directly to gradients."""
-    for param, ref_param in zip(model_params, reference_params):
-        if param.grad is not None:
-            reg_term = reg_param * (param - ref_param)
-            param.grad.add_(reg_term)
-
-def move_model_to_device(model: nn.Module, device: str) -> nn.Module:
-    """Safely move model to device with proper cleanup."""
-    try:
-        return model.to(device)
-    finally:
-        if device == 'cuda':
-            torch.cuda.empty_cache()
-
-def cleanup_gpu():
-    """Clean up GPU memory."""
-    if torch.cuda.is_available():
-        torch.cuda.empty_cache()
+    def compute_updates(self):
+        """Compute parameter updates from training."""
+        current_params = self.global_state.model.state_dict()
+        updates = {}
+        for name, param in current_params.items():
+            updates[name] = param - self.initial_params[name]
+        return updates
