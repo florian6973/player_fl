@@ -8,6 +8,8 @@ import random
 ROOT_DIR = '/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl'
 from typing import List, Dict, Optional
 
+
+DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 def set_seeds(seed_value=1):
     """Set seeds for reproducibility."""
     torch.manual_seed(seed_value)
@@ -29,7 +31,7 @@ class TrainerConfig:
     personalization_params: Optional[Dict] = None
 
 
-LR_RATES_TRY = {'EMNIST':[5e-3, 1e-3, 5e-4, 1e-4, 8e-5],
+LEARNING_RATES_TRY = {'EMNIST':[5e-3, 1e-3, 5e-4, 1e-4, 8e-5],
             'CIFAR':[5e-3, 1e-3, 5e-4, 1e-4],
             "FMNIST":[1e-3, 5e-4, 1e-4, 8e-5],
             "ISIC":[1e-3, 5e-3, 1e-4],

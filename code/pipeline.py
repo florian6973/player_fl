@@ -6,7 +6,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 sys.path.append(f'{ROOT_DIR}/code')
-from data_processing import *
+from dataset_processing import *
 from servers import *
 from helper import *
 from losses import *
@@ -14,7 +14,7 @@ import models as ms
 from helper import *
 from performance_logging import *
 import pickle
-from config import *
+from configs import *
 import time
 
 
@@ -88,20 +88,19 @@ class ResultsManager:
         
         return existing_dict
 
-    def get_best_parameters(self, param_type, server_type, cost):
-        """Get best hyperparameter value for given server type and cost."""
+    def get_best_parameters(self, param_type, server_type):
+        """Get best hyperparameter value for given server type."""
         results = self.load_results(param_type)
-        if results is None or cost not in results:
+        if results is None:
             return None
-        
-        cost_results = results[cost]  # Now gives us lr-level dict
+    
         
         # Collect metrics across all learning rates for this server
         server_metrics = {}
-        for lr in cost_results.keys():
-            if server_type not in cost_results[lr]:
+        for lr in results.keys():
+            if server_type not in results[lr]:
                 continue
-            server_metrics[lr] = cost_results[lr][server_type]
+            server_metrics[lr] = results[lr][server_type]
         
         if not server_metrics:
             return None
@@ -129,50 +128,33 @@ class Experiment:
         self.results_manager = ResultsManager(root_dir=ROOT_DIR, dataset=self.config.dataset, experiment_type = self.config.experiment_type)
         self.logger = performance_logger.get_logger(self.config.dataset, 'experiment')
 
-    def run_experiment(self, costs):
+    def run_experiment(self):
         if self.config.experiment_type == ExperimentType.EVALUATION:
-            return self._run_final_evaluation(costs)
+            return self._run_final_evaluation()
         else:
-            return self._run_hyperparameter_tuning(costs)
+            return self._run_hyperparameter_tuning()
             
-    def _check_existing_results(self, costs):
+    def _check_existing_results(self):
         """Check existing results and return remaining work to be done."""
         results = self.results_manager.load_results(self.config.experiment_type)
-        remaining_costs = costs
         completed_runs = 0
         
         if results is not None:
-            # Check which costs have been completed
-            completed_costs = set(results.keys())
-            remaining_costs = list(set(costs) - completed_costs)
-            
-            # Check number of completed runs if any results exist
-            if completed_costs: 
-                # Check the first cost that was completed to determine number of runs
-                first_cost = next(iter(completed_costs))
-                # Count number of elements in any metric list to determine completed runs
-                first_param = next(iter(results[first_cost].keys()))
-                first_server = next(iter(results[first_cost][first_param].keys()))
-                completed_runs = len(results[first_cost][first_param][first_server]['global']['losses'])
+            # Count number of elements in any metric list to determine completed runs
+            first_param = next(iter(results.keys()))
+            first_server = next(iter(results[first_param].keys()))
+            completed_runs = len(results[first_param][first_server]['global']['losses'])
                 
         self.logger.info(f"Found {completed_runs} completed runs")
         
-        remaining_runs = self.default_params['runs_lr'] - completed_runs
-        if remaining_runs > 0:
-            remaining_costs = costs
-        self.logger.info(f"Remaining costs to process: {remaining_costs}")
         
-        return results, remaining_costs, completed_runs
+        return results, completed_runs
 
-    def _run_hyperparameter_tuning(self, costs):
+    def _run_hyperparameter_tuning(self):
         """Run LR or Reg param tuning with multiple runs"""
-        results, remaining_costs, completed_runs = self._check_existing_results(costs)
+        results, completed_runs = self._check_existing_results()
         
-        # If no costs remain and all runs are completed, return existing results
-        if not remaining_costs and completed_runs >= self.default_params['runs_lr']:
-            self.logger.info("All experiments are already completed")
-            return results
-            
+    
         # Calculate remaining runs
         remaining_runs = self.default_params['runs_lr'] - completed_runs
         
@@ -180,20 +162,16 @@ class Experiment:
             current_run = completed_runs + run + 1
             self.logger.info(f"Starting run {current_run}/{self.default_params['runs_lr']}")
             results_run = {}
-            
-            for cost in remaining_costs:
-                if self.config.experiment_type == ExperimentType.LEARNING_RATE:
-                    hyperparams_list = [{'learning_rate': lr} for lr in self.config.params_to_try]
-                    server_types = ['local', 'fedavg', 'pfedme', 'ditto']
-                else:  # REG_PARAM
-                    hyperparams_list = [{'reg_param': reg} for reg in self.config.params_to_try]
-                    server_types = ['pfedme', 'ditto']
+            if self.config.experiment_type == ExperimentType.LEARNING_RATE:
+                hyperparams_list = [{'learning_rate': lr} for lr in self.config.params_to_try]
+                server_types = ['local', 'fedavg', 'pfedme', 'ditto']
+            else:  # REG_PARAM
+                hyperparams_list = [{'reg_param': reg} for reg in self.config.params_to_try]
+                server_types = ['pfedme', 'ditto']
 
-                tracking = {}
-                for hyperparams in hyperparams_list:
-                    param = next(iter(hyperparams.values()))
-                    tracking[param] = self._hyperparameter_tuning(cost, hyperparams, server_types)
-                results_run[cost] = tracking
+            for hyperparams in hyperparams_list:
+                param = next(iter(hyperparams.values()))
+                results_run[param] = self._hyperparameter_tuning(hyperparams, server_types)
             
             results = self.results_manager.append_or_create_metric_lists(results, results_run)
             self.results_manager.save_results(results, self.config.experiment_type)
@@ -201,10 +179,9 @@ class Experiment:
         return results
     
     @log_execution_time
-    def _hyperparameter_tuning(self, cost, hyperparams, server_types):
+    def _hyperparameter_tuning(self, hyperparams, server_types):
         """Run hyperparameter tuning for specific parameters."""
-        self.logger.info(f"Starting hyperparameter tuning for cost: {cost}")
-        client_dataloaders = self._initialize_experiment(self.default_params['batch_size'], cost)
+        client_dataloaders = self._initialize_experiment(self.default_params['batch_size'])
         tracking = {}
         
         for server_type in server_types:
@@ -214,7 +191,7 @@ class Experiment:
             lr = hyperparams.get('learning_rate')
             config = self._create_trainer_config(lr)
 
-            server = self._create_server_instance(server_type, config, cost, tuning = True)
+            server = self._create_server_instance(server_type, config, tuning = True)
             self._add_clients_to_server(server, client_dataloaders)
             metrics = self._train_and_evaluate(server, config.rounds)
 
@@ -225,22 +202,14 @@ class Experiment:
 
         return tracking
 
-    def _run_final_evaluation(self, costs):
+    def _run_final_evaluation(self):
         """Run final evaluation with multiple runs"""
         results = {}
-        diversities = {}
         for run in range(self.default_params['runs']):
             try:
                 print(f"Starting run {run + 1}/{self.default_params['runs']}")
-                results_run = {}
-                diversities_run = {}
-                
-                for cost in costs:
-                    experiment_results = self._final_evaluation(cost)
-                    results_run[cost] = experiment_results
-                        
+                results_run = self._final_evaluation()
                 results = self.results_manager.append_or_create_metric_lists(results, results_run)
-                diversities = self.results_manager.append_or_create_metric_lists(diversities, diversities_run)
                 self.results_manager.save_results(results, self.config.experiment_type)
                 
             except Exception as e:
@@ -248,27 +217,20 @@ class Experiment:
                 if results is not None:
                     self.results_manager.save_results(results,  self.config.experiment_type)
         
-        return results, diversities
+        return results
 
 
-    def _final_evaluation(self, cost):
+    def _final_evaluation(self):
         tracking = {}
-        server_types = ['local', 'fedavg', 'pfedme', 'ditto']
-        client_dataloaders = self._initialize_experiment(self.default_params['batch_size'], cost)
+        server_types = ['local', 'fedavg', 'fedprox', 'pfedme', 'ditto', 'localadaptation', 'babu', 'fedlp', 'fedlama', 'pfedla', 'layerpfl']
+        client_dataloaders = self._initialize_experiment(self.default_params['batch_size'])
 
         for server_type in server_types:
             print(f"Evaluating {server_type} model with best hyperparameters")
             lr = self.results_manager.get_best_parameters(
-                ExperimentType.LEARNING_RATE, server_type, cost)
-            print(lr, flush = True)
-            if server_type in ['pfedme', 'ditto']:
-                reg_param = self.results_manager.get_best_parameters(
-                    ExperimentType.REG_PARAM, server_type, cost)
-                config = self._create_trainer_config(lr, personalization_params={"reg_param": reg_param})
-            else:
-                config = self._create_trainer_config(lr)
-
-            server = self._create_server_instance(server_type, config, cost, tuning = False)
+                ExperimentType.LEARNING_RATE, server_type)
+            config = self._create_trainer_config(lr)
+            server = self._create_server_instance(server_type, config, tuning = False)
             self._add_clients_to_server(server, client_dataloaders)
             metrics = self._train_and_evaluate(server, config.rounds)
             tracking[server_type] = metrics
@@ -276,25 +238,21 @@ class Experiment:
         return tracking
     
     
-    def _initialize_experiment(self, batch_size, cost):
+    def _initialize_experiment(self, batch_size):
+        # Initialize preprocessor
         preprocessor = DataPreprocessor(self.config.dataset, batch_size)
-        client_data = {}
-        client_ids = self._get_client_ids(cost)
         
-        for client_id in client_ids:
-            client_num = int(client_id.split('_')[1])
-            X, y = self._load_data(client_num, cost)
-            client_data[client_id] = {'X': X, 'y': y}
+        # Use UnifiedDataLoader to load the full dataset
+        loader = UnifiedDataLoader(root_dir=self.config.root_dir, dataset_name=self.config.dataset)
+        dataset_df = loader.load()  # Returns a DataFrame with 'data', 'label', and 'site'
         
-        return preprocessor.process_clients(client_data)
+        # Process client data into train, validation, and test loaders
+        client_data = preprocessor.process_client_data(dataset_df)
+        return client_data
+
     
-    def _get_client_ids(self, cost):
-        CLIENT_NUMS = {'IXITiny': 3, 'ISIC': 4}
-        if self.config.dataset in CLIENT_NUMS and cost == 'all':
-            CLIENT_NUM = CLIENT_NUMS[self.config.dataset]
-        else:
-            CLIENT_NUM = 2
-        return [f'client_{i}' for i in range(1, CLIENT_NUM + 1)]
+    def _get_client_ids(self):
+        return [f'client_{i}' for i in range(1, NUM_SITES_DICT[self.config.dataset] + 1)]
     
     def _create_trainer_config(self, learning_rate, personalization_params = None):
         return TrainerConfig(
@@ -307,23 +265,16 @@ class Experiment:
             personalization_params=personalization_params
         )
 
-    def _create_model(self, cost, learning_rate):
-        if self.config.dataset in ['EMNIST', 'CIFAR']:
-            with open(f'{self.data_dir}/CLASSES', 'rb') as f:
-                classes_used = pickle.load(f)
-            classes = len(set(classes_used[cost][0] + classes_used[cost][1]))
-            model = getattr(ms, self.config.dataset)(classes)
-        else:
-            model = getattr(ms, self.config.dataset)()
-
-        criterion = {
-            'Synthetic': nn.BCELoss(),
-            'Credit': nn.BCELoss(),
-            'Weather': nn.MSELoss(),
-            'EMNIST': nn.CrossEntropyLoss(),
+    def _create_model(self, learning_rate):
+        classes = CLASSES_DICT[self.config.dataset]
+        model = getattr(ms, self.config.dataset)(classes)
+        criterion = {'EMNIST': nn.CrossEntropyLoss(),
             'CIFAR': nn.CrossEntropyLoss(),
-            'IXITiny': get_dice_loss,
-            'ISIC': nn.CrossEntropyLoss()
+            "FMNIST": nn.CrossEntropyLoss(),
+            "ISIC": ls.MulticlassFocalLoss,
+            "Sentiment": nn.CrossEntropyLoss(),
+            "Heart": ls.MulticlassFocalLoss,
+            "mimic": ls.MulticlassFocalLoss
         }.get(self.config.dataset, None)
 
         optimizer = torch.optim.Adam(
@@ -334,9 +285,9 @@ class Experiment:
         )
         return model, criterion, optimizer
 
-    def _create_server_instance(self, server_type, config, cost, tuning):
+    def _create_server_instance(self, server_type, config, tuning):
         learning_rate = config.learning_rate
-        model, criterion, optimizer = self._create_model(cost, learning_rate)
+        model, criterion, optimizer = self._create_model(learning_rate)
         globalmodelstate = ModelState(
             model=model,
             optimizer=optimizer,
@@ -346,8 +297,15 @@ class Experiment:
         server_mapping = {
             'local': Server,
             'fedavg': FedAvgServer,
+            'fedprox': FedProxServer,
             'pfedme': PFedMeServer,
-            'ditto': DittoServer
+            'ditto': DittoServer,
+            'localadaptation':LocalAdaptationServer,
+            'babu':BABUServer,
+            'fedlp':FedLPServer,
+            'fedlama':FedLAMAServer,
+            'pfedla':pFedLAServer,
+            'layerpfl':LayerServer
         }
 
         server_class = server_mapping[server_type]
@@ -357,12 +315,12 @@ class Experiment:
 
     def _add_clients_to_server(self, server, client_dataloaders):
         is_personalized = server.server_type in ['pfedme', 'ditto']
-        for client_id in client_dataloaders:
-            if client_id == 'client_joint' and server.server_type != 'local':
-                continue  # Skip this iteration
-            else:
-                clientdata = self._create_site_data(client_id, client_dataloaders[client_id])
-                server.add_client(clientdata=clientdata, personal=is_personalized)
+        
+        for client_id, loaders in client_dataloaders.items():
+            # Create SiteData from loaders
+            client_data = self._create_site_data(client_id, loaders)
+            server.add_client(clientdata=client_data, personal=is_personalized)
+
 
     def _create_site_data(self, client_id, loaders):
         return SiteData(
@@ -372,8 +330,14 @@ class Experiment:
             test_loader=loaders[2]
         )
 
-    def _load_data(self, client_num, cost):
-        return loadData(self.config.dataset, f'{self.data_dir}', client_num, cost)
+    def _load_data(self, client_num):
+        loader = UnifiedDataLoader(root_dir=self.config.root_dir, dataset_name=self.config.dataset)
+        dataset_df = loader.load()
+        
+        # Filter dataset for the specific client (if applicable)
+        client_df = dataset_df[dataset_df['site'] == client_num]
+        return client_df['data'].values, client_df['label'].values
+
 
     @log_execution_time
     def _train_and_evaluate(self, server, rounds):
@@ -383,6 +347,8 @@ class Experiment:
         for round_num in range(rounds):
             round_start = time.time()
             server.train_round()
+            if (round_num == rounds -1) and (server.type in ['localadaptation', 'babu']):
+                server.train_round(final_round = True)
             round_time = time.time() - round_start
             
             # Log every 20% of rounds
