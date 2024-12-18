@@ -1,0 +1,9 @@
+script_annonymize
+annon/
+data/
+archive/
+results/
+code/slurm*
+code/archive
+*.ipynb
+workbooks/*

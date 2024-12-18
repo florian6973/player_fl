@@ -1,0 +1,18 @@
+#! /usr/bin/bash
+#SBATCH --job-name=lr_tuning   
+#SBATCH --partition=gpu
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=aelhussein@nygenome.org
+#SBATCH --nodes=1
+#SBATCH --cpus-per-task=2
+#SBATCH --mem=20G
+#SBATCH --gres gpu:tesla
+#SBATCH --time=40:00:00
+
+source ~/anaconda3/bin/activate ~/anaconda3/envs/cuda_env/
+conda activate cuda_env
+module load cuda
+
+DIR='/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl'
+python $DIR/code/lr_tuning_pipeline.py  --datasets=FMNIST,EMNIST,CIFAR,ISIC #--datasets=Heart,FMNIST,EMNIST,Sentiment,mimic,CIFAR,ISIC
+
