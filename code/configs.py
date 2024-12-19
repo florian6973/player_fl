@@ -1,13 +1,11 @@
 import torch
 import torch.nn as nn
-import dataset_processing as dp
-import models as mod
 import losses as ls
 import numpy as np
 import random
 ROOT_DIR = '/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl'
-from typing import List, Dict, Optional
-
+from typing import Dict, Optional
+from dataclasses import dataclass
 
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 def set_seeds(seed_value=1):
@@ -63,23 +61,6 @@ CLASSES_DICT = {'EMNIST':62,
             "Sentiment":2,
             "Heart":5,
             "mimic":2}
-
-DATALOADER_DICT = {'EMNIST':dp.EMNISTDataset,
-            'CIFAR':dp.CIFARDataset,
-            "FMNIST":dp.FMNISTDataset,
-            "ISIC":dp.ISICDataset,
-            "Sentiment": dp.SentimentDataset,
-            "Heart": dp.HeartDataset,
-            "mimic":dp.MIMICDataset}
-
-MODEL_DICT = {'EMNIST':mod.EMNIST,
-            'CIFAR':mod.CIFAR,
-            "FMNIST":mod.FMNIST,
-            "ISIC": mod.ISIC,
-            "Sentiment": mod.Sentiment,
-            "Heart": mod.Heart,
-            "mimic":mod.mimic}
-
 
 BATCH_SIZE_DICT = {'EMNIST':128,
                 'CIFAR':128,

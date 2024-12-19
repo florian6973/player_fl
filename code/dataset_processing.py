@@ -39,7 +39,7 @@ class UnifiedDataLoader:
             return self._load_isic()
         elif self.dataset_name == 'Sentiment':
             return self._load_sentiment()
-        elif self.dataset_name == 'MIMIC':
+        elif self.dataset_name == 'mimic':
             return self._load_mimic()
         elif self.dataset_name == 'Heart':
             return self._load_heart()
@@ -55,10 +55,13 @@ class UnifiedDataLoader:
         }
         
         dataset = dataset_classes[self.dataset_name]()
-    
-        data =dataset.data.numpy()
-        labels = dataset.targets.numpy()
-            
+        data = dataset.data
+        labels = dataset.targets
+        if isinstance(data, torch.Tensor):
+            data = data.numpy()
+            labels = labels.numpy()
+        elif data.shape[-3:] == (32,32,3):
+            data = data.transpose((0,3,1,2))
         
         return pd.DataFrame({
             'data': list(data),
@@ -73,18 +76,16 @@ class UnifiedDataLoader:
         for site in range(6):
             file_path = f'{self.data_dir}/{self.dataset_name}/site_{site}_metadata.csv'
             files = pd.read_csv(file_path)
-            
             # Store full image paths
-            image_files = [f'{self.data_dir}/ISIC_2019_Training_Input_preprocessed/{file}.jpg' 
+            image_files = [f'{self.data_dir}/ISIC/ISIC_2019_Training_Input_preprocessed/{file}.jpg' 
                           for file in files['image']]
             
             df = pd.DataFrame({
                 'data': image_files,
-                'label': files['label'].values,
+                'label': files['target'].values,
                 'site': np.full(len(files), site)
             })
             all_data.append(df)
-            
         return pd.concat(all_data, ignore_index=True)
 
     def _load_sentiment(self):
@@ -94,12 +95,11 @@ class UnifiedDataLoader:
         for device in range(15):
             file_path = f'{self.data_dir}/Sentiment/data_device_{device}_indices.pth'
             site_data = torch.load(file_path)
-            
             df = pd.DataFrame({
                 'data': list(site_data['data'].numpy()),
-                'label': site_data['label'].numpy(),
-                'mask': list(site_data['mask'].numpy()),
-                'site': np.full(len(site_data['label']), device)
+                'label': site_data['labels'].numpy(),
+                'mask': list(site_data['masks'].numpy()),
+                'site': np.full(len(site_data['labels']), device)
             })
             all_data.append(df)
             
@@ -113,12 +113,11 @@ class UnifiedDataLoader:
         for i, dx in enumerate(diagnoses):
             file_path = f'{self.data_dir}/mimic_iii/dataset_concatenated_{dx}_indices.pt'
             site_data = torch.load(file_path)
-            
             df = pd.DataFrame({
                 'data': list(site_data['data'].numpy()),
-                'label': site_data['label'].numpy(),
-                'mask': list(site_data['mask'].numpy()),
-                'site': np.full(len(site_data['label']), i)
+                'label': site_data['labels']['Mortality'].numpy(),
+                'mask': list(site_data['masks'].numpy()),
+                'site': np.full(len(site_data['labels']['Mortality']), i)
             })
             all_data.append(df)
             
@@ -410,7 +409,7 @@ class DataPartitioner:
 
     def partition_site_data(self, df):
         """Partition dataframe into client data dictionary"""
-        if self.dataset_name in ['Heart', 'MIMIC', 'ISIC', 'Sentiment']:
+        if self.dataset_name in ['Heart', 'mimic', 'ISIC', 'Sentiment']:
             return self._natural_partition(df)
         else:
             return self._dirichlet_partition(df)
@@ -466,13 +465,13 @@ class DataPartitioner:
 
 
 class DataPreprocessor:
-    """Handles dataset creation and preprocessing"""
+    """Handles dataset creation and preprocessing with support for masked data"""
     def __init__(self, dataset_name, batch_size):
         self.dataset_name = dataset_name
         self.batch_size = batch_size
         self.dataset_class = self._get_dataset_class()
         self.partitioner = DataPartitioner(self.dataset_name)
-    
+        
     def _get_dataset_class(self):
         dataset_classes = {
             'EMNIST': EMNISTDataset,
@@ -480,11 +479,11 @@ class DataPreprocessor:
             'FMNIST': FMNISTDataset,
             'ISIC': ISICDataset,
             'Sentiment': SentimentDataset,
-            'MIMIC': MIMICDataset,
+            'mimic': MIMICDataset,
             'Heart': HeartDataset,
         }
         return dataset_classes[self.dataset_name]
-
+    
     def process_client_data(self, df):
         """Process data for all clients"""
         partitioned_client_data = self.partitioner.partition_site_data(df)
@@ -493,46 +492,67 @@ class DataPreprocessor:
         for client_id, data in partitioned_client_data.items():
             train_loader, val_loader, test_loader = self._create_data_splits(data)
             processed_data[client_id] = (train_loader, val_loader, test_loader)
-                
+            
         return processed_data
-
+    
     def _create_data_splits(self, data):
-        """Create train/val/test splits and return DataLoaders"""
+        """Create train/val/test splits handling both masked and unmasked data"""
+        # Extract data components
         X, y = data['X'], data['y']
-        train_data, val_data, test_data = self._split_data(X, y)
+        masks = data.get('masks', None)
         
-        train_dataset = self.dataset_class(*train_data, is_train=True)
+        # Split data while handling masks if present
+        train_data, val_data, test_data = self._split_data(X, y, masks)
+        
+        # Create datasets with appropriate components
+        train_dataset = self._create_dataset(train_data, is_train=True)
         scaler = getattr(train_dataset, 'get_scalers', lambda: {})()
         
-        val_dataset = self.dataset_class(*val_data, is_train=False, **scaler)
-        test_dataset = self.dataset_class(*test_data, is_train=False, **scaler)
+        val_dataset = self._create_dataset(val_data, is_train=False, **scaler)
+        test_dataset = self._create_dataset(test_data, is_train=False, **scaler)
         
         return (
             DataLoader(train_dataset, batch_size=self.batch_size, shuffle=True),
             DataLoader(val_dataset, batch_size=self.batch_size, shuffle=False),
             DataLoader(test_dataset, batch_size=self.batch_size, shuffle=False)
         )
-
-    def _split_data(self, X, y):
-        """Split data into train/val/test sets"""
-        X_temp, X_test, y_temp, y_test = train_test_split(
-            X, y, test_size=0.2, random_state=42
-        )
-        X_train, X_val, y_train, y_val = train_test_split(
-            X_temp, y_temp, test_size=0.2, random_state=42
-        )
-        return (X_train, y_train), (X_val, y_val), (X_test, y_test)
+    
+    def _create_dataset(self, data, is_train=True, **kwargs):
+        """Create dataset instance handling presence/absence of masks"""
+        if len(data) == 3:  # Data includes masks
+            X, y, masks = data
+            return self.dataset_class(X, y, masks=masks, is_train=is_train, **kwargs)
+        else:  # Regular data without masks
+            X, y = data
+            return self.dataset_class(X, y, is_train=is_train, **kwargs)
+    
+    def _split_data(self, X, y, masks=None):
+        """Split data into train/val/test sets, handling masks if present"""
+        # Initial split for test set
+        if masks is not None:
+            X_temp, X_test, y_temp, y_test, masks_temp, masks_test = train_test_split(
+                X, y, masks, test_size=0.2, random_state=42
+            )
+            # Split remaining data into train and validation
+            X_train, X_val, y_train, y_val, masks_train, masks_val = train_test_split(
+                X_temp, y_temp, masks_temp, test_size=0.2, random_state=42
+            )
+            return (
+                (X_train, y_train, masks_train),
+                (X_val, y_val, masks_val),
+                (X_test, y_test, masks_test)
+            )
+        else:
+            X_temp, X_test, y_temp, y_test = train_test_split(
+                X, y, test_size=0.2, random_state=42
+            )
+            X_train, X_val, y_train, y_val = train_test_split(
+                X_temp, y_temp, test_size=0.2, random_state=42
+            )
+            return (
+                (X_train, y_train),
+                (X_val, y_val),
+                (X_test, y_test)
+            )
     
 
-# example usage
-# Load data
-loader = UnifiedDataLoader(root_dir=ROOT_DIR, dataset_name='EMNIST')
-df = loader.load()
-
-# Initialize preprocessor with partitioner
-preprocessor = DataPreprocessor(dataset_name='EMNIST', batch_size=32)
-
-client_data = preprocessor.process_client_data(df)
-
-# Access client data
-train_loader, val_loader, test_loader = client_data['client_1']
