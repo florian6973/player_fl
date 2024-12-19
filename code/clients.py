@@ -12,7 +12,7 @@ from typing import List, Dict, Optional
 from helper import *
 from configs import *
 from sklearn.metrics import f1_score, matthews_corrcoef, balanced_accuracy_score
-
+from collections import OrderedDict
 
 
 @dataclass
@@ -475,50 +475,48 @@ class FedLAMAClient(Client):
 class pFedLAClient(Client):
     """pFedLA client implementation using hypernetwork for layer-wise aggregation."""
     def __init__(self, *args, **kwargs):
+        # Initialize with personal_model=False since pFedLA handles personalization differently
         super().__init__(*args, **kwargs)
-        # Initialize client embedding vector
-        self.embedding_dim = self.config.personalization_params.get('embedding_dim', 32)
-        # Store original parameters for computing updates
-        self.initial_params = copy.deepcopy(self.global_state.model.state_dict())
         
-    def train_epoch(self, personal: bool = False):
-        """Train for one epoch and track parameter changes."""
-        state = self.global_state  # pFedLA only uses global model
-        model = state.model.train().to(self.device)
-        total_loss = 0.0
+        # Store initial parameters for computing updates
+        self.initial_params = {}
+        self._store_initial_params()
+
+    def _store_initial_params(self):
+        """Store initial model parameters."""
+        for name, param in self.global_state.model.state_dict().items():
+            self.initial_params[name] = param.clone().detach()
+
+    def set_model_state(self, state_dict, personal=False):
+        """Override to update initial params when model state is set."""
+        super().set_model_state(state_dict, personal=False) 
+        self._store_initial_params()
+
+    def train(self, personal=False):
+        """Train model and return parameter updates."""
+        # Train for specified number of epochs
+        final_loss = super().train(personal=False)
         
-        try:
-            for batch_x, batch_y in self.data.train_loader:
-                batch_x = batch_x.to(self.device)
-                batch_y = batch_y.to(self.device)
-                
-                state.optimizer.zero_grad()
-                outputs = model(batch_x)
-                loss = state.criterion(outputs, batch_y)
-                loss.backward()
-                
-                if self.config.clip_grad:
-                    torch.nn.utils.clip_grad_norm_(
-                        model.parameters(), 
-                        self.config.clip_value
-                    )
-                
-                state.optimizer.step()
-                total_loss += loss.item()
-                
-            avg_loss = total_loss / len(self.data.train_loader)
-            state.train_losses.append(avg_loss)
-            return avg_loss
-            
-        finally:
-            model.to('cpu')
-            if self.device == 'cuda':
-                torch.cuda.empty_cache()
+        # Compute updates
+        updates = self.compute_updates()
+        
+        # Store current state as initial state for next round
+        self._store_initial_params()
+        
+        return updates, {
+            'loss': final_loss,
+            'model_state': self.global_state.model.state_dict()
+        }
 
     def compute_updates(self):
-        """Compute parameter updates from training."""
+        """Compute parameter updates from initial state."""
+        updates = OrderedDict()
         current_params = self.global_state.model.state_dict()
-        updates = {}
-        for name, param in current_params.items():
-            updates[name] = param - self.initial_params[name]
+        
+        for name, current_param in current_params.items():
+            if name in self.initial_params:
+                updates[name] = current_param - self.initial_params[name]
+            else:
+                updates[name] = torch.zeros_like(current_param)
+                
         return updates

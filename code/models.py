@@ -379,31 +379,48 @@ class Heart(torch.nn.Module):
 
 #HYPERNETWORK
 class HyperNetwork(nn.Module):
-    """Hypernetwork for generating layer-wise aggregation weights across all clients."""
-    def __init__(self, embedding_dim: int, hidden_dim: int, model: nn.Module, num_clients: int):
+    def __init__(self, embedding_dim, client_num, hidden_dim, backbone: nn.Module, device):
         super().__init__()
+        self.client_num = client_num
         self.embedding_dim = embedding_dim
-        self.hidden_dim = hidden_dim
-        self.num_clients = num_clients
+        self.device = device
         
-        # Create layer-specific MLPs for each model layer
-        self.layer_networks = nn.ModuleDict()
-        for name, _ in model.named_parameters():
-            layer_name = name.split('.')[0]
-            if layer_name not in self.layer_networks:
-                self.layer_networks[layer_name] = nn.Sequential(
-                    nn.Linear(embedding_dim, hidden_dim),
-                    nn.ReLU(),
-                    nn.Linear(hidden_dim, hidden_dim),
-                    nn.ReLU(),
-                    nn.Linear(hidden_dim, num_clients),  # Output weights for all clients
-                    nn.Softmax(dim=-1)  # Softmax over client dimension
-                )
+        # Client embeddings
+        self.embeddings = nn.Parameter(
+            torch.randn(client_num, embedding_dim).to(device)
+        )
+        
+        # Get layer names from backbone
+        self.trainable_layers = [
+            name.split('.')[0] for name, param in backbone.named_parameters()
+            if param.requires_grad
+        ]
+        self.trainable_layers = list(set(self.trainable_layers))  # unique layers
+        
+        # Create MLP for each layer
+        self.mlp_layers = nn.ModuleDict()
+        for layer_name in self.trainable_layers:
+            self.mlp_layers[layer_name] = nn.Sequential(
+                nn.Linear(embedding_dim, hidden_dim),
+                nn.ReLU(),
+                nn.Linear(hidden_dim, client_num)
+            ).to(device)
     
-    def forward(self, embedding):
-        """Generate layer-wise aggregation weights across all clients."""
-        weights = {}
-        for layer_name, network in self.layer_networks.items():
-            # Returns tensor of shape [num_clients]
-            weights[layer_name] = network(embedding)
-        return weights
+    def forward(self, client_idx):
+        """Generate aggregation weights for each layer for given client."""
+        client_embedding = self.embeddings[client_idx]
+        
+        alpha = {}
+        for layer_name in self.trainable_layers:
+            # Generate weights and apply softmax for normalization
+            layer_weights = self.mlp_layers[layer_name](client_embedding)
+            alpha[layer_name] = F.softmax(layer_weights, dim=0)
+        
+        return alpha
+    
+    def get_params(self):
+        """Get all trainable parameters."""
+        params = [self.embeddings]
+        for layer in self.mlp_layers.values():
+            params.extend(layer.parameters())
+        return params

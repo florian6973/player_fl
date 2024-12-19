@@ -9,6 +9,7 @@ from helper import *
 from configs import *
 from clients import *
 from models import HyperNetwork
+from collections import OrderedDict
 
 class Server:
     """Base server class for federated learning."""
@@ -387,139 +388,122 @@ class FedLAMAServer(FLServer):
                     )
         self.round += 1
 
+
 class pFedLAServer(FLServer):
+    """pFedLA server implementation with layer-wise personalized aggregation."""
     def __init__(self, config: TrainerConfig, model: nn.Module):
         super().__init__(config, model)
-        self.hypernetworks = {}
-        self.client_embeddings = {}
-        self.embedding_dim = config.personalization_params.get('embedding_dim', 32)
-        self.hidden_dim = config.personalization_params.get('hidden_dim', 64)
-        self.hn_lr = config.personalization_params.get('hn_lr', 0.01)  # Learning rate for hypernetwork
-        # Optimizers for hypernetworks and embeddings
-        self.hn_optimizers = {}
-        self.embedding_optimizers = {}
-
-    def initialize_hypernetwork(self, client_id: str):
-        """Initialize hypernetwork and optimizers for a client."""
-        if client_id not in self.hypernetworks:
-            # Initialize hypernetwork
-            self.hypernetworks[client_id] = HyperNetwork(
-                embedding_dim=self.embedding_dim,
-                hidden_dim=self.hidden_dim,
-                model=self.global_model,
-                num_clients=len(self.clients)
-            ).to(self.config.device)
-            
-            # Initialize client embedding
-            self.client_embeddings[client_id] = nn.Parameter(
-                torch.randn(self.embedding_dim, device=self.config.device)
-            )
-            
-            # Initialize optimizers
-            self.hn_optimizers[client_id] = torch.optim.Adam(
-                self.hypernetworks[client_id].parameters(),
-                lr=self.hn_lr
-            )
-            self.embedding_optimizers[client_id] = torch.optim.Adam(
-                [self.client_embeddings[client_id]],
-                lr=self.hn_lr
-            )
-
-    def update_hypernetworks(self, all_updates):
-        """Update hypernetworks and embeddings using client updates."""
-        for client_id, client in self.clients.items():
-            # Get current model parameters and hypernetwork
-            hypernetwork = self.hypernetworks[client_id]
-            embedding = self.client_embeddings[client_id]
-            
-            # Zero gradients
-            self.hn_optimizers[client_id].zero_grad()
-            self.embedding_optimizers[client_id].zero_grad()
-            
-            # Generate current weights
-            weights = hypernetwork(embedding)
-            
-            # Compute gradients for hypernetwork and embedding
-            # Based on equations (10) and (11) from the paper
-            hn_grad = 0
-            embedding_grad = 0
-            
-            for name, param in self.global_model.named_parameters():
-                layer_name = name.split('.')[0]
-                layer_weights = weights[layer_name]  # [num_clients]
-                
-                # Get aggregated update based on current weights
-                aggregated_update = torch.zeros_like(param)
-                for other_id, other_updates in all_updates.items():
-                    client_idx = list(self.clients.keys()).index(other_id)
-                    weight = layer_weights[client_idx]
-                    aggregated_update += other_updates[name] * weight
-                
-                # Compute gradient terms
-                client_update = all_updates[client_id][name]
-                diff = client_update - aggregated_update
-                
-                # Compute gradients w.r.t weights
-                weight_grad = torch.autograd.grad(
-                    layer_weights,
-                    [embedding] + list(hypernetwork.parameters()),
-                    grad_outputs=torch.ones_like(layer_weights),
-                    retain_graph=True
-                )
-                
-                # Accumulate gradients
-                embedding_grad += weight_grad[0] * diff.norm()
-                for i, param in enumerate(hypernetwork.parameters()):
-                    param.grad = param.grad + weight_grad[i+1] * diff.norm() if param.grad is not None else weight_grad[i+1] * diff.norm()
-            
-            # Update embedding
-            embedding.grad = embedding_grad
-            self.embedding_optimizers[client_id].step()
-            
-            # Update hypernetwork
-            self.hn_optimizers[client_id].step()
-
-    def aggregate_models(self, personal: bool = False):
-        """Layer-wise personalized aggregation with hypernetwork updates."""
-        all_updates = {}
+        # pFedLA specific parameters from config
+        personalization_params = config.personalization_params
+        self.embedding_dim = personalization_params.get('embedding_dim', 32)
+        self.hidden_dim = personalization_params.get('hidden_dim', 64)
+        self.hn_lr = personalization_params.get('hn_lr', 0.01)
         
-        # Collect updates from all clients
-        for client_id, client in self.clients.items():
-            all_updates[client_id] = client.compute_updates()
+        # Initialize hypernetwork
+        self.hypernetwork = HyperNetwork(
+            embedding_dim=self.embedding_dim,
+            client_num=len(self.clients),
+            hidden_dim=self.hidden_dim,
+            backbone=self.global_model,
+            device=self.device
+        )
         
-        # Update hypernetworks using collected updates
-        self.update_hypernetworks(all_updates)
+        # Initialize per-client models
+        self.client_models = [
+            [param.clone().detach() for param in self.global_model.parameters()]
+            for _ in range(len(self.clients))
+        ]
         
-        # Perform personalized aggregation using updated weights
-        for client_id, client in self.clients.items():
-            weights = self.hypernetworks[client_id](self.client_embeddings[client_id])
-            
-            new_state = {}
-            for name, param in self.global_model.named_parameters():
-                layer_name = name.split('.')[0]
-                layer_weights = weights[layer_name]
-                
-                aggregated_update = torch.zeros_like(param)
-                for other_id, other_updates in all_updates.items():
-                    client_idx = list(self.clients.keys()).index(other_id)
-                    weight = layer_weights[client_idx]
-                    aggregated_update += other_updates[name] * weight
-                
-                new_state[name] = param + aggregated_update
-            
-            client.set_model_state(new_state)
+        # Track parameter names
+        self.layer_names = [name for name, _ in self.global_model.named_parameters()]
+        self.trainable_names = [
+            name for name, param in self.global_model.named_parameters()
+            if param.requires_grad
+        ]
 
-    def train_round(self, personal: bool = False):
-        """Run one round of training."""
+    def generate_client_model(self, client_id):
+        """Generate personalized model for client using hypernetwork."""
+        alpha = self.hypernetwork(client_id)
+        
+        # Stack client parameters for efficient computation
+        layer_params = {}
+        for name, params in zip(self.layer_names, zip(*self.client_models)):
+            layer_params[name] = torch.stack(params, dim=0).to(self.device)
+        
+        personalized_params = OrderedDict()
+        for name in self.layer_names:
+            if name in self.trainable_names:
+                base_name = name.split('.')[0]
+                weights = alpha[base_name]
+            else:
+                weights = torch.zeros(len(self.clients), device=self.device)
+                weights[client_id] = 1.0
+                
+            weights = weights / weights.sum() if weights.sum() != 0 else torch.ones_like(weights) / len(weights)
+            personalized_params[name] = torch.sum(
+                weights.view(-1, 1, 1).expand_as(layer_params[name]) * layer_params[name],
+                dim=0
+            )
+        
+        return personalized_params
+    
+    def update_hypernetwork(self, client_id, delta, retained_layers=None):
+        """Update hypernetwork parameters using client updates."""
+        retained_layers = retained_layers or []
+        update_params = [
+            param for name, param in delta.items()
+            if name in self.trainable_names and name.split('.')[0] not in retained_layers
+        ]
+        
+        if not update_params:
+            return
+            
+        hn_grads = torch.autograd.grad(
+            outputs=list(filter(
+                lambda p: p.requires_grad,
+                self.client_models[client_id]
+            )),
+            inputs=self.hypernetwork.get_params(),
+            grad_outputs=update_params,
+            allow_unused=True
+        )
+        
+        for param, grad in zip(self.hypernetwork.get_params(), hn_grads):
+            if grad is not None:
+                param.data -= self.hn_lr * grad
+
+    def update_client_model(self, client_id, delta):
+        """Update stored client model parameters."""
+        updated_params = []
+        for param, diff in zip(self.client_models[client_id], delta.values()):
+            updated_params.append((param + diff).detach().cpu())
+        self.client_models[client_id] = updated_params
+
+    def train_round(self, personal=True):
+        """Override train_round to implement pFedLA training."""
         train_loss = 0
         val_loss = 0
         val_score = 0
-
-        # Train all clients
-        for client in self.clients.values():
-            client_train_loss = client.train(personal)
-            client_val_loss, client_val_score = client.validate(personal)
+        
+        for client_id in self.clients:
+            client = self.clients[client_id]
             
+            # Generate and distribute personalized model
+            personalized_params = self.generate_client_model(client_id)
+            client.set_model_state(personalized_params)
+            
+            # Train client
+            client_train_loss = client.train(personal=True)
+            client_val_loss, client_val_score = client.validate(personal=True)
+            
+            # Get updates
+            delta = client.compute_updates()
+            
+            # Update client model and hypernetwork
+            self.update_client_model(client_id, delta)
+            self.update_hypernetwork(client_id, delta)
+            
+            # Weight metrics
             train_loss += client_train_loss * client.data.weight
             val_loss += client_val_loss * client.data.weight
             val_score += client_val_score * client.data.weight
@@ -529,12 +513,18 @@ class pFedLAServer(FLServer):
         self.val_losses.append(val_loss)
         self.val_scores.append(val_score)
 
-        # Aggregate and distribute
-        self.aggregate_models(personal)
-
         # Update best model if improved
         if val_loss < self.best_loss:
             self.best_loss = val_loss
             self.best_model = copy.deepcopy(self.global_model)
 
         return train_loss, val_loss, val_score
+
+
+    def aggregate_models(self, personal=True):
+        """Override to prevent default FedAvg aggregation."""
+        pass  # pFedLA handles aggregation through hypernetwork
+
+    def distribute_global_model(self):
+        """Override to prevent default model distribution."""
+        pass  # pFedLA handles model distribution through hypernetwork
