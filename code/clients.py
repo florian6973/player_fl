@@ -11,7 +11,8 @@ class TrainerConfig:
     epochs: int = 5
     rounds: int = 20
     num_clients: int = 5
-    personalization_params: Optional[Dict] = None
+    requires_personal_model: bool = False
+    algorithm_params: Optional[Dict] = None
 
 
 @dataclass
@@ -133,28 +134,29 @@ class Client:
         # Create personal state if needed
         self.personal_state = self.global_state.copy() if personal_model else None
 
-    def get_model_state(self, personal = False):
+    def get_client_state(self, personal):
         """Get model state dictionary."""
         state = self.personal_state if personal else self.global_state
-        return state.model.state_dict()
+        return state
 
-    def set_model_state(self, state_dict, personal = False):
+    def set_model_state(self, state_dict):
         """Set model state from dictionary."""
-        state = self.personal_state if personal else self.global_state
+        state = self.get_client_state(personal = False)
         state.model.load_state_dict(state_dict)
 
-    def update_best_model(self, loss, personal  = False):
+    def update_best_model(self, loss, personal):
         """Update best model if loss improves."""
-        state = self.personal_state if personal else self.global_state
+        state = self.get_client_state(personal)
+        
         if loss < state.best_loss:
             state.best_loss = loss
             state.best_model = copy.deepcopy(state.model)
             return True
         return False
 
-    def train_epoch(self, personal = False):
+    def train_epoch(self, personal):
         """Train for one epoch."""
-        state = self.personal_state if personal else self.global_state
+        state = self.get_client_state(personal)
         model = state.model.train().to(self.device)
         total_loss = 0.0
         
@@ -181,16 +183,16 @@ class Client:
             if self.device == 'cuda':
                 torch.cuda.empty_cache()
 
-    def train(self, personal = False):
+    def train(self, personal):
         """Train for multiple epochs."""
         final_loss = 0.0
         for epoch in range(self.config.epochs):
             final_loss = self.train_epoch(personal)
         return final_loss
 
-    def evaluate(self, loader, personal = False, validate = False):
+    def evaluate(self, loader, personal, validate):
         """Evaluate model performance."""
-        state = self.personal_state if personal else self.global_state
+        state = self.get_client_state(personal)
         model = (state.model if validate else state.best_model).to(self.device)
         model.eval()
         
@@ -225,9 +227,9 @@ class Client:
             if self.device == 'cuda':
                 torch.cuda.empty_cache()
 
-    def validate(self, personal = False):
+    def validate(self, personal):
         """Validate current model."""
-        state = self.personal_state if personal else self.global_state
+        state = self.get_client_state(personal)
         val_loss, val_metrics = self.evaluate(
             self.data.val_loader, 
             personal, 
@@ -240,12 +242,13 @@ class Client:
         self.update_best_model(val_loss, personal)
         return val_loss, val_metrics
 
-    def test(self, personal = False):
+    def test(self, personal):
         """Test using best model."""
-        state = self.personal_state if personal else self.global_state
+        state = self.get_client_state(personal)
         test_loss, test_metrics = self.evaluate(
             self.data.test_loader,
-            personal
+            personal,
+            validate = False
         )
         
         state.test_losses.append(test_loss)
@@ -259,10 +262,10 @@ class FedProxClient(Client):
     """FedProx client implementation."""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.reg_param = self.config.personalization_params['reg_param']
+        self.reg_param = self.config.algorithm_params['reg_param']
 
     def train_epoch(self, personal=False):
-        state = self.global_state  # FedProx only uses global model
+        state = self.get_client_state(personal)
         model = move_model_to_device(state.model.train(), self.device)
         total_loss = 0.0
         
@@ -275,10 +278,9 @@ class FedProxClient(Client):
                 outputs = model(batch_x)
                 loss = state.criterion(outputs, batch_y)
                 
-                proximal_term = compute_proximal_term(
+                proximal_term = self.compute_proximal_term(
                     model.parameters(),
                     self.global_state.model.parameters(),
-                    self.reg_param
                 )
                 
                 total_loss_batch = loss + proximal_term
@@ -296,16 +298,24 @@ class FedProxClient(Client):
             model.to('cpu')
             cleanup_gpu()
 
+    def compute_proximal_term(self, model_params, reference_params):
+        """Calculate proximal term between two sets of model parameters."""
+        proximal_term = 0.0
+        for param, ref_param in zip(model_params, reference_params):
+            proximal_term += (self.reg_param / 2) * torch.norm(param - ref_param) ** 2
+        return proximal_term
+    
+
 class PFedMeClient(Client):
     """PFedMe client implementation with proximal regularization."""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.reg_param = self.config.personalization_params['reg_param']
+        self.reg_param = self.config.algorithm_params['reg_param']
 
     def train_epoch(self, personal=True):
         """Train for one epoch with proximal term regularization."""
-        # PFedMe primarily uses personal model
-        state = self.personal_state if personal else self.global_state
+        state = self.get_client_state(personal)
+
         model = move_model_to_device(state.model.train(), self.device)
         global_model = move_model_to_device(self.global_state.model, self.device)
         total_loss = 0.0
@@ -319,10 +329,9 @@ class PFedMeClient(Client):
                 outputs = model(batch_x)
                 loss = state.criterion(outputs, batch_y)
                 
-                proximal_term = compute_proximal_term(
+                proximal_term = self.compute_proximal_term(
                     model.parameters(),
                     global_model.parameters(),
-                    self.reg_param
                 )
                 
                 total_batch_loss = loss + proximal_term
@@ -346,14 +355,22 @@ class PFedMeClient(Client):
         for epoch in range(self.config.epochs):
             final_loss = self.train_epoch(personal)
         return final_loss
+    
+    def compute_proximal_term(self, model_params, reference_params):
+        """Calculate proximal term between two sets of model parameters."""
+        proximal_term = 0.0
+        for param, ref_param in zip(model_params, reference_params):
+            proximal_term += (self.reg_param / 2) * torch.norm(param - ref_param) ** 2
+        return proximal_term
+    
 
 class DittoClient(Client):
     """Ditto client implementation."""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.reg_param = self.config.personalization_params['reg_param']
+        self.reg_param = self.config.algorithm_params['reg_param']
 
-    def train_epoch(self, personal=False):
+    def train_epoch(self, personal):
         if not personal:
             return super().train_epoch(personal=False)
             
@@ -372,10 +389,9 @@ class DittoClient(Client):
                 loss = state.criterion(outputs, batch_y)
                 loss.backward()
                 
-                add_gradient_regularization(
+                self.add_gradient_regularization(
                     model.parameters(),
-                    global_model.parameters(),
-                    self.reg_param
+                    global_model.parameters()
                 )
                     
                 state.optimizer.step()
@@ -389,6 +405,13 @@ class DittoClient(Client):
             model.to('cpu')
             global_model.to('cpu')
             cleanup_gpu()
+    
+    def add_gradient_regularization(self, model_params, reference_params):
+        """Add regularization directly to gradients."""
+        for param, ref_param in zip(model_params, reference_params):
+            if param.grad is not None:
+                reg_term = self.reg_param * (param - ref_param)
+                param.grad.add_(reg_term)
 
 class LocalAdaptationClient(Client):
     """Client that performs additional local training after federation."""
@@ -398,18 +421,25 @@ class LocalAdaptationClient(Client):
 class LayerClient(Client):
     """Client for layer-wise federated learning."""
     def __init__(self, *args, **kwargs):
-        self.layers_to_include = kwargs['config'].personalization_params['layers_to_include']
+        self.layers_to_include = kwargs['config'].algorithm_params['layers_to_include']
         super().__init__(*args, **kwargs)
 
     def set_model_state(self, state_dict, personal = False):
         """Selectively load state dict only for federated layers."""
-        state = self.personal_state if personal else self.global_state
-        selective_load_state_dict(state.model, state_dict, self.layers_to_include)
+        state = self.get_client_state(personal)
+        
+        current_state = state.model.state_dict()
+        for name, param in state_dict.items():
+            if any(layer in name for layer in self.layers_to_include):
+                current_state[name].copy_(param)
+        state.model.load_state_dict(current_state)    
 
 class BABUClient(LayerClient):
     """Client implementation for BABU."""
+
     def set_head_body_training(self, train_head):
-        model = self.global_state.model
+        state = self.get_client_state(personal = False)
+        model = state.model
         head_params = []
         body_params = []
         
@@ -422,6 +452,7 @@ class BABUClient(LayerClient):
                 head_params.append(name)
             else:
                 body_params.append(name)
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Initialize with body training
@@ -437,12 +468,13 @@ class FedLPClient(Client):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Get layer-preserving rates (LPRs) for each layer
-        self.layer_preserving_rate = self.config.personalization_params['layer_preserving_rate']
+        self.layer_preserving_rate = self.config.algorithm_params['layer_preserving_rate']
         
     def generate_layer_indicators(self):
         """Generate binary indicators for all model layers using a single preservation rate."""
         indicators = {}
-        for name, _ in self.global_state.model.named_parameters():
+        state = self.get_client_state(personal = False)
+        for name, _ in state.model.named_parameters():
             # Get base layer name (e.g., 'conv1' from 'conv1.weight')
             layer_name = name.split('.')[0]
             if layer_name not in indicators:  # Only generate once per layer
@@ -453,7 +485,8 @@ class FedLPClient(Client):
     def get_pruned_model_state(self):
         """Get model state with pruned layers based on indicators."""
         indicators = self.generate_layer_indicators()
-        state_dict = self.global_state.model.state_dict()
+        state = self.get_client_state(personal = False)
+        state_dict = state.model.state_dict()
         pruned_state = {}
         
         for name, param in state_dict.items():
@@ -483,34 +516,36 @@ class pFedLAClient(Client):
 
     def _store_initial_params(self):
         """Store initial model parameters."""
-        for name, param in self.global_state.model.state_dict().items():
+        state = self.get_client_state(personal = False)
+        for name, param in state.model.state_dict().items():
             self.initial_params[name] = param.clone().detach()
 
     def set_model_state(self, state_dict, personal=False):
         """Override to update initial params when model state is set."""
-        super().set_model_state(state_dict, personal=False) 
+        super().set_model_state(state_dict, personal) 
         self._store_initial_params()
 
     def train(self, personal=False):
         """Train model and return parameter updates."""
         # Train for specified number of epochs
-        final_loss = super().train(personal=False)
+        final_loss = super().train(personal)
         
         # Compute updates
         updates = self.compute_updates()
         
         # Store current state as initial state for next round
         self._store_initial_params()
-        
+        state = self.get_client_state(personal)
         return updates, {
             'loss': final_loss,
-            'model_state': self.global_state.model.state_dict()
+            'model_state': state.model.state_dict()
         }
 
     def compute_updates(self):
         """Compute parameter updates from initial state."""
         updates = OrderedDict()
-        current_params = self.global_state.model.state_dict()
+        state = self.get_client_state(personal = False)
+        current_params = state.model.state_dict()
         
         for name, current_param in current_params.items():
             if name in self.initial_params:

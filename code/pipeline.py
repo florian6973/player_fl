@@ -6,7 +6,6 @@ from losses import MulticlassFocalLoss
 from clients import *
 from servers import *
 from performance_logging import *
-
 class ExperimentType:
     LEARNING_RATE = 'learning_rate'
     EVALUATION = 'evaluation'
@@ -231,7 +230,7 @@ class Experiment:
     def _get_client_ids(self):
         return [f'client_{i}' for i in range(1, self.default_params['num_clients'] + 1)]
     
-    def _create_trainer_config(self, learning_rate, personalization_params = None):
+    def _create_trainer_config(self, server_type, learning_rate, algorithm_params = None):
         return TrainerConfig(
             dataset_name=self.config.dataset,
             device=DEVICE,
@@ -240,7 +239,8 @@ class Experiment:
             epochs=5,
             rounds=self.default_params['rounds'],
             num_clients=self.default_params['num_clients'],
-            personalization_params=personalization_params
+            requires_personal_model= True if server_type in ['pfedme', 'ditto'] else False,
+            algorithm_params=algorithm_params
         )
 
     def _create_model(self, learning_rate):
@@ -265,13 +265,13 @@ class Experiment:
 
     def _create_server_instance(self, server_type, hyperparams, tuning):
         lr = hyperparams.get('learning_rate')
-        personalization_params = get_personalization_config(server_type, self.config.dataset)
-        config = self._create_trainer_config(lr, personalization_params=personalization_params)
+        algorithm_params = get_algorithm_config(server_type, self.config.dataset)
+        config = self._create_trainer_config(server_type,lr, algorithm_params=algorithm_params)
         learning_rate = config.learning_rate
         
     
         # Update config with personalization parameters
-        config.personalization_params = personalization_params
+        config.algorithm_params = algorithm_params
         model, criterion, optimizer = self._create_model(learning_rate)
         globalmodelstate = ModelState(
             model=model,
@@ -298,13 +298,11 @@ class Experiment:
         server.set_server_type(server_type, tuning)
         return server
 
-    def _add_clients_to_server(self, server, client_dataloaders):
-        is_personalized = server.server_type in ['pfedme', 'ditto']
-        
+    def _add_clients_to_server(self, server, client_dataloaders):        
         for client_id, loaders in client_dataloaders.items():
             # Create SiteData from loaders
             client_data = self._create_site_data(client_id, loaders)
-            server.add_client(clientdata=client_data, personal=is_personalized)
+            server.add_client(clientdata=client_data)
 
     def _create_site_data(self, client_id, loaders):
         return SiteData(
@@ -330,9 +328,10 @@ class Experiment:
         for round_num in range(rounds):
             round_start = time.time()
             server.train_round()
-            identical, diffs = check_client_models_identical(server)
+            identical, diffs = check_client_models_identical(server, server.config.requires_personal_model)
             if not identical:
-                print(f"\nRound {round_num + 1}: Models are different!")
+                pass
+                #print(f"\nRound {round_num + 1}: Models are different!")
             if (round_num +1 == rounds) and (server.server_type in ['localadaptation', 'babu']):
                 server.train_round(final_round = True)
             round_time = time.time() - round_start
@@ -388,7 +387,7 @@ class Experiment:
         return metrics
 
 
-def check_client_models_identical(server):
+def check_client_models_identical(server, personal):
     """
     Check if all client models are identical.
     Returns: 
@@ -401,7 +400,7 @@ def check_client_models_identical(server):
     
     # Get first client's model state as reference
     first_client_id = list(clients.keys())[0]
-    reference_state = clients[first_client_id].global_state.model.state_dict()
+    reference_state = clients[first_client_id].personal_state.model.state_dict() if personal else clients[first_client_id].global_state.model.state_dict()
     
     differences = {}
     models_identical = True
@@ -411,7 +410,7 @@ def check_client_models_identical(server):
         if client_id == first_client_id:
             continue
             
-        current_state = client.global_state.model.state_dict()
+        current_state = client.personal_state.model.state_dict() if personal else client.global_state.model.state_dict()
         
         # Compare each parameter
         for key in reference_state.keys():

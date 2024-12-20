@@ -46,7 +46,10 @@ ALGORITHMS = [
 ]
 
 ALGORITHMS = [
-    'babu', 
+    'local', 
+    'fedavg', 
+    'fedprox', 
+    'pfedme', 
 ]
 
 DATASET_ALPHA = {
