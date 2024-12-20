@@ -5,8 +5,6 @@ import pandas as pd
 import numpy as np
 
 
-
-
 def move_model_to_device(model, device):
     """Safely move model to device with proper cleanup."""
     try:

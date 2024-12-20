@@ -26,32 +26,117 @@ class TrainerConfig:
     batch_size: int
     epochs: int = 5
     rounds: int = 20
+    num_clients: int = 5
     personalization_params: Optional[Dict] = None
 
+def get_parameters_for_dataset(DATASET):
+    default_params = {
+        'EMNIST': {
+            'learning_rates_try': [5e-3, 1e-3, 5e-4, 1e-4, 8e-5],
+            'num_clients': 5,
+            'sizes_per_site': 3000,
+            'classes': 62,
+            'batch_size': 128,
+            'rounds': 10,
+            'runs': 50,
+            'runs_lr': 5
+        },
+        'CIFAR': {
+            'learning_rates_try': [5e-3, 1e-3, 5e-4, 1e-4],
+            'num_clients': 5,
+            'sizes_per_site': 10000,
+            'classes': 10,
+            'batch_size': 128,
+            'rounds': 10,
+            'runs': 20,
+            'runs_lr': 5
+        },
+        'FMNIST': {
+            'learning_rates_try': [1e-3, 5e-4, 1e-4, 8e-5],
+            'num_clients': 5,
+            'sizes_per_site': 2000,
+            'classes': 10,
+            'batch_size': 128,
+            'rounds': 10,
+            'runs': 50,
+            'runs_lr': 5
+        },
+        'ISIC': {
+            'learning_rates_try': [1e-3, 5e-3, 1e-4],
+            'num_clients': 4,
+            'sizes_per_site': None,
+            'classes': 4,
+            'batch_size': 32,
+            'rounds': 10,
+            'runs': 3,
+            'runs_lr': 1
+        },
+        'Sentiment': {
+            'learning_rates_try': [1e-3, 5e-4, 1e-4, 8e-5],
+            'num_clients': 15,
+            'sizes_per_site': None,
+            'classes': 2,
+            'batch_size': 128,
+            'rounds': 10,
+            'runs': 10,
+            'runs_lr': 3
+        },
+        'Heart': {
+            'learning_rates_try': [5e-1, 1e-1, 5e-2, 1e-2, 5e-3],
+            'num_clients': 4,
+            'sizes_per_site': None,
+            'classes': 5,
+            'batch_size': 128,
+            'rounds': 10,
+            'runs': 50,
+            'runs_lr': 5
+        },
+        'mimic': {
+            'learning_rates_try': [5e-4, 1e-4, 3e-4, 8e-5],
+            'num_clients': 4,
+            'sizes_per_site': None,
+            'classes': 2,
+            'batch_size': 128,
+            'rounds': 10,
+            'runs': 10,
+            'runs_lr': 3
+        }
+    }
 
-LEARNING_RATES_TRY = {'EMNIST':[5e-3, 1e-3, 5e-4, 1e-4, 8e-5],
-            'CIFAR':[5e-3, 1e-3, 5e-4, 1e-4],
-            "FMNIST":[1e-3, 5e-4, 1e-4, 8e-5],
-            "ISIC":[1e-3, 5e-3, 1e-4],
-            "Sentiment":[1e-3, 5e-4, 1e-4,8e-5],
-            "Heart":[5e-1, 1e-1, 5e-2, 1e-2, 5e-3],
-            "mimic": [5e-4, 1e-4, 3e-4, 8e-5]}
+    params = default_params.get(DATASET)
+    if not params:
+        raise ValueError(f"Dataset {DATASET} is not supported.")
 
-NUM_SITES_DICT = {'EMNIST':5,
-            'CIFAR':5,
-            "FMNIST":5,
-            "ISIC":4,
-            "Sentiment": 15,
-            "Heart":4,
-            "mimic":4}
+    return params
 
-SIZES_PER_SITE_DICT = {'EMNIST':3000,
-                'CIFAR':10000,
-                "FMNIST":2000,
-                "ISIC": None,
-                "Sentiment": None,
-                "Heart": None, 
-                "mimic":None}
+def get_personalization_config(server_type, dataset_name):
+    """Get personalization parameters for specific server type and dataset."""
+    params = {}
+    
+    # Layer-based methods
+    if server_type in ['layerpfl', 'babu', 'layerpfl_minus_1', 'layerpfl_plus_1']:
+        params['layers_to_include'] = LAYERS_TO_FEDERATE_DICT[server_type][dataset_name]
+    
+    # FedLP specific parameters
+    elif server_type == 'fedlp':
+        params['layer_preserving_rate'] = LAYER_PRESERVATION_RATES[dataset_name]
+    
+    # Regularization-based methods
+    elif server_type in ['fedprox', 'pfedme', 'ditto']:
+        params['reg_param'] = REG_PARAMS[server_type][dataset_name]
+    
+    # FedLAMA specific parameters
+    elif server_type == 'fedlama':
+        params['tau_prime'] = 2
+        params['phi'] = 2
+    
+    # pFedLA specific parameters
+    elif server_type == 'pfedla':
+        params['embedding_dim'] = HYPERNETWORK_PARAMS['embedding_dim'][dataset_name]
+        params['hidden_dim'] = HYPERNETWORK_PARAMS['hidden_dim'][dataset_name]
+        params['hn_lr'] = HYPERNETWORK_PARAMS['hn_lr'][dataset_name]
+
+    return params
 
 
 CLASSES_DICT = {'EMNIST':62,
@@ -62,129 +147,128 @@ CLASSES_DICT = {'EMNIST':62,
             "Heart":5,
             "mimic":2}
 
-BATCH_SIZE_DICT = {'EMNIST':128,
-                'CIFAR':128,
-                "FMNIST":128,
-                "ISIC": 32,
-                "Sentiment": 128,
-                "Heart": 128, 
-                "mimic":128}
-
-LR_DICT = {'EMNIST':5e-4,
-            'CIFAR':5e-4,
-            "FMNIST":7e-4,
-            "ISIC":7e-4,
-            "Sentiment":13e-5,
-            "Heart":75e-4,
-            "mimic": 9e-4}
-
-LR_DICT_ALG = {'EMNIST':{'Single':(1e-3,None), 'FedAvg':(1e-3,None), 'LayerPFL':(1e-3,1e-3),'FedProx':(5e-3, None), 
-                         'pFedMe':(5e-2, None), 'Ditto':(1e-3, None), 'LocalAdaptation':(1e-3, None), 'BABU':(1e-3,0),
-                         'LayerPFL_minus_1':(5e-4,5e-4), 'LayerPFL_plus_1':(1e-3,1e-3), 'FedLP':(5e-4,5e-4),
-                         'FedLAMA':(1e-3,1e-3), 'pFedLA': (5e-3,5e-3)},
-            'CIFAR':{'Single':(1e-3,None), 'FedAvg':(1e-3,None), 'LayerPFL':(1e-3,1e-3),'FedProx':(1e-3, None), 
-                     'pFedMe':(5e-2, None), 'Ditto':(1e-3, None), 'LocalAdaptation':(1e-3, None), 'BABU':(5e-4,0),
-                     'LayerPFL_minus_1':(1e-3,1e-3), 'LayerPFL_plus_1':(5e-4,5e-4), 'FedLP':(1e-3,1e-3),
-                    'FedLAMA':(5e-4,5e-4), 'pFedLA': (1e-3,1e-3)},
-            "FMNIST":{'Single':(1e-3,None), 'FedAvg':(5e-4,None), 'LayerPFL':(1e-3,1e-3),'FedProx':(5e-4, None), 
-                      'pFedMe':(5e-2, None), 'Ditto':(5e-4, None), 'LocalAdaptation':(5e-4, None), 'BABU':(1e-3,0),
-                      'LayerPFL_minus_1':(1e-3,1e-3), 'LayerPFL_plus_1':(1e-3,1e-3), 'FedLP':(1e-3,1e-3),
-                         'FedLAMA':(1e-3,1e-3), 'pFedLA': (1e-3,1e-3)},
-            "ISIC":{'Single':(1e-3,None), 'FedAvg':(1e-3,None), 'LayerPFL':(5e-4,5e-4),'FedProx':(1e-3, None), 
-                    'pFedMe':(5e-3, None), 'Ditto':(1e-3, None), 'LocalAdaptation':(1e-3, None), 'BABU':(1e-3,0),
-                    'LayerPFL_minus_1':(5e-4,5e-4), 'LayerPFL_plus_1':(1e-3,1e-3), 'FedLP':(5e-3,5e-3),
-                         'FedLAMA':(1e-3,1e-3), 'pFedLA': (1e-3,1e-3)},
-            "Sentiment":{'Single':(5e-4,None), 'FedAvg':(1e-3,None), 'LayerPFL':(8e-5,8e-5),'FedProx':(1e-3, None), 
-                         'pFedMe':(1e-2, None), 'Ditto':(1e-3, None), 'LocalAdaptation':(1e-3, None), 'BABU':(8e-5,0),
-                         'LayerPFL_minus_1':(8e-5,8e-5), 'LayerPFL_plus_1':(1e-4,1e-4), 'FedLP':(5e-4,5e-4),
-                         'FedLAMA':(1e-3,1e-3), 'pFedLA': (1e-3,1e-3)},
-            "Heart":{'Single':(5e-2,None), 'FedAvg':(1e-1,None), 'LayerPFL':(1e-2,1e-2),'FedProx':(5e-2, None),
-                      'pFedMe':(1e-1, None), 'Ditto':(5e-2, None), 'LocalAdaptation':(1e-2, None), 'BABU':(1e-1,0),
-                      'LayerPFL_minus_1':(5e-2,5e-2), 'LayerPFL_plus_1':(5e-2,5e-2), 'FedLP':(5e-2,5e-2), 
-                         'FedLAMA':(5e-1,5e-1), 'pFedLA': (1e-2,1e-2)},
-            "mimic":{'Single':(8e-5,None), 'FedAvg':(5e-4,None), 'LayerPFL':(3e-4,3e-4),'FedProx':(5e-4, None),
-                     'pFedMe':(1e-3, None), 'Ditto':(5e-4, None), 'LocalAdaptation':(5e-4, None), 'BABU':(5e-4,0),
-                     'LayerPFL_minus_1':(8e-5,8e-5), 'LayerPFL_plus_1':(5e-4,5e-4), 'FedLP':(3e-4,3e-4),
-                         'FedLAMA':(8e-5,8e-5), 'pFedLA': (5e-4,5e-4)}}
-
-LOSSES_DICT = {'EMNIST': nn.CrossEntropyLoss(),
-            'CIFAR': nn.CrossEntropyLoss(),
-            "FMNIST": nn.CrossEntropyLoss(),
-            "ISIC": ls.MulticlassFocalLoss,
-            "Sentiment": nn.CrossEntropyLoss(),
-            "Heart": ls.MulticlassFocalLoss,
-            "mimic": ls.MulticlassFocalLoss}
-
-FOCAL_LOSS_DATASETS = ['Heart', 'ISIC', 'mimic']
-LOSS_ALPHA = {"Heart": [0.12939189, 0.18108108, 0.22331081, 0.22364865, 0.24256757],
-              "ISIC": [0.87868852, 0.88131148, 0.82793443, 0.41206557],
-             "mimic": [0.15,0.85]}
-LOSS_GAMMA = {"Heart": 3,
-              "ISIC": 1,
-             "mimic": 1}
-
-EPOCHS_DICT = {'EMNIST':75,
-            'CIFAR':50,
-            "FMNIST":75,
-            "ISIC":50,
-            "Sentiment": 75,
-            "Heart": 50,
-            "mimic":50}
 
 LAYERS_TO_FEDERATE_DICT = {
-    "LayerPFL":{'EMNIST':['layer1.', 'layer2.', 'layer3.'],
+        "layerpfl":{
+                'EMNIST':['layer1.', 'layer2.', 'layer3.'],
                 'CIFAR':['layer1.', 'layer2.', 'layer3.', 'layer4.', 'layer5.'],
                 "FMNIST":['layer1.', 'layer2.', 'layer3.'],
                 'ISIC':['layer1.', 'layer2.', 'layer3.', 'layer4.', 'layer5.'],
                 "Sentiment":['token_embedding_table1', 'position_embedding_table1', 'attention1', 'proj1'],
                 "Heart": ['fc1', 'fc2'],
-                "mimic":['token_embedding_table1','position_embedding_table1', 'attention1', 'proj1']},
+                "mimic":['token_embedding_table1','position_embedding_table1', 'attention1', 'proj1']
+                },
 
-    "BABU":{'EMNIST':['layer1.', 'layer2.', 'layer3.', 'fc1'],
-            'CIFAR':['layer1.', 'layer2.', 'layer3.', 'layer4.', 'layer5.', 'fc1'],
-            "FMNIST":['layer1.', 'layer2.', 'layer3.', 'fc1'],
-            'ISIC':['layer1.', 'layer2.', 'layer3.', 'layer4.', 'layer5.', 'fc1'],
-            "Sentiment":['token_embedding_table1','position_embedding_table1', 'attention1', 'proj1', 'fc1'],
-            "Heart": ['fc1', 'fc2', 'fc3'],
-            "mimic":['token_embedding_table1','position_embedding_table1', 'attention1', 'proj1', 'fc1']},
-    
-    "LayerPFL_minus_1":{'EMNIST':['layer1.', 'layer2.'],
+        "babu":{
+                'EMNIST':['layer1.', 'layer2.', 'layer3.', 'fc1'],
+                'CIFAR':['layer1.', 'layer2.', 'layer3.', 'layer4.', 'layer5.', 'fc1'],
+                "FMNIST":['layer1.', 'layer2.', 'layer3.', 'fc1'],
+                'ISIC':['layer1.', 'layer2.', 'layer3.', 'layer4.', 'layer5.', 'fc1'],
+                "Sentiment":['token_embedding_table1','position_embedding_table1', 'attention1', 'proj1', 'fc1'],
+                "Heart": ['fc1', 'fc2', 'fc3'],
+                "mimic":['token_embedding_table1','position_embedding_table1', 'attention1', 'proj1', 'fc1']
+                },
+
+        "layerpfl_minus_1":{
+                'EMNIST':['layer1.', 'layer2.'],
                 'CIFAR':['layer1.', 'layer2.', 'layer3.', 'layer4.'],
                 "FMNIST":['layer1.', 'layer2.'],
                 'ISIC':['layer1.', 'layer2.', 'layer3.', 'layer4.'],
                 "Sentiment":['token_embedding_table1', 'position_embedding_table1'],
                 "Heart": ['fc1'],
-                "mimic":['token_embedding_table1','position_embedding_table1']},
- 
-    "LayerPFL_plus_1":{'EMNIST':['layer1.', 'layer2.', 'layer3.', 'fc1'],
-            'CIFAR':['layer1.', 'layer2.', 'layer3.', 'layer4.', 'layer5.', 'fc1'],
-            "FMNIST":['layer1.', 'layer2.', 'layer3.', 'fc1'],
-            'ISIC':['layer1.', 'layer2.', 'layer3.', 'layer4.', 'layer5.', 'fc1'],
-            "Sentiment":['token_embedding_table1','position_embedding_table1', 'attention1', 'proj1', 'fc1'],
-            "Heart": ['fc1', 'fc2', 'fc3'],
-            "mimic":['token_embedding_table1','position_embedding_table1', 'attention1', 'proj1', 'fc1']},
+                "mimic":['token_embedding_table1','position_embedding_table1']
+                },
 
-    "FedLP":{'EMNIST':['layer1.', 'layer2.', 'layer3.', 'fc1', 'fc2'],
-            'CIFAR':['layer1.', 'layer2.', 'layer3.', 'layer4.', 'layer5.', 'fc1', 'fc2'],
-            "FMNIST":['layer1.', 'layer2.', 'layer3.', 'fc1', 'fc2'],
-            'ISIC':['layer1.', 'layer2.', 'layer3.', 'layer4.', 'layer5.', 'fc1', 'fc2'],
-            "Sentiment":['token_embedding_table1','position_embedding_table1', 'attention1', 'proj1', 'fc1', 'fc2'],
-            "Heart": ['fc1', 'fc2', 'fc3', 'fc4'],
-            "mimic":['token_embedding_table1','position_embedding_table1', 'attention1', 'proj1', 'fc1', 'fc2']},
+        "layerpfl_plus_1":{
+                'EMNIST':['layer1.', 'layer2.', 'layer3.', 'fc1'],
+                'CIFAR':['layer1.', 'layer2.', 'layer3.', 'layer4.', 'layer5.', 'fc1'],
+                "FMNIST":['layer1.', 'layer2.', 'layer3.', 'fc1'],
+                'ISIC':['layer1.', 'layer2.', 'layer3.', 'layer4.', 'layer5.', 'fc1'],
+                "Sentiment":['token_embedding_table1','position_embedding_table1', 'attention1', 'proj1', 'fc1'],
+                "Heart": ['fc1', 'fc2', 'fc3'],
+                "mimic":['token_embedding_table1','position_embedding_table1', 'attention1', 'proj1', 'fc1']
+                },
+                
+                }
 
+REG_PARAMS = {
+        'fedprox': {
+                'EMNIST': 0.1,
+                'CIFAR': 0.15,
+                "FMNIST":0.1,
+                'ISIC':0.1,
+                "Sentiment":0.1,
+                "Heart": 0.1,
+                "mimic":0.1
+                },
+        
+        'pfedme': {
+                'EMNIST': 0.1,
+                'CIFAR': 0.15,
+                "FMNIST":0.1,
+                'ISIC':0.1,
+                "Sentiment":0.1,
+                "Heart": 0.1,
+                "mimic":0.1
+                },
+
+        'ditto': {
+                'EMNIST': 0.1,
+                'CIFAR': 0.15,
+                "FMNIST":0.1,
+                'ISIC':0.1,
+                "Sentiment":0.1,
+                "Heart": 0.1,
+                "mimic":0.1
+                },
         }
+
+LAYER_PRESERVATION_RATES = {
+        'EMNIST': 0.7,
+        'CIFAR': 0.7,
+        "FMNIST":0.7,
+        'ISIC':0.7,
+        "Sentiment":0.7,
+        "Heart": 0.7,
+        "mimic":0.7
+}
+
+
+HYPERNETWORK_PARAMS = {
+    'embedding_dim': {
+        'EMNIST': 32,
+        'CIFAR': 64,
+        "FMNIST":32,
+        'ISIC':64,
+        "Sentiment":64,
+        "Heart": 16,
+        "mimic":64
+    },
+
+    'hidden_dim': {
+        'EMNIST': 64,
+        'CIFAR': 128,
+        "FMNIST":64,
+        'ISIC':128,
+        "Sentiment":128,
+        "Heart": 16,
+        "mimic":128
+    },
+
+    'hn_lr': {
+        'EMNIST': 0.01,
+        'CIFAR': 0.01,
+        "FMNIST":0.01,
+        'ISIC':0.01,
+        "Sentiment":0.01,
+        "Heart": 0.01,
+        "mimic":0.01
+    }
+}
+
 
 ATTENTION_MODELS = ['Sentiment', 'mimic']
 
-CLIP_GRAD = []
-
-RUNS =  {'EMNIST':10,
-        'CIFAR':10,
-        "FMNIST":10,
-        "ISIC":3,
-        "Sentiment": 20,
-        "Heart": 50,
-        "mimic":10}
 
 ALGORITHMS = ['Single','FedAvg','FedProx','pFedMe', 'Ditto', 'LocalAdaptation', 'BABU', 
               'LayerPFL', 'LayerPFL_minus_1', 'LayerPFL_plus_1', 'FedLP', 'FedLAMA']

@@ -42,6 +42,15 @@ class ModelState:
     test_losses: List[float] = field(default_factory=list)
     test_scores: List[float] = field(default_factory=list)
 
+    best_metrics = {
+            'loss': float('inf'),
+            'accuracy': 0,
+            'balanced_accuracy': 0,
+            'f1_macro': 0,
+            'f1_weighted': 0,
+            'mcc': 0
+        }
+
     def __post_init__(self):
         if self.best_model is None and self.model is not None:
             self.best_model = copy.deepcopy(self.model)
@@ -62,6 +71,26 @@ class ModelState:
             optimizer=new_optimizer,
             criterion= self.criterion 
         )
+    
+    def update_best_metrics(self, metrics_dict, loss):
+        """Update best metrics if improved."""
+        updated = False
+        
+        # Check loss improvement
+        if loss < self.best_metrics['loss']:
+            self.best_metrics['loss'] = loss
+            updated = True
+            
+        # Check each metric improvement
+        for metric_name, value in metrics_dict.items():
+            if metric_name not in self.best_metrics:
+                self.best_metrics[metric_name] = value
+                updated = True
+            elif value > self.best_metrics[metric_name]: 
+                self.best_metrics[metric_name] = value
+                updated = True
+                
+        return updated
 
 class MetricsCalculator:
     def __init__(self, dataset_name):
@@ -77,13 +106,12 @@ class MetricsCalculator:
 
     def calculate_metrics(self, predictions, labels):
         """Calculate multiple classification metrics."""
-        y_pred, y_true = self.process_predictions(self, predictions, labels)
         return {
-            'accuracy': (y_pred == y_true).mean(),
-            'balanced_accuracy': balanced_accuracy_score(y_true, y_pred),
-            'f1_macro': f1_score(y_true, y_pred, average='macro'),
-            'f1_weighted': f1_score(y_true, y_pred, average='weighted'),
-            'mcc': matthews_corrcoef(y_true, y_pred)
+            'accuracy': (predictions == labels).mean(),
+            'balanced_accuracy': balanced_accuracy_score(labels, predictions),
+            'f1_macro': f1_score(labels, predictions, average='macro'),
+            'f1_weighted': f1_score(labels, predictions, average='weighted'),
+            'mcc': matthews_corrcoef(labels, predictions)
         }
 
 
@@ -92,9 +120,7 @@ class Client:
     def __init__(self, 
                  config: TrainerConfig, 
                  data: SiteData, 
-                 model: nn.Module,
-                 optimizer: torch.optim.Optimizer,
-                 criterion: nn.Module,
+                 modelstate: ModelState,
                  metrics_calculator: MetricsCalculator,
                  personal_model: bool = False):
         self.config = config
@@ -103,12 +129,9 @@ class Client:
         self.metrics_calculator = metrics_calculator
 
         # Initialize model states
-        self.global_state = ModelState(
-            model=model,
-            optimizer=optimizer,
-            criterion=criterion
-        )
+        self.global_state = modelstate
 
+        # Create personal state if needed
         self.personal_state = self.global_state.copy() if personal_model else None
 
     def get_model_state(self, personal = False):
@@ -145,12 +168,6 @@ class Client:
                 outputs = model(batch_x)
                 loss = state.criterion(outputs, batch_y)
                 loss.backward()
-                
-                if self.config.clip_grad:
-                    torch.nn.utils.clip_grad_norm_(
-                        model.parameters(), 
-                        self.config.clip_value
-                    )
                 
                 state.optimizer.step()
                 total_loss += loss.item()
@@ -199,11 +216,10 @@ class Client:
                     all_labels.extend(labels)
 
             avg_loss = total_loss / len(loader)
-            metrics = self.metrics_calculator.calculate_score(
+            metrics = self.metrics_calculator.calculate_metrics(
                 np.array(all_labels),
                 np.array(all_predictions)
             )
-            
             return avg_loss, metrics
             
         finally:
@@ -238,7 +254,9 @@ class Client:
         state.test_scores.append(test_metrics)
         
         return test_loss, test_metrics
+    
 
+            
 class FedProxClient(Client):
     """FedProx client implementation."""
     def __init__(self, *args, **kwargs):
@@ -267,12 +285,7 @@ class FedProxClient(Client):
                 
                 total_loss_batch = loss + proximal_term
                 total_loss_batch.backward()
-                
-                if self.config.clip_grad:
-                    torch.nn.utils.clip_grad_norm_(
-                        model.parameters(), 
-                        self.config.clip_value
-                    )
+        
                 
                 state.optimizer.step()
                 total_loss += loss.item()
@@ -316,12 +329,6 @@ class PFedMeClient(Client):
                 
                 total_batch_loss = loss + proximal_term
                 total_batch_loss.backward()
-                
-                if self.config.clip_grad:
-                    torch.nn.utils.clip_grad_norm_(
-                        model.parameters(), 
-                        self.config.clip_value
-                    )
                 
                 state.optimizer.step()
                 total_loss += loss.item()
@@ -372,12 +379,6 @@ class DittoClient(Client):
                     global_model.parameters(),
                     self.reg_param
                 )
-                
-                if self.config.clip_grad:
-                    torch.nn.utils.clip_grad_norm_(
-                        model.parameters(), 
-                        self.config.clip_value
-                    )
                     
                 state.optimizer.step()
                 total_loss += loss.item()
@@ -409,19 +410,20 @@ class LayerClient(Client):
 
 class BABUClient(LayerClient):
     """Client implementation for BABU."""
-    def set_layer_learning_rates(self, train_head: bool = False):
+    def set_layer_learning_rates(self, train_head=False):
         """Set learning rates based on whether training head or body."""
         lr = self.config.learning_rate
         for param_group in self.global_state.optimizer.param_groups:
             params_in_federated_layers = any(
-                layer in name 
-                for layer, param in param_group['params'] 
-                for name, _ in self.global_state.model.named_parameters() 
-                if param is _
+                any(layer in name for layer in self.layers_to_include)
+                for name, model_param in self.global_state.model.named_parameters()
+                for param in param_group['params']
+                if model_param is param
             )
             # If training head: federated layers (body) get lr=0, others get normal lr
             # If training body: federated layers get normal lr, others get lr=0
             param_group['lr'] = 0.0 if params_in_federated_layers == train_head else lr
+
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -441,14 +443,17 @@ class FedLPClient(Client):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Get layer-preserving rates (LPRs) for each layer
-        self.layer_preserving_rates = self.config.personalization_params['layer_preserving_rates']
+        self.layer_preserving_rate = self.config.personalization_params['layer_preserving_rate']
         
     def generate_layer_indicators(self):
-        """Generate binary indicators for each layer based on LPRs."""
+        """Generate binary indicators for all model layers using a single preservation rate."""
         indicators = {}
-        for layer_name, prob in self.layer_preserving_rates.items():
-            # Bernoulli trial for each layer
-            indicators[layer_name] = 1 if random.random() < prob else 0
+        for name, _ in self.global_state.model.named_parameters():
+            # Get base layer name (e.g., 'conv1' from 'conv1.weight')
+            layer_name = name.split('.')[0]
+            if layer_name not in indicators:  # Only generate once per layer
+                # Single Bernoulli trial with same probability for each layer
+                indicators[layer_name] = 1 if random.random() < self.layer_preserving_rate else 0
         return indicators
         
     def get_pruned_model_state(self):

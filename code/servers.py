@@ -11,26 +11,40 @@ from clients import *
 from models import HyperNetwork
 from collections import OrderedDict
 
+    
 class Server:
     """Base server class for federated learning."""
-    def __init__(self, config: TrainerConfig, model: nn.Module):
+    def __init__(self, config: TrainerConfig, globalmodelstate: ModelState):
         self.config = config
         self.device = config.device
         self.clients = {}
-        self.global_model = copy.deepcopy(model)
-        self.best_model = copy.deepcopy(model)
-        self.best_loss = float('inf')
+        self.serverstate = globalmodelstate
         
-        # Track metrics
-        self.train_losses = []
-        self.val_losses = []
-        self.val_scores = []
-        self.test_losses = []
-        self.test_scores = []
+    
+    def set_server_type(self, name, tuning):
+        self.server_type = name
+        self.tuning = tuning
+    
+    def _create_client(self, clientdata, modelstate, personal_model = False):
+        """Create a client instance."""
+        return Client(
+            config=self.config,  
+            data=clientdata, 
+            modelstate=modelstate.copy(),  # Create a copy of the model state
+            metrics_calculator=MetricsCalculator(self.config.dataset_name),
+            personal_model=personal_model
+        )
 
-    def add_client(self, client_id, client: Client):
-        """Add a client to the federation."""
-        self.clients[client_id] = client
+    def add_client(self, clientdata: SiteData, personal: bool = False):
+        """Add a client to the federation."""        
+        client = self._create_client(
+            clientdata=clientdata,
+            modelstate=self.serverstate,
+            personal_model=personal
+        )
+        
+        # Add client to federation
+        self.clients[clientdata.site_id] = client
         self._update_client_weights()
 
     def _update_client_weights(self):
@@ -39,12 +53,20 @@ class Server:
         for client in self.clients.values():
             client.data.weight = client.data.num_samples / total_samples
 
+    def _aggregate_scores(self, score_dict, client_metrics, weight):
+        """Aggregate client score into score dictionary with weight."""
+        for metric_name, value in client_metrics.items():
+            if metric_name not in score_dict:
+                score_dict[metric_name] = 0.0
+            score_dict[metric_name] += value * weight
+        return score_dict
+
     def train_round(self, personal = False):
         """Run one round of training."""
         # Train all clients
         train_loss = 0
         val_loss = 0
-        val_score = 0
+        val_score = {}
 
         for client in self.clients.values():
             # Train and validate
@@ -54,65 +76,63 @@ class Server:
             # Weight metrics by client dataset size
             train_loss += client_train_loss * client.data.weight
             val_loss += client_val_loss * client.data.weight
-            val_score += client_val_score * client.data.weight
-
+            val_score = self._aggregate_scores(val_score, client_val_score, client.data.weight)
         # Track metrics
-        self.train_losses.append(train_loss)
-        self.val_losses.append(val_loss)
-        self.val_scores.append(val_score)
-
+        self.serverstate.train_losses.append(train_loss)
+        self.serverstate.val_losses.append(val_loss)
+        self.serverstate.val_scores.append(val_score)
         # Aggregate and distribute
         self.aggregate_models(personal)
         self.distribute_global_model()
 
         # Update best model if improved
-        if val_loss < self.best_loss:
-            self.best_loss = val_loss
-            self.best_model = copy.deepcopy(self.global_model)
+        if val_loss < self.serverstate.best_loss:
+            self.serverstate.best_loss = val_loss
+            self.serverstate.best_model = copy.deepcopy(self.serverstate.model)
 
         return train_loss, val_loss, val_score
 
     def test_global(self, personal = False):
         """Test the global model across all clients."""
         test_loss = 0
-        test_score = 0
-
+        test_score = {}
+        
         for client in self.clients.values():
             client_loss, client_score = client.test(personal)
             test_loss += client_loss * client.data.weight
-            test_score += client_score * client.data.weight
+            test_score = self._aggregate_scores(test_score, client_score, client.data.weight)
 
-        self.test_losses.append(test_loss)
-        self.test_scores.append(test_score)
+        self.serverstate.test_losses.append(test_loss)
+        self.serverstate.test_scores.append(test_score)
 
         return test_loss, test_score
     
-    def aggregate_models(self):
+    def aggregate_models(self, personal):
         """Base aggregation method - to be implemented by subclasses."""
         return
     
     def distribute_global_model(self):
         """Base distribution method - to be implemented by subclasses"""
         return
-
+    
 
 class FLServer(Server):
     """Base federated learning server with FedAvg implementation."""
     def aggregate_models(self, personal = False):
         """Standard FedAvg aggregation."""
         # Reset global model parameters
-        for param in self.global_model.parameters():
+        for param in self.serverstate.model.parameters():
             param.data.zero_()
             
         # Aggregate parameters
         for client in self.clients.values():
             client_model = client.personal_state.model if personal else client.global_state.model
-            for g_param, c_param in zip(self.global_model.parameters(), client_model.parameters()):
+            for g_param, c_param in zip(self.serverstate.model.parameters(), client_model.parameters()):
                 g_param.data.add_(c_param.data * client.data.weight)
 
     def distribute_global_model(self):
         """Distribute global model to all clients."""
-        global_state = self.global_model.state_dict()
+        global_state = self.serverstate.model.state_dict()
         for client in self.clients.values():
             client.set_model_state(global_state)
 
@@ -122,10 +142,28 @@ class FedAvgServer(FLServer):
 
 class FedProxServer(FLServer):
     """FedProx server implementation."""
-    pass  # Uses standard FedAvg behavior
+    def _create_client(self, clientdata, modelstate, personal_model = False):
+        """Create a client instance."""
+        return FedProxClient(
+            config=self.config,  
+            data=clientdata, 
+            modelstate=modelstate.copy(),  # Create a copy of the model state
+            metrics_calculator=MetricsCalculator(self.config.dataset_name),
+            personal_model=personal_model
+        )
 
 class PFedMeServer(FLServer):
     """PFedMe server implementation."""
+    def _create_client(self, clientdata, modelstate, personal_model = True):
+        """Create a client instance."""
+        return PFedMeClient(
+            config=self.config,  
+            data=clientdata, 
+            modelstate=modelstate.copy(),  # Create a copy of the model state
+            metrics_calculator=MetricsCalculator(self.config.dataset_name),
+            personal_model=personal_model
+        )
+    
     def train_round(self, personal = True):
         return super().train_round(personal)
     
@@ -134,6 +172,16 @@ class PFedMeServer(FLServer):
 
 class DittoServer(FLServer):
     """Ditto server implementation."""
+    def _create_client(self, clientdata, modelstate, personal_model = True):
+        """Create a client instance."""
+        return DittoClient(
+            config=self.config,  
+            data=clientdata, 
+            modelstate=modelstate.copy(),  # Create a copy of the model state
+            metrics_calculator=MetricsCalculator(self.config.dataset_name),
+            personal_model=personal_model
+        )
+    
     def train_round(self, personal = True):
         return super().train_round(personal)
     
@@ -142,6 +190,16 @@ class DittoServer(FLServer):
 
 class LocalAdaptationServer(FLServer):
     """Local adaptation server implementation."""
+    def _create_client(self, clientdata, modelstate, personal_model = False):
+        """Create a client instance."""
+        return LocalAdaptationClient(
+            config=self.config,  
+            data=clientdata, 
+            modelstate=modelstate.copy(),  # Create a copy of the model state
+            metrics_calculator=MetricsCalculator(self.config.dataset_name),
+            personal_model=personal_model
+        )
+    
     def train_round(self, personal = False, final_round = False):
         """Run one round of training with optional final round behavior."""
         # Use parent class training logic
@@ -150,7 +208,7 @@ class LocalAdaptationServer(FLServer):
         if final_round:
             train_loss = 0
             val_loss = 0
-            val_score = 0
+            val_score = {}
             # Restore best models to clients for final evaluation
             for client in self.clients.values():
                 client_train_loss = client.train(personal)
@@ -159,31 +217,51 @@ class LocalAdaptationServer(FLServer):
             # Weight metrics by client dataset size
             train_loss += client_train_loss * client.data.weight
             val_loss += client_val_loss * client.data.weight
-            val_score += client_val_score * client.data.weight
+            val_score = self._aggregate_scores(val_score, client_val_score, client.data.weight)
 
 
         return train_loss, val_loss, val_score
     
 class LayerServer(FLServer):
     """Server for layer-wise federated learning."""
+    def _create_client(self, clientdata, modelstate, personal_model = False):
+        """Create a client instance."""
+        return LayerClient(
+            config=self.config,  
+            data=clientdata, 
+            modelstate=modelstate.copy(),  # Create a copy of the model state
+            metrics_calculator=MetricsCalculator(self.config.dataset_name),
+            personal_model=personal_model
+        )
+    
     def aggregate_models(self, personal = False):
         """Aggregate only specified layers."""
         layers_to_include = self.config.personalization_params['layers_to_include']
         
         # Reset parameters of federated layers
-        for name, param in self.global_model.named_parameters():
+        for name, param in self.serverstate.model.named_parameters():
             if any(layer in name for layer in layers_to_include):
                 param.data.zero_()
         
         # Aggregate only federated layers
         for client in self.clients.values():
             client_model = client.get_model_state(personal)
-            for name, param in self.global_model.named_parameters():
+            for name, param in self.serverstate.model.named_parameters():
                 if any(layer in name for layer in layers_to_include):
                     param.data.add_(client_model[name].data * client.data.weight)
 
 class BABUServer(LayerServer):
     """Server implementation for BABU."""
+    def _create_client(self, clientdata, modelstate, personal_model = False):
+        """Create a client instance."""
+        return BABUClient(
+            config=self.config,  
+            data=clientdata, 
+            modelstate=modelstate.copy(),  # Create a copy of the model state
+            metrics_calculator=MetricsCalculator(self.config.dataset_name),
+            personal_model=personal_model
+        )
+
     def train_round(self, personal = False, final_round = False):
         """Run one round of training with final round head tuning."""
         # Use parent class training logic
@@ -193,54 +271,31 @@ class BABUServer(LayerServer):
             #Train the head
             train_loss = 0
             val_loss = 0
-            val_score = 0
+            val_score = {}
             for client in self.clients.values():
                 client_train_loss = client.train_head() 
                 client_val_loss, client_val_score = client.validate(personal)
         
             train_loss += client_train_loss * client.data.weight
             val_loss += client_val_loss * client.data.weight
-            val_score += client_val_score * client.data.weight
+            val_score = self._aggregate_scores(val_score, client_val_score, client.data.weight)
 
 
         return train_loss, val_loss, val_score
     
 
-class FedLPClient(LayerClient):
-    """Client for FedLP with layer-wise probabilistic participation."""
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # Get layer-preserving rates (LPRs) for each layer
-        self.layer_preserving_rates = self.config.personalization_params['layer_preserving_rates']
-        
-    def generate_layer_indicators(self):
-        """Generate binary indicators for each layer based on LPRs."""
-        indicators = {}
-        for layer, prob in self.layer_preserving_rates.items():
-            # Bernoulli trial for each layer
-            indicators[layer] = 1 if random.random() < prob else 0
-        return indicators
-        
-    def get_pruned_model_state(self):
-        """Get model state with pruned layers based on indicators."""
-        indicators = self.generate_layer_indicators()
-        state_dict = self.global_state.model.state_dict()
-        pruned_state = {}
-        
-        for name, param in state_dict.items():
-            # Find which layer this parameter belongs to
-            layer = next(
-                (layer for layer in self.layers_to_include if layer in name),
-                None
-            )
-            if layer and indicators[layer]:
-                pruned_state[name] = param
-                
-        return pruned_state, indicators
-
-
 class FedLPServer(FLServer):
     """Server implementation for FedLP."""
+    def _create_client(self, clientdata, modelstate, personal_model = False):
+        """Create a client instance."""
+        return FedLPClient(
+            config=self.config,  
+            data=clientdata, 
+            modelstate=modelstate.copy(),  # Create a copy of the model state
+            metrics_calculator=MetricsCalculator(self.config.dataset_name),
+            personal_model=personal_model
+        )
+    
     def aggregate_models(self, personal = False):
         """Aggregate pruned models layer-wise, keeping original params if no participation."""
         # Track participating clients for each layer
@@ -262,7 +317,7 @@ class FedLPServer(FLServer):
                     layer_participants[layer_name].append(client_id)
         
         # Create new state dict for aggregated model
-        new_state_dict = self.global_model.state_dict()
+        new_state_dict = self.serverstate.model.state_dict()
         
         # Layer-wise aggregation
         for name, param in new_state_dict.items():
@@ -286,21 +341,31 @@ class FedLPServer(FLServer):
 
 class FedLAMAServer(FLServer):
     """Server implementation for FedLAMA with adaptive layer-wise aggregation."""
-    def __init__(self, config: TrainerConfig, model: nn.Module):
-        super().__init__(config, model)
+    def __init__(self, config: TrainerConfig, globalmodelstate: ModelState):
+        super().__init__(config, globalmodelstate)
         self.tau_prime = config.personalization_params.get('tau_prime', 1)  # Base interval τ'
         self.phi = config.personalization_params.get('phi', 1)  # Interval increase factor
         self.round = 0
         self.aggregation_intervals = None
         
+    def _create_client(self, clientdata, modelstate, personal_model = False):
+        """Create a client instance."""
+        return FedLAMAClient(
+            config=self.config,  
+            data=clientdata, 
+            modelstate=modelstate.copy(),  # Create a copy of the model state
+            metrics_calculator=MetricsCalculator(self.config.dataset_name),
+            personal_model=personal_model
+        )
+    
     def calculate_layer_discrepancy(self):
         """Calculate layer-wise model discrepancy across clients."""
-        diff_dict = {name: 0.0 for name, _ in self.global_model.named_parameters()}
-        layer_dims = {name: param.numel() for name, param in self.global_model.named_parameters()}
+        diff_dict = {name: 0.0 for name, _ in self.serverstate.model.named_parameters()}
+        layer_dims = {name: param.numel() for name, param in self.serverstate.model.named_parameters()}
         
         for client in self.clients.values():
             client_state = client.get_model_state()
-            for name, global_param in self.global_model.named_parameters():
+            for name, global_param in self.serverstate.model.named_parameters():
                 client_param = client_state[name]
                 diff_dict[name] += torch.norm(global_param - client_param).item()
                 
@@ -343,7 +408,6 @@ class FedLAMAServer(FLServer):
         """Adjust aggregation intervals based on layer discrepancy."""
         # Get discrepancies and dimensions
         discrepancies, layer_dims = self.calculate_layer_discrepancy()
-        
         # Sort layers by discrepancy
         sorted_layers = sorted(discrepancies.items(), key=lambda x: x[1])
         
@@ -367,7 +431,7 @@ class FedLAMAServer(FLServer):
         if self.aggregation_intervals is None:
             self.aggregation_intervals = {
                 name: self.tau_prime 
-                for name, _ in self.global_model.named_parameters()
+                for name, _ in self.serverstate.model.named_parameters()
             }
         
         # Update intervals periodically
@@ -375,7 +439,7 @@ class FedLAMAServer(FLServer):
             self.aggregation_intervals = self.adjust_aggregation_intervals()
 
         # Create new state dict for aggregation
-        new_state = self.global_model.state_dict()
+        new_state = self.serverstate.model.state_dict()
         
         # Aggregate only layers due for synchronization
         for name, param in new_state.items():
@@ -391,36 +455,54 @@ class FedLAMAServer(FLServer):
 
 class pFedLAServer(FLServer):
     """pFedLA server implementation with layer-wise personalized aggregation."""
-    def __init__(self, config: TrainerConfig, model: nn.Module):
-        super().__init__(config, model)
+    def __init__(self, config: TrainerConfig, globalmodelstate: ModelState):
+        super().__init__(config, globalmodelstate)
         # pFedLA specific parameters from config
         personalization_params = config.personalization_params
         self.embedding_dim = personalization_params.get('embedding_dim', 32)
         self.hidden_dim = personalization_params.get('hidden_dim', 64)
         self.hn_lr = personalization_params.get('hn_lr', 0.01)
-        
+       
+    def _initialize_hypernetwork(self):
+        """Initialize hypernetwork and related attributes when all clients are ready."""
         # Initialize hypernetwork
         self.hypernetwork = HyperNetwork(
             embedding_dim=self.embedding_dim,
             client_num=len(self.clients),
             hidden_dim=self.hidden_dim,
-            backbone=self.global_model,
+            backbone=self.serverstate.model,
             device=self.device
         )
         
         # Initialize per-client models
         self.client_models = [
-            [param.clone().detach() for param in self.global_model.parameters()]
+            [param.clone().detach() for param in self.serverstate.model.parameters()]
             for _ in range(len(self.clients))
         ]
         
         # Track parameter names
-        self.layer_names = [name for name, _ in self.global_model.named_parameters()]
+        self.layer_names = [name for name, _ in self.serverstate.model.named_parameters()]
         self.trainable_names = [
-            name for name, param in self.global_model.named_parameters()
+            name for name, param in self.serverstate.model.named_parameters()
             if param.requires_grad
         ]
 
+    def _create_client(self, clientdata, modelstate, personal_model = False):
+        """Create a client instance."""
+        return pFedLAClient(
+            config=self.config,  
+            data=clientdata, 
+            modelstate=modelstate.copy(),  # Create a copy of the model state
+            metrics_calculator=MetricsCalculator(self.config.dataset_name),
+            personal_model=personal_model
+        )
+    
+    def add_client(self, clientdata: SiteData, personal: bool = False):
+        """Override add_client to initialize hypernetwork after adding client."""
+        super().add_client(clientdata, personal)
+        if len(self.clients) == self.config.num_clients:
+            self._initialize_hypernetwork()
+    
     def generate_client_model(self, client_id):
         """Generate personalized model for client using hypernetwork."""
         alpha = self.hypernetwork(client_id)
@@ -440,8 +522,17 @@ class pFedLAServer(FLServer):
                 weights[client_id] = 1.0
                 
             weights = weights / weights.sum() if weights.sum() != 0 else torch.ones_like(weights) / len(weights)
+            
+            # Handle different parameter shapes for weights and biases
+            if 'weight' in name:
+                # For weight matrices, expand to match [num_clients, out_features, in_features]
+                weights_expanded = weights.view(-1, 1, 1).expand(-1, *layer_params[name].shape[1:])
+            elif 'bias' in name:
+                # For bias vectors, expand to match [num_clients, out_features]
+                weights_expanded = weights.view(-1, 1).expand(-1, layer_params[name].shape[1])
+            
             personalized_params[name] = torch.sum(
-                weights.view(-1, 1, 1).expand_as(layer_params[name]) * layer_params[name],
+                weights_expanded * layer_params[name],
                 dim=0
             )
         
@@ -449,6 +540,7 @@ class pFedLAServer(FLServer):
     
     def update_hypernetwork(self, client_id, delta, retained_layers=None):
         """Update hypernetwork parameters using client updates."""
+        client_idx =  int(str.split(client_id, 'client_')[-1]) -1
         retained_layers = retained_layers or []
         update_params = [
             param for name, param in delta.items()
@@ -461,7 +553,7 @@ class pFedLAServer(FLServer):
         hn_grads = torch.autograd.grad(
             outputs=list(filter(
                 lambda p: p.requires_grad,
-                self.client_models[client_id]
+                self.client_models[client_idx]
             )),
             inputs=self.hypernetwork.get_params(),
             grad_outputs=update_params,
@@ -475,15 +567,16 @@ class pFedLAServer(FLServer):
     def update_client_model(self, client_id, delta):
         """Update stored client model parameters."""
         updated_params = []
-        for param, diff in zip(self.client_models[client_id], delta.values()):
+        client_idx =  int(str.split(client_id, 'client_')[-1]) -1 
+        for param, diff in zip(self.client_models[client_idx], delta.values()):
             updated_params.append((param + diff).detach().cpu())
-        self.client_models[client_id] = updated_params
+        self.client_models[client_idx] = updated_params
 
-    def train_round(self, personal=True):
+    def train_round(self, personal=False):
         """Override train_round to implement pFedLA training."""
         train_loss = 0
         val_loss = 0
-        val_score = 0
+        val_score = {}
         
         for client_id in self.clients:
             client = self.clients[client_id]
@@ -493,8 +586,8 @@ class pFedLAServer(FLServer):
             client.set_model_state(personalized_params)
             
             # Train client
-            client_train_loss = client.train(personal=True)
-            client_val_loss, client_val_score = client.validate(personal=True)
+            client_train_loss = client.train(personal)
+            client_val_loss, client_val_score = client.validate(personal)
             
             # Get updates
             delta = client.compute_updates()
@@ -504,19 +597,19 @@ class pFedLAServer(FLServer):
             self.update_hypernetwork(client_id, delta)
             
             # Weight metrics
-            train_loss += client_train_loss * client.data.weight
+            train_loss += client_train_loss[1]['loss'] * client.data.weight
             val_loss += client_val_loss * client.data.weight
-            val_score += client_val_score * client.data.weight
+            val_score = self._aggregate_scores(val_score, client_val_score, client.data.weight)
 
         # Track metrics
-        self.train_losses.append(train_loss)
-        self.val_losses.append(val_loss)
-        self.val_scores.append(val_score)
+        self.serverstate.train_losses.append(train_loss)
+        self.serverstate.val_losses.append(val_loss)
+        self.serverstate.val_scores.append(val_score)
 
         # Update best model if improved
-        if val_loss < self.best_loss:
-            self.best_loss = val_loss
-            self.best_model = copy.deepcopy(self.global_model)
+        if val_loss < self.serverstate.best_loss:
+            self.serverstate.best_loss = val_loss
+            self.serverstate.best_model = copy.deepcopy(self.serverstate.model)
 
         return train_loss, val_loss, val_score
 
@@ -528,3 +621,4 @@ class pFedLAServer(FLServer):
     def distribute_global_model(self):
         """Override to prevent default model distribution."""
         pass  # pFedLA handles model distribution through hypernetwork
+

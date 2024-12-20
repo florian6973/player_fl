@@ -23,16 +23,9 @@ class ExperimentType:
     EVALUATION = 'evaluation'
 
 class ExperimentConfig:
-    def __init__(self, dataset, experiment_type, params_to_try=None):
+    def __init__(self, dataset, experiment_type):
         self.dataset = dataset
         self.experiment_type = experiment_type
-        self.params_to_try = params_to_try or self._get_params_test()
-
-    def _get_params_test(self):
-        if self.experiment_type == ExperimentType.LEARNING_RATE:
-            return LEARNING_RATES_TRY[self.dataset]
-        else:
-            return None
 
 class ResultsManager:
     def __init__(self, root_dir, dataset, experiment_type):
@@ -108,24 +101,28 @@ class ResultsManager:
         return self._select_best_hyperparameter(server_metrics)
 
     def _select_best_hyperparameter(self, lr_results):
-        """Select best hyperparameter based on minimum loss."""
+        """Select best hyperparameter based on minimum median of final losses."""
         best_loss = float('inf')
         best_param = None
         
         for lr, metrics in lr_results.items():
-            avg_loss = np.median(metrics['global']['losses'])
-                
-            if avg_loss < best_loss:
-                best_loss = avg_loss
+            # Extract final loss from each run
+            final_losses = [run[-1] for run in metrics['global']['losses']]
+            median_loss = np.median(final_losses)
+            
+            if median_loss < best_loss:
+                best_loss = median_loss
                 best_param = lr
-                
+        
         return best_param
 
 
 class Experiment:
     def __init__(self, config: ExperimentConfig):
         self.config = config
+        self.root_dir = ROOT_DIR
         self.results_manager = ResultsManager(root_dir=ROOT_DIR, dataset=self.config.dataset, experiment_type = self.config.experiment_type)
+        self.default_params = get_parameters_for_dataset(self.config.dataset)
         self.logger = performance_logger.get_logger(self.config.dataset, 'experiment')
 
     def run_experiment(self):
@@ -154,7 +151,6 @@ class Experiment:
         """Run LR or Reg param tuning with multiple runs"""
         results, completed_runs = self._check_existing_results()
         
-    
         # Calculate remaining runs
         remaining_runs = self.default_params['runs_lr'] - completed_runs
         
@@ -163,12 +159,8 @@ class Experiment:
             self.logger.info(f"Starting run {current_run}/{self.default_params['runs_lr']}")
             results_run = {}
             if self.config.experiment_type == ExperimentType.LEARNING_RATE:
-                hyperparams_list = [{'learning_rate': lr} for lr in self.config.params_to_try]
-                server_types = ['local', 'fedavg', 'pfedme', 'ditto']
-            else:  # REG_PARAM
-                hyperparams_list = [{'reg_param': reg} for reg in self.config.params_to_try]
-                server_types = ['pfedme', 'ditto']
-
+                hyperparams_list = [{'learning_rate': lr} for lr in self.default_params['learning_rates_try']]
+                server_types = ['local', 'fedavg', 'fedprox', 'pfedme', 'ditto', 'localadaptation', 'babu', 'fedlp', 'fedlama', 'pfedla', 'layerpfl']
             for hyperparams in hyperparams_list:
                 param = next(iter(hyperparams.values()))
                 results_run[param] = self._hyperparameter_tuning(hyperparams, server_types)
@@ -187,13 +179,10 @@ class Experiment:
         for server_type in server_types:
             self.logger.info(f"Training {server_type} model with hyperparameters: {hyperparams}")
             start_time = time.time()
-            
-            lr = hyperparams.get('learning_rate')
-            config = self._create_trainer_config(lr)
 
-            server = self._create_server_instance(server_type, config, tuning = True)
+            server = self._create_server_instance(server_type, hyperparams, tuning = True)
             self._add_clients_to_server(server, client_dataloaders)
-            metrics = self._train_and_evaluate(server, config.rounds)
+            metrics = self._train_and_evaluate(server, server.config.rounds)
 
             tracking[server_type] = metrics
             
@@ -243,7 +232,7 @@ class Experiment:
         preprocessor = DataPreprocessor(self.config.dataset, batch_size)
         
         # Use UnifiedDataLoader to load the full dataset
-        loader = UnifiedDataLoader(root_dir=self.config.root_dir, dataset_name=self.config.dataset)
+        loader = UnifiedDataLoader(root_dir=self.root_dir, dataset_name=self.config.dataset)
         dataset_df = loader.load()  # Returns a DataFrame with 'data', 'label', and 'site'
         
         # Process client data into train, validation, and test loaders
@@ -252,7 +241,7 @@ class Experiment:
 
     
     def _get_client_ids(self):
-        return [f'client_{i}' for i in range(1, NUM_SITES_DICT[self.config.dataset] + 1)]
+        return [f'client_{i}' for i in range(1, self.default_params['num_clients'] + 1)]
     
     def _create_trainer_config(self, learning_rate, personalization_params = None):
         return TrainerConfig(
@@ -262,19 +251,20 @@ class Experiment:
             batch_size=self.default_params['batch_size'],
             epochs=5,
             rounds=self.default_params['rounds'],
+            num_clients=self.default_params['num_clients'],
             personalization_params=personalization_params
         )
 
     def _create_model(self, learning_rate):
-        classes = CLASSES_DICT[self.config.dataset]
+        classes = self.default_params['classes']
         model = getattr(ms, self.config.dataset)(classes)
         criterion = {'EMNIST': nn.CrossEntropyLoss(),
             'CIFAR': nn.CrossEntropyLoss(),
             "FMNIST": nn.CrossEntropyLoss(),
-            "ISIC": ls.MulticlassFocalLoss,
+            "ISIC": ls.MulticlassFocalLoss(num_classes=classes, alpha = [0.87868852, 0.88131148, 0.82793443, 0.41206557], gamma = 1),
             "Sentiment": nn.CrossEntropyLoss(),
-            "Heart": ls.MulticlassFocalLoss,
-            "mimic": ls.MulticlassFocalLoss
+            "Heart": ls.MulticlassFocalLoss(num_classes=classes, alpha = [0.12939189, 0.18108108, 0.22331081, 0.22364865, 0.24256757], gamma = 3),
+            "mimic":ls.MulticlassFocalLoss(num_classes=classes, alpha = [0.15,0.85], gamma = 1),
         }.get(self.config.dataset, None)
 
         optimizer = torch.optim.Adam(
@@ -285,8 +275,15 @@ class Experiment:
         )
         return model, criterion, optimizer
 
-    def _create_server_instance(self, server_type, config, tuning):
+    def _create_server_instance(self, server_type, hyperparams, tuning):
+        lr = hyperparams.get('learning_rate')
+        personalization_params = get_personalization_config(server_type, self.config.dataset)
+        config = self._create_trainer_config(lr, personalization_params=personalization_params)
         learning_rate = config.learning_rate
+        
+    
+        # Update config with personalization parameters
+        config.personalization_params = personalization_params
         model, criterion, optimizer = self._create_model(learning_rate)
         globalmodelstate = ModelState(
             model=model,
@@ -309,7 +306,7 @@ class Experiment:
         }
 
         server_class = server_mapping[server_type]
-        server = server_class(config=config, globalmodelstate=globalmodelstate)
+        server = server_class(config=config, globalmodelstate = globalmodelstate)
         server.set_server_type(server_type, tuning)
         return server
 
@@ -321,7 +318,6 @@ class Experiment:
             client_data = self._create_site_data(client_id, loaders)
             server.add_client(clientdata=client_data, personal=is_personalized)
 
-
     def _create_site_data(self, client_id, loaders):
         return SiteData(
             site_id=client_id,
@@ -331,7 +327,7 @@ class Experiment:
         )
 
     def _load_data(self, client_num):
-        loader = UnifiedDataLoader(root_dir=self.config.root_dir, dataset_name=self.config.dataset)
+        loader = UnifiedDataLoader(root_dir=self.root_dir, dataset_name=self.config.dataset)
         dataset_df = loader.load()
         
         # Filter dataset for the specific client (if applicable)
@@ -339,33 +335,33 @@ class Experiment:
         return client_df['data'].values, client_df['label'].values
 
 
-    @log_execution_time
+    #@log_execution_time
     def _train_and_evaluate(self, server, rounds):
         eval_type = "validation" if server.tuning else "test"
-        self.logger.info(f"Starting training for {rounds} rounds for server type {server.server_type}")
+        #self.logger.info(f"Starting training for {rounds} rounds for server type {server.server_type}")
         
         for round_num in range(rounds):
             round_start = time.time()
             server.train_round()
-            if (round_num == rounds -1) and (server.type in ['localadaptation', 'babu']):
+            if (round_num == rounds -1) and (server.server_type in ['localadaptation', 'babu']):
                 server.train_round(final_round = True)
             round_time = time.time() - round_start
             
             # Log every 20% of rounds
             if round_num % max(1, rounds // 5) == 0:
-                self.logger.info(f"Completed round {round_num + 1}/{rounds} in {round_time:.2f}s")
+                #self.logger.info(f"Completed round {round_num + 1}/{rounds} in {round_time:.2f}s")
                 
                 # Get current metrics
-                state = server.global_site.state.global_state
+                state = server.serverstate
                 current_loss = state.val_losses[-1]
                 current_score = state.val_scores[-1]
-                self.logger.info(f"Current {eval_type} metrics - Loss: {current_loss:.4f}; Score: {current_score:4f}")
+                #self.logger.info(f"Current {eval_type} metrics - Loss: {current_loss:.4f}")
         
         if not server.tuning:
             # Final evaluation
-            self.logger.info("Running final evaluation")
+            #self.logger.info("Running final evaluation")
             server.test_global()
-            state = server.global_site.state.global_state
+            state = server.serverstate
         
         if server.tuning:
             losses, scores = state.val_losses, state.val_scores 
@@ -379,16 +375,12 @@ class Experiment:
             },
             'sites': {}
         }
-
-        if server.server_type == 'fedavg' and not server.tuning:
-            metrics['diversity'] = server.weight_diversities
-        
         
         # Log per-client metrics
         for client_id, client in server.clients.items():
-            state = (client.site.state.personal_state 
-                    if client.site.state.personal_state is not None 
-                    else client.site.state.global_state)
+            state = (client.personal_state 
+                    if client.personal_state is not None 
+                    else client.global_state)
             
             if server.tuning:
                 losses, scores = state.val_losses, state.val_scores 
@@ -400,7 +392,7 @@ class Experiment:
                 'scores': scores
             }
             
-            self.logger.info(f"Client {client_id} final metrics - "
-                            f"Loss: {losses[-1]:.4f}, Score: {scores[-1]:.4f}")
+            # self.logger.info(f"Client {client_id} final metrics - "
+            #                 f"Loss: {losses[-1]:.4f}, Score: {scores[-1]:.4f}")
     
         return metrics
