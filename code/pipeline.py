@@ -112,7 +112,7 @@ class Experiment:
         self.root_dir = ROOT_DIR
         self.results_manager = ResultsManager(root_dir=ROOT_DIR, dataset=self.config.dataset, experiment_type = self.config.experiment_type)
         self.default_params = get_parameters_for_dataset(self.config.dataset)
-        self.logger = performance_logger.get_logger(self.config.dataset, 'experiment')
+        #self.logger = performance_logger.get_logger(self.config.dataset, 'experiment')
 
     def run_experiment(self):
         if self.config.experiment_type == ExperimentType.EVALUATION:
@@ -131,7 +131,7 @@ class Experiment:
             first_server = next(iter(results[first_param].keys()))
             completed_runs = len(results[first_param][first_server]['global']['losses'])
                 
-        self.logger.info(f"Found {completed_runs} completed runs")
+        #self.logger.info(f"Found {completed_runs} completed runs")
         
         
         return results, completed_runs
@@ -145,11 +145,11 @@ class Experiment:
         
         for run in range(remaining_runs):
             current_run = completed_runs + run + 1
-            self.logger.info(f"Starting run {current_run}/{self.default_params['runs_lr']}")
+            #self.logger.info(f"Starting run {current_run}/{self.default_params['runs_lr']}")
             results_run = {}
             if self.config.experiment_type == ExperimentType.LEARNING_RATE:
                 hyperparams_list = [{'learning_rate': lr} for lr in self.default_params['learning_rates_try']]
-                server_types = ['local', 'fedavg', 'fedprox', 'pfedme', 'ditto', 'localadaptation', 'babu', 'fedlp', 'fedlama', 'pfedla', 'layerpfl']
+                server_types = ALGORITHMS
             for hyperparams in hyperparams_list:
                 param = next(iter(hyperparams.values()))
                 results_run[param] = self._hyperparameter_tuning(hyperparams, server_types)
@@ -159,14 +159,13 @@ class Experiment:
             
         return results
     
-    @log_execution_time
     def _hyperparameter_tuning(self, hyperparams, server_types):
         """Run hyperparameter tuning for specific parameters."""
         client_dataloaders = self._initialize_experiment(self.default_params['batch_size'])
         tracking = {}
         
         for server_type in server_types:
-            self.logger.info(f"Training {server_type} model with hyperparameters: {hyperparams}")
+            #self.logger.info(f"Training {server_type} model with hyperparameters: {hyperparams}")
             start_time = time.time()
 
             server = self._create_server_instance(server_type, hyperparams, tuning = True)
@@ -176,7 +175,7 @@ class Experiment:
             tracking[server_type] = metrics
             
             duration = time.time() - start_time
-            self.logger.info(f"Completed {server_type} training in {duration:.2f}s")
+            #self.logger.info(f"Completed {server_type} training in {duration:.2f}s")
 
         return tracking
 
@@ -200,7 +199,7 @@ class Experiment:
 
     def _final_evaluation(self):
         tracking = {}
-        server_types = ['local', 'fedavg', 'fedprox', 'pfedme', 'ditto', 'localadaptation', 'babu', 'fedlp', 'fedlama', 'pfedla', 'layerpfl']
+        server_types = ALGORITHMS
         client_dataloaders = self._initialize_experiment(self.default_params['batch_size'])
 
         for server_type in server_types:
@@ -326,31 +325,33 @@ class Experiment:
 
     #@log_execution_time
     def _train_and_evaluate(self, server, rounds):
-        eval_type = "validation" if server.tuning else "test"
         #self.logger.info(f"Starting training for {rounds} rounds for server type {server.server_type}")
         
         for round_num in range(rounds):
             round_start = time.time()
             server.train_round()
-            if (round_num == rounds -1) and (server.server_type in ['localadaptation', 'babu']):
+            identical, diffs = check_client_models_identical(server)
+            if not identical:
+                print(f"\nRound {round_num + 1}: Models are different!")
+            if (round_num +1 == rounds) and (server.server_type in ['localadaptation', 'babu']):
                 server.train_round(final_round = True)
             round_time = time.time() - round_start
             
             # Log every 20% of rounds
-            if round_num % max(1, rounds // 5) == 0:
+            if round_num % max(1, rounds // 2) == 0 or round_num + 1 == rounds:
                 #self.logger.info(f"Completed round {round_num + 1}/{rounds} in {round_time:.2f}s")
                 
                 # Get current metrics
                 state = server.serverstate
                 current_loss = state.val_losses[-1]
-                current_score = state.val_scores[-1]
                 #self.logger.info(f"Current {eval_type} metrics - Loss: {current_loss:.4f}")
         
         if not server.tuning:
             # Final evaluation
             #self.logger.info("Running final evaluation")
             server.test_global()
-            state = server.serverstate
+        
+        state = server.serverstate
         
         if server.tuning:
             losses, scores = state.val_losses, state.val_scores 
@@ -382,6 +383,45 @@ class Experiment:
             }
             
             # self.logger.info(f"Client {client_id} final metrics - "
-            #                 f"Loss: {losses[-1]:.4f}, Score: {scores[-1]:.4f}")
+            #                  f"Loss: {losses[-1]:.4f}")
     
         return metrics
+
+
+def check_client_models_identical(server):
+    """
+    Check if all client models are identical.
+    Returns: 
+        bool: True if all models are identical, False otherwise
+        dict: Differences found between models if any
+    """
+    clients = server.clients
+    if not clients:
+        return True, {}
+    
+    # Get first client's model state as reference
+    first_client_id = list(clients.keys())[0]
+    reference_state = clients[first_client_id].global_state.model.state_dict()
+    
+    differences = {}
+    models_identical = True
+    
+    # Compare each client's model with the reference
+    for client_id, client in clients.items():
+        if client_id == first_client_id:
+            continue
+            
+        current_state = client.global_state.model.state_dict()
+        
+        # Compare each parameter
+        for key in reference_state.keys():
+            if not torch.equal(reference_state[key], current_state[key]):
+                if client_id not in differences:
+                    differences[client_id] = {}
+                differences[client_id][key] = {
+                    'max_diff': float(torch.max(torch.abs(reference_state[key] - current_state[key]))),
+                    'mean_diff': float(torch.mean(torch.abs(reference_state[key] - current_state[key])))
+                }
+                models_identical = False
+    
+    return models_identical, differences

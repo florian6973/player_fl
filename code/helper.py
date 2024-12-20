@@ -45,7 +45,7 @@ def get_personalization_config(server_type, dataset_name):
         params['embedding_dim'] = HYPERNETWORK_PARAMS['embedding_dim'][dataset_name]
         params['hidden_dim'] = HYPERNETWORK_PARAMS['hidden_dim'][dataset_name]
         params['hn_lr'] = HYPERNETWORK_PARAMS['hn_lr'][dataset_name]
-
+    return params
 
 def move_model_to_device(model, device):
     """Safely move model to device with proper cleanup."""

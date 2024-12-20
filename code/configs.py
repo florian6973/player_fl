@@ -3,7 +3,7 @@ DATA_DIR = f'{ROOT_DIR}/data'
 import torch
 import torch.nn as nn
 import random
-import nump as np
+import numpy as np
 import pandas as pd
 import sys
 sys.path.append(f'{ROOT_DIR}/code')
@@ -24,6 +24,10 @@ from dataclasses import dataclass, field
 import torch.nn.functional as F
 import pickle
 import time
+import logging
+from datetime import datetime
+from functools import wraps
+import os
 
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -39,6 +43,10 @@ ALGORITHMS = [
     'fedlama', 
     'pfedla', 
     'layerpfl'
+]
+
+ALGORITHMS = [
+    'babu', 
 ]
 
 DATASET_ALPHA = {
@@ -99,7 +107,7 @@ DEFAULT_PARAMS = {
         'runs_lr': 3
     },
     'Heart': {
-        'learning_rates_try': [5e-1, 1e-1, 5e-2, 1e-2, 5e-3],
+        'learning_rates_try': [1, 5e-1, 1e-1, 5e-2, 1e-2],
         'num_clients': 4,
         'sizes_per_client': None,
         'classes': 5,
@@ -167,7 +175,7 @@ LAYERS_TO_FEDERATE_DICT = {
 REG_PARAMS = {
     'fedprox': {
             'EMNIST': 0.1,
-            'CIFAR': 0.15,
+            'CIFAR': 0.1,
             "FMNIST":0.1,
             'ISIC':0.1,
             "Sentiment":0.1,
@@ -177,7 +185,7 @@ REG_PARAMS = {
     
     'pfedme': {
             'EMNIST': 0.1,
-            'CIFAR': 0.15,
+            'CIFAR': 0.1,
             "FMNIST":0.1,
             'ISIC':0.1,
             "Sentiment":0.1,
@@ -187,7 +195,7 @@ REG_PARAMS = {
 
     'ditto': {
             'EMNIST': 0.1,
-            'CIFAR': 0.15,
+            'CIFAR': 0.1,
             "FMNIST":0.1,
             'ISIC':0.1,
             "Sentiment":0.1,

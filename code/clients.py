@@ -1,6 +1,6 @@
 from configs import *
 from helper import *
- 
+
 @dataclass
 class TrainerConfig:
     """Configuration for training parameters."""
@@ -173,7 +173,6 @@ class Client:
 
             avg_loss = total_loss / len(self.data.train_loader)
             state.train_losses.append(avg_loss)
-
                 
             return avg_loss
             
@@ -409,33 +408,29 @@ class LayerClient(Client):
 
 class BABUClient(LayerClient):
     """Client implementation for BABU."""
-    def set_layer_learning_rates(self, train_head=False):
-        """Set learning rates based on whether training head or body."""
-        lr = self.config.learning_rate
-        for param_group in self.global_state.optimizer.param_groups:
-            params_in_federated_layers = any(
-                any(layer in name for layer in self.layers_to_include)
-                for name, model_param in self.global_state.model.named_parameters()
-                for param in param_group['params']
-                if model_param is param
-            )
-            # If training head: federated layers (body) get lr=0, others get normal lr
-            # If training body: federated layers get normal lr, others get lr=0
-            param_group['lr'] = 0.0 if params_in_federated_layers == train_head else lr
-
-
+    def set_head_body_training(self, train_head):
+        model = self.global_state.model
+        head_params = []
+        body_params = []
+        
+        for name, param in model.named_parameters():
+            is_head = not any(layer_name in name for layer_name in self.layers_to_include)
+            param.requires_grad = train_head if is_head else not train_head
+            
+            # Track parameters for logging
+            if is_head:
+                head_params.append(name)
+            else:
+                body_params.append(name)
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Initialize with body training
-        self.set_layer_learning_rates(train_head=False)
+        self.set_head_body_training(train_head=False)
 
     def train_head(self):
         """Train only the head of the model."""
-        self.set_layer_learning_rates(train_head=True)
-        try:
-            return self.train(personal=False)
-        finally:
-            self.set_layer_learning_rates(train_head=False)
+        self.set_head_body_training(train_head=True)
+        return self.train(personal=False)
 
 class FedLPClient(Client):
     """Client for FedLP with layer-wise probabilistic participation."""

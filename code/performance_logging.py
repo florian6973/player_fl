@@ -1,13 +1,9 @@
-import logging
-import time
-import os
-from functools import wraps
-import torch
-from datetime import datetime
+from configs import *
+
 
 class PerformanceLogger:
     def __init__(self, log_dir='logs/python_logs'):
-        self.log_dir = log_dir
+        self.log_dir = f'{ROOT_DIR}/code/{log_dir}'
         os.makedirs(log_dir, exist_ok=True)
         self.loggers = {}
         
@@ -39,6 +35,7 @@ class PerformanceLogger:
             self.loggers[logger_name] = logger
             
         return self.loggers[logger_name]
+    
 def log_execution_time(func):
     @wraps(func)
     def wrapper(self, *args, **kwargs):
