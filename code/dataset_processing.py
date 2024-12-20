@@ -1,21 +1,4 @@
-ROOT_DIR = '/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl'
-import torch
-import pandas as pd
-import sys
-import numpy as np
-sys.path.append(f'{ROOT_DIR}/code')
-from torch.utils.data  import DataLoader, Dataset
-from torchvision.transforms import transforms
-from torchvision.datasets import FashionMNIST, EMNIST, CIFAR10
-import warnings
-warnings.simplefilter(action='ignore', category=FutureWarning)
-from PIL import Image
-from sklearn.preprocessing import StandardScaler
-import albumentations
-import random 
-from sklearn.model_selection import train_test_split
 from configs import *
-
 
 class UnifiedDataLoader:
     """
@@ -405,7 +388,7 @@ class DataPartitioner:
         self.num_sites, self.size_per_site, self.alpha = self._get_partition_params()
 
     def _get_partition_params(self):
-        return NUM_SITES_DICT[self.dataset_name], SIZES_PER_SITE_DICT[self.dataset_name], 0.5
+        return DEFAULT_PARAMS[self.dataset_name]['num_clients'], DEFAULT_PARAMS[self.dataset_name]['sizes_per_client'], 0.5
 
     def partition_site_data(self, df):
         """Partition dataframe into client data dictionary"""

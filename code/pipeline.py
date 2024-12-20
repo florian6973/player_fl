@@ -1,22 +1,11 @@
-ROOT_DIR = '/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl'
-
-import sys
-import os
-import numpy as np
-import torch
-import torch.nn as nn
-sys.path.append(f'{ROOT_DIR}/code')
-from dataset_processing import *
-from servers import *
-from helper import *
-from losses import *
-import models as ms
-from helper import *
-from performance_logging import *
-import pickle
 from configs import *
-import time
-
+from helper import *
+from dataset_processing import *
+import models
+from losses import MulticlassFocalLoss
+from clients import *
+from servers import *
+from performance_logging import *
 
 class ExperimentType:
     LEARNING_RATE = 'learning_rate'
@@ -257,14 +246,14 @@ class Experiment:
 
     def _create_model(self, learning_rate):
         classes = self.default_params['classes']
-        model = getattr(ms, self.config.dataset)(classes)
+        model = getattr(models, self.config.dataset)(classes)
         criterion = {'EMNIST': nn.CrossEntropyLoss(),
             'CIFAR': nn.CrossEntropyLoss(),
             "FMNIST": nn.CrossEntropyLoss(),
-            "ISIC": ls.MulticlassFocalLoss(num_classes=classes, alpha = [0.87868852, 0.88131148, 0.82793443, 0.41206557], gamma = 1),
+            "ISIC": MulticlassFocalLoss(num_classes=classes, alpha = [0.87868852, 0.88131148, 0.82793443, 0.41206557], gamma = 1),
             "Sentiment": nn.CrossEntropyLoss(),
-            "Heart": ls.MulticlassFocalLoss(num_classes=classes, alpha = [0.12939189, 0.18108108, 0.22331081, 0.22364865, 0.24256757], gamma = 3),
-            "mimic":ls.MulticlassFocalLoss(num_classes=classes, alpha = [0.15,0.85], gamma = 1),
+            "Heart": MulticlassFocalLoss(num_classes=classes, alpha = [0.12939189, 0.18108108, 0.22331081, 0.22364865, 0.24256757], gamma = 3),
+            "mimic":MulticlassFocalLoss(num_classes=classes, alpha = [0.15,0.85], gamma = 1),
         }.get(self.config.dataset, None)
 
         optimizer = torch.optim.Adam(

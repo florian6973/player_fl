@@ -1,15 +1,7 @@
-ROOT_DIR = '/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl'
-import copy
-import torch
-import torch.nn as nn
-import sys
-import numpy as np
-sys.path.append(f'{ROOT_DIR}/code')
-from helper import *
 from configs import *
+from helper import *
 from clients import *
 from models import HyperNetwork
-from collections import OrderedDict
 
     
 class Server:
@@ -471,7 +463,6 @@ class pFedLAServer(FLServer):
             client_num=len(self.clients),
             hidden_dim=self.hidden_dim,
             backbone=self.serverstate.model,
-            device=self.device
         )
         
         # Initialize per-client models

@@ -1,13 +1,4 @@
-ROOT_DIR = '/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl'
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-import sys
-import numpy as np
-sys.path.append(f'{ROOT_DIR}/code')
-import warnings
-warnings.simplefilter(action='ignore', category=FutureWarning)
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+from configs import *
 
 #MODELS
 class EMNIST(nn.Module):
@@ -247,7 +238,7 @@ class Sentiment(nn.Module):
         embeddings_index_dict = torch.load(f'{ROOT_DIR}/data/Sentiment/token_to_index_and_embeddings.pth')
         embeddings = embeddings_index_dict['embeddings']
         #model
-        self.token_embedding_table1 = nn.Embedding.from_pretrained(embeddings.to(device), freeze=False)
+        self.token_embedding_table1 = nn.Embedding.from_pretrained(embeddings.to(DEVICE), freeze=False)
         self.position_embedding_table1 = nn.Embedding(block_size, n_embd)
         self.attention1 = Attention(n_embd)
         self.proj1 = nn.Sequential(nn.Linear(n_embd, n_embd))
@@ -301,7 +292,7 @@ class mimic(nn.Module):
         embeddings_index_dict = torch.load(f'{ROOT_DIR}/data/mimic_iii/token_to_index_and_embeddings.pth')
         embeddings = embeddings_index_dict['embeddings']
         #model
-        self.token_embedding_table1 = nn.Embedding.from_pretrained(embeddings.to(device), freeze=False)
+        self.token_embedding_table1 = nn.Embedding.from_pretrained(embeddings.to(DEVICE), freeze=False)
         self.position_embedding_table1 = nn.Embedding(block_size, n_embd)
         self.attention1 = Attention(n_embd)
         self.proj1 = nn.Sequential(nn.Linear(n_embd, n_embd))
@@ -379,15 +370,14 @@ class Heart(torch.nn.Module):
 
 #HYPERNETWORK
 class HyperNetwork(nn.Module):
-    def __init__(self, embedding_dim, client_num, hidden_dim, backbone: nn.Module, device):
+    def __init__(self, embedding_dim, client_num, hidden_dim, backbone: nn.Module):
         super().__init__()
         self.client_num = client_num
         self.embedding_dim = embedding_dim
-        self.device = device
         
         # Client embeddings
         self.embeddings = nn.Parameter(
-            torch.randn(client_num, embedding_dim).to(device)
+            torch.randn(client_num, embedding_dim).to(DEVICE)
         )
         
         # Get layer names from backbone
@@ -404,7 +394,7 @@ class HyperNetwork(nn.Module):
                 nn.Linear(embedding_dim, hidden_dim),
                 nn.ReLU(),
                 nn.Linear(hidden_dim, client_num)
-            ).to(device)
+            ).to(DEVICE)
     
     def forward(self, client_id):
         """Generate aggregation weights for each layer for given client."""

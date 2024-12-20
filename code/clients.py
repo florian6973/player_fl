@@ -1,18 +1,17 @@
-ROOT_DIR = '/gpfs/commons/groups/gursoy_lab/aelhussein/ot_cost/otcost_fl'
-import copy
-import torch
-import torch.nn as nn
-import sys
-import numpy as np
-sys.path.append(f'{ROOT_DIR}/code/run_models')
-from sklearn import metrics
-from torch.utils.data  import DataLoader
-from dataclasses import dataclass, field
-from typing import List, Dict, Optional
-from helper import *
 from configs import *
-from sklearn.metrics import f1_score, matthews_corrcoef, balanced_accuracy_score
-from collections import OrderedDict
+from helper import *
+ 
+@dataclass
+class TrainerConfig:
+    """Configuration for training parameters."""
+    dataset_name: str
+    device: str
+    learning_rate: float
+    batch_size: int
+    epochs: int = 5
+    rounds: int = 20
+    num_clients: int = 5
+    personalization_params: Optional[Dict] = None
 
 
 @dataclass

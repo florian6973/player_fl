@@ -1,17 +1,7 @@
-ROOT_DIR = '/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl'
-import torch
-import torch.nn as nn
-import sys
-sys.path.append(f'{ROOT_DIR}/code/helper')
-import matplotlib.pyplot as plt
-import warnings
-warnings.simplefilter(action='ignore', category=FutureWarning)
-import torch.nn.functional as F
-
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+from configs import *
 
 class MulticlassFocalLoss(nn.Module):
-    def __init__(self, num_classes, alpha = 1, gamma=3, reduction="mean", device = device):
+    def __init__(self, num_classes, alpha = 1, gamma=3, reduction="mean", device = DEVICE):
         super(MulticlassFocalLoss, self).__init__()
         self.gamma = torch.tensor(gamma).to(device)
         self.reduction = reduction
