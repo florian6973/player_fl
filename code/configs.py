@@ -12,6 +12,7 @@ from torchvision.transforms import transforms
 from torchvision.datasets import FashionMNIST, EMNIST, CIFAR10
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
+warnings.simplefilter(action='ignore', category=UserWarning)
 from PIL import Image
 from sklearn.preprocessing import StandardScaler
 import albumentations 
@@ -43,6 +44,10 @@ ALGORITHMS = [
     'fedlama', 
     'pfedla', 
     'layerpfl'
+]
+
+ALGORITHMS = [ 
+    'pfedla'
 ]
 
 DATASETS = [
@@ -120,7 +125,7 @@ DEFAULT_PARAMS = {
         'batch_size': 128,
         'rounds': 10,
         'runs': 50,
-        'runs_lr': 9
+        'runs_lr': 5
     },
     'mimic': {
         'learning_rates_try': [5e-4, 1e-4, 3e-4, 8e-5],

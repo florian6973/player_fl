@@ -238,7 +238,7 @@ class Sentiment(nn.Module):
         embeddings_index_dict = torch.load(f'{ROOT_DIR}/data/Sentiment/token_to_index_and_embeddings.pth')
         embeddings = embeddings_index_dict['embeddings']
         #model
-        self.token_embedding_table1 = nn.Embedding.from_pretrained(embeddings.to(DEVICE), freeze=False)
+        self.token_embedding_table1 = nn.Embedding.from_pretrained(embeddings, freeze=False)
         self.position_embedding_table1 = nn.Embedding(block_size, n_embd)
         self.attention1 = Attention(n_embd)
         self.proj1 = nn.Sequential(nn.Linear(n_embd, n_embd))
@@ -292,7 +292,7 @@ class mimic(nn.Module):
         embeddings_index_dict = torch.load(f'{ROOT_DIR}/data/mimic_iii/token_to_index_and_embeddings.pth')
         embeddings = embeddings_index_dict['embeddings']
         #model
-        self.token_embedding_table1 = nn.Embedding.from_pretrained(embeddings.to(DEVICE), freeze=False)
+        self.token_embedding_table1 = nn.Embedding.from_pretrained(embeddings, freeze=False)
         self.position_embedding_table1 = nn.Embedding(block_size, n_embd)
         self.attention1 = Attention(n_embd)
         self.proj1 = nn.Sequential(nn.Linear(n_embd, n_embd))

@@ -58,3 +58,9 @@ def cleanup_gpu():
     """Clean up GPU memory."""
     if torch.cuda.is_available():
         torch.cuda.empty_cache()
+
+def move_to_device(batch, device):
+    """Move batch data to device, handling both single tensors and lists/tuples of tensors."""
+    if isinstance(batch, (list, tuple)):
+        return [x.to(device) if x is not None else None for x in batch]
+    return batch.to(device)

@@ -1,0 +1,21 @@
+2024-12-21 12:33:30,813 - FMNIST_experiment - INFO - Starting hyperparameter tuning experiment
+2024-12-21 12:33:30,814 - FMNIST_experiment - INFO - Testing learning rates: [0.001, 0.0005, 0.0001, 8e-05]
+2024-12-21 12:33:30,844 - FMNIST_experiment - INFO - 
+Starting Run 1/5
+2024-12-21 12:33:31,015 - FMNIST_experiment - INFO - 
+Starting server type: ditto
+2024-12-21 12:33:31,217 - FMNIST_experiment - INFO - Starting training for 10 rounds for server type ditto
+2024-12-21 12:34:13,709 - FMNIST_experiment - INFO - Starting hyperparameter tuning experiment
+2024-12-21 12:34:13,710 - FMNIST_experiment - INFO - Testing learning rates: [0.001, 0.0005, 0.0001, 8e-05]
+2024-12-21 12:34:13,909 - FMNIST_experiment - INFO - 
+Starting Run 1/5
+2024-12-21 12:34:13,985 - FMNIST_experiment - INFO - 
+Starting server type: pfedla
+2024-12-21 12:34:14,019 - FMNIST_experiment - INFO - Starting training for 10 rounds for server type pfedla
+2024-12-21 12:36:26,018 - FMNIST_experiment - INFO - Starting hyperparameter tuning experiment
+2024-12-21 12:36:26,019 - FMNIST_experiment - INFO - Testing learning rates: [0.001, 0.0005, 0.0001, 8e-05]
+2024-12-21 12:36:26,048 - FMNIST_experiment - INFO - 
+Starting Run 1/5
+2024-12-21 12:36:26,130 - FMNIST_experiment - INFO - 
+Starting server type: pfedla
+2024-12-21 12:36:26,165 - FMNIST_experiment - INFO - Starting training for 10 rounds for server type pfedla

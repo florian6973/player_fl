@@ -1,0 +1,7 @@
+2024-12-21 12:15:29,442 - ISIC_experiment - INFO - Starting hyperparameter tuning experiment
+2024-12-21 12:15:29,442 - ISIC_experiment - INFO - Testing learning rates: [0.001, 0.005, 0.0001]
+2024-12-21 12:15:29,443 - ISIC_experiment - INFO - 
+Starting Run 1/1
+2024-12-21 12:15:29,596 - ISIC_experiment - INFO - 
+Starting server type: local
+2024-12-21 12:15:29,813 - ISIC_experiment - INFO - Starting training for 10 rounds for server type local

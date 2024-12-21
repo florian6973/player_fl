@@ -1,0 +1,64 @@
+2024-12-21 12:24:07,884 - Sentiment_experiment - INFO - Starting hyperparameter tuning experiment
+2024-12-21 12:24:07,884 - Sentiment_experiment - INFO - Testing learning rates: [0.001, 0.0005, 0.0001, 8e-05]
+2024-12-21 12:24:07,886 - Sentiment_experiment - INFO - 
+Starting Run 1/3
+2024-12-21 12:24:08,062 - Sentiment_experiment - INFO - 
+Starting server type: local
+2024-12-21 12:24:08,509 - Sentiment_experiment - INFO - Starting training for 10 rounds for server type local
+2024-12-21 12:24:48,653 - Sentiment_experiment - INFO - 
+Starting server type: fedavg
+2024-12-21 12:24:48,785 - Sentiment_experiment - INFO - Starting training for 10 rounds for server type fedavg
+2024-12-21 12:25:26,574 - Sentiment_experiment - INFO - 
+Starting server type: fedprox
+2024-12-21 12:25:26,749 - Sentiment_experiment - INFO - Starting training for 10 rounds for server type fedprox
+2024-12-21 12:26:02,738 - Sentiment_experiment - INFO - 
+Starting server type: pfedme
+2024-12-21 12:26:02,973 - Sentiment_experiment - INFO - Starting training for 10 rounds for server type pfedme
+2024-12-21 12:26:51,522 - Sentiment_experiment - INFO - 
+Starting server type: ditto
+2024-12-21 12:26:51,887 - Sentiment_experiment - INFO - Starting training for 10 rounds for server type ditto
+2024-12-21 12:28:16,086 - Sentiment_experiment - INFO - 
+Starting server type: localadaptation
+2024-12-21 12:28:16,231 - Sentiment_experiment - INFO - Starting training for 10 rounds for server type localadaptation
+2024-12-21 12:29:01,752 - Sentiment_experiment - INFO - 
+Starting server type: babu
+2024-12-21 12:29:01,897 - Sentiment_experiment - INFO - Starting training for 10 rounds for server type babu
+2024-12-21 12:29:42,324 - Sentiment_experiment - INFO - 
+Starting server type: fedlp
+2024-12-21 12:29:42,468 - Sentiment_experiment - INFO - Starting training for 10 rounds for server type fedlp
+2024-12-21 12:30:20,454 - Sentiment_experiment - INFO - 
+Starting server type: fedlama
+2024-12-21 12:30:20,622 - Sentiment_experiment - INFO - Starting training for 10 rounds for server type fedlama
+2024-12-21 12:30:58,733 - Sentiment_experiment - INFO - 
+Starting server type: pfedla
+2024-12-21 12:30:58,943 - Sentiment_experiment - INFO - Starting training for 10 rounds for server type pfedla
+2024-12-21 12:32:00,875 - Sentiment_experiment - INFO - 
+Starting server type: layerpfl
+2024-12-21 12:32:01,040 - Sentiment_experiment - INFO - Starting training for 10 rounds for server type layerpfl
+2024-12-21 12:32:38,794 - Sentiment_experiment - INFO - 
+Starting server type: local
+2024-12-21 12:32:38,953 - Sentiment_experiment - INFO - Starting training for 10 rounds for server type local
+2024-12-21 12:33:16,363 - Sentiment_experiment - INFO - 
+Starting server type: fedavg
+2024-12-21 12:33:16,507 - Sentiment_experiment - INFO - Starting training for 10 rounds for server type fedavg
+2024-12-21 12:33:54,545 - Sentiment_experiment - INFO - 
+Starting server type: fedprox
+2024-12-21 12:33:54,707 - Sentiment_experiment - INFO - Starting training for 10 rounds for server type fedprox
+2024-12-21 12:34:30,361 - Sentiment_experiment - INFO - 
+Starting server type: pfedme
+2024-12-21 12:34:30,712 - Sentiment_experiment - INFO - Starting training for 10 rounds for server type pfedme
+2024-12-21 12:35:17,301 - Sentiment_experiment - INFO - 
+Starting server type: ditto
+2024-12-21 12:35:17,538 - Sentiment_experiment - INFO - Starting training for 10 rounds for server type ditto
+2024-12-21 12:36:41,572 - Sentiment_experiment - INFO - 
+Starting server type: localadaptation
+2024-12-21 12:36:41,718 - Sentiment_experiment - INFO - Starting training for 10 rounds for server type localadaptation
+2024-12-21 12:37:27,585 - Sentiment_experiment - INFO - 
+Starting server type: babu
+2024-12-21 12:37:27,730 - Sentiment_experiment - INFO - Starting training for 10 rounds for server type babu
+2024-12-21 12:38:08,329 - Sentiment_experiment - INFO - 
+Starting server type: fedlp
+2024-12-21 12:38:08,472 - Sentiment_experiment - INFO - Starting training for 10 rounds for server type fedlp
+2024-12-21 12:38:46,533 - Sentiment_experiment - INFO - 
+Starting server type: fedlama
+2024-12-21 12:38:46,698 - Sentiment_experiment - INFO - Starting training for 10 rounds for server type fedlama

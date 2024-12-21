@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # List of datasets to process
-datasets= ("FMNIST"  "EMNIST" "CIFAR" "Sentiment" "ISIC", "mimic" "Heart")
+datasets=("FMNIST"  "EMNIST" "CIFAR" "Sentiment" "ISIC" "mimic" "Heart")
+datasets=("FMNIST"  "EMNIST" "CIFAR" "Sentiment" "ISIC" "mimic")
 
 # Options for experiment type
 experiment_types=("learning_rate" "evaluation")

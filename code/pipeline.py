@@ -184,7 +184,7 @@ class Experiment:
         """Run hyperparameter tuning for specific parameters."""
         client_dataloaders = self._initialize_experiment(self.default_params['batch_size'])
         tracking = {}
-        
+        server_types = ['pfedla']
         for server_type in server_types:
             self.logger.info(f"\nStarting server type: {server_type}")
 

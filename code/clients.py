@@ -162,8 +162,8 @@ class Client:
         
         try:
             for batch_x, batch_y in self.data.train_loader:
-                batch_x = batch_x.to(self.device)
-                batch_y = batch_y.to(self.device)
+                batch_x = move_to_device(batch_x, self.device)
+                batch_y = move_to_device(batch_y, self.device)
                 
                 state.optimizer.zero_grad()
                 outputs = model(batch_x)
@@ -202,8 +202,8 @@ class Client:
         try:
             with torch.no_grad():
                 for batch_x, batch_y in loader:
-                    batch_x = batch_x.to(self.device)
-                    batch_y = batch_y.to(self.device)
+                    batch_x = move_to_device(batch_x, self.device)
+                    batch_y = move_to_device(batch_y, self.device)
                     outputs = model(batch_x)
                     loss = state.criterion(outputs, batch_y)
                     total_loss += loss.item()
@@ -270,8 +270,8 @@ class FedProxClient(Client):
         
         try:
             for batch_x, batch_y in self.data.train_loader:
-                batch_x = batch_x.to(self.device)
-                batch_y = batch_y.to(self.device)
+                batch_x = move_to_device(batch_x, self.device)
+                batch_y = move_to_device(batch_y, self.device)
                 
                 state.optimizer.zero_grad()
                 outputs = model(batch_x)
@@ -321,8 +321,8 @@ class PFedMeClient(Client):
         
         try:
             for batch_x, batch_y in self.data.train_loader:
-                batch_x = batch_x.to(self.device)
-                batch_y = batch_y.to(self.device)
+                batch_x = move_to_device(batch_x, self.device)
+                batch_y = move_to_device(batch_y, self.device)
                 
                 state.optimizer.zero_grad()
                 outputs = model(batch_x)
@@ -380,8 +380,8 @@ class DittoClient(Client):
         
         try:
             for batch_x, batch_y in self.data.train_loader:
-                batch_x = batch_x.to(self.device)
-                batch_y = batch_y.to(self.device)
+                batch_x = move_to_device(batch_x, self.device)
+                batch_y = move_to_device(batch_y, self.device)
                 
                 state.optimizer.zero_grad()
                 outputs = model(batch_x)

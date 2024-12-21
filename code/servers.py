@@ -552,13 +552,14 @@ class pFedLAServer(FLServer):
                 
             weights = weights / weights.sum() if weights.sum() != 0 else torch.ones_like(weights) / len(weights)
             
-            # Handle different parameter shapes for weights and biases
-            if 'weight' in name:
-                # For weight matrices, expand to match [num_clients, out_features, in_features]
-                weights_expanded = weights.view(-1, 1, 1).expand(-1, *layer_params[name].shape[1:])
-            elif 'bias' in name:
-                # For bias vectors, expand to match [num_clients, out_features]
-                weights_expanded = weights.view(-1, 1).expand(-1, layer_params[name].shape[1])
+            # Handle different parameter shapes
+            param_shape = layer_params[name].shape
+            if len(param_shape) == 5:  # Conv2d weights [num_clients, out_channels, in_channels, kernel_h, kernel_w]
+                weights_expanded = weights.view(-1, 1, 1, 1, 1).expand(-1, *param_shape[1:])
+            elif len(param_shape) == 3:  # Linear weights [num_clients, out_features, in_features]
+                weights_expanded = weights.view(-1, 1, 1).expand(-1, *param_shape[1:])
+            elif len(param_shape) == 2:  # Linear weights without batch dim
+                weights_expanded = weights.view(-1, 1).expand(-1, param_shape[1])
             
             personalized_params[name] = torch.sum(
                 weights_expanded * layer_params[name],
