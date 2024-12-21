@@ -1,7 +1,10 @@
-2024-12-21 12:15:29,442 - ISIC_experiment - INFO - Starting hyperparameter tuning experiment
-2024-12-21 12:15:29,442 - ISIC_experiment - INFO - Testing learning rates: [0.001, 0.005, 0.0001]
-2024-12-21 12:15:29,443 - ISIC_experiment - INFO - 
+2024-12-21 13:20:27,230 - ISIC_experiment - INFO - Starting hyperparameter tuning experiment
+2024-12-21 13:20:27,230 - ISIC_experiment - INFO - Testing learning rates: [0.001, 0.005, 0.0001]
+2024-12-21 13:20:27,232 - ISIC_experiment - INFO - 
 Starting Run 1/1
-2024-12-21 12:15:29,596 - ISIC_experiment - INFO - 
+2024-12-21 13:20:27,354 - ISIC_experiment - INFO - 
 Starting server type: local
-2024-12-21 12:15:29,813 - ISIC_experiment - INFO - Starting training for 10 rounds for server type local
+2024-12-21 13:20:27,556 - ISIC_experiment - INFO - Starting training for 10 rounds for server type local
+2024-12-21 13:59:21,151 - ISIC_experiment - INFO - 
+Starting server type: fedavg
+2024-12-21 13:59:21,189 - ISIC_experiment - INFO - Starting training for 10 rounds for server type fedavg

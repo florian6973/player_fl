@@ -156,11 +156,10 @@ class Client:
 
     def train_epoch(self, personal):
         """Train for one epoch."""
-        state = self.get_client_state(personal)
-        model = state.model.train().to(self.device)
-        total_loss = 0.0
-        
         try:
+            state = self.get_client_state(personal)
+            model = state.model.train().to(self.device)
+            total_loss = 0.0
             for batch_x, batch_y in self.data.train_loader:
                 batch_x = move_to_device(batch_x, self.device)
                 batch_y = move_to_device(batch_y, self.device)
@@ -191,15 +190,14 @@ class Client:
 
     def evaluate(self, loader, personal, validate):
         """Evaluate model performance."""
-        state = self.get_client_state(personal)
-        model = (state.model if validate else state.best_model).to(self.device)
-        model.eval()
-        
-        total_loss = 0.0
-        all_predictions = []
-        all_labels = []
-        
         try:
+            state = self.get_client_state(personal)
+            model = (state.model if validate else state.best_model).to(self.device)
+            model.eval()
+            
+            total_loss = 0.0
+            all_predictions = []
+            all_labels = []
             with torch.no_grad():
                 for batch_x, batch_y in loader:
                     batch_x = move_to_device(batch_x, self.device)
@@ -263,12 +261,11 @@ class FedProxClient(Client):
         super().__init__(*args, **kwargs)
         self.reg_param = self.config.algorithm_params['reg_param']
 
-    def train_epoch(self, personal=False):
-        state = self.get_client_state(personal)
-        model = move_model_to_device(state.model.train(), self.device)
-        total_loss = 0.0
-        
+    def train_epoch(self, personal=False):        
         try:
+            state = self.get_client_state(personal)
+            model = state.model.train().to(self.device)
+            total_loss = 0.0
             for batch_x, batch_y in self.data.train_loader:
                 batch_x = move_to_device(batch_x, self.device)
                 batch_y = move_to_device(batch_y, self.device)
@@ -313,13 +310,11 @@ class PFedMeClient(Client):
 
     def train_epoch(self, personal=True):
         """Train for one epoch with proximal term regularization."""
-        state = self.get_client_state(personal)
-
-        model = move_model_to_device(state.model.train(), self.device)
-        global_model = move_model_to_device(self.global_state.model, self.device)
-        total_loss = 0.0
-        
         try:
+            state = self.get_client_state(personal)
+            model = state.model.train().to(self.device)
+            global_model = self.global_state.model.train().to(self.device)
+            total_loss = 0.0
             for batch_x, batch_y in self.data.train_loader:
                 batch_x = move_to_device(batch_x, self.device)
                 batch_y = move_to_device(batch_y, self.device)
@@ -372,39 +367,38 @@ class DittoClient(Client):
     def train_epoch(self, personal):
         if not personal:
             return super().train_epoch(personal=False)
-            
-        state = self.personal_state
-        model = move_model_to_device(state.model.train(), self.device)
-        global_model = move_model_to_device(self.global_state.model, self.device)
-        total_loss = 0.0
-        
-        try:
-            for batch_x, batch_y in self.data.train_loader:
-                batch_x = move_to_device(batch_x, self.device)
-                batch_y = move_to_device(batch_y, self.device)
-                
-                state.optimizer.zero_grad()
-                outputs = model(batch_x)
-                loss = state.criterion(outputs, batch_y)
-                loss.backward()
-                
-                self.add_gradient_regularization(
-                    model.parameters(),
-                    global_model.parameters()
-                )
+        else:
+            try:
+                state = self.get_client_state(personal)
+                model = state.model.train().to(self.device)
+                global_model = self.global_state.model.train().to(self.device)
+                total_loss = 0.0
+                for batch_x, batch_y in self.data.train_loader:
+                    batch_x = move_to_device(batch_x, self.device)
+                    batch_y = move_to_device(batch_y, self.device)
                     
-                state.optimizer.step()
-                total_loss += loss.item()
+                    state.optimizer.zero_grad()
+                    outputs = model(batch_x)
+                    loss = state.criterion(outputs, batch_y)
+                    loss.backward()
+                    
+                    self.add_gradient_regularization(
+                        model.parameters(),
+                        global_model.parameters()
+                    )
+                        
+                    state.optimizer.step()
+                    total_loss += loss.item()
 
-            avg_loss = total_loss / len(self.data.train_loader)
-            state.train_losses.append(avg_loss)
-            return avg_loss
-            
-        finally:
-            model.to('cpu')
-            global_model.to('cpu')
-            cleanup_gpu()
-    
+                avg_loss = total_loss / len(self.data.train_loader)
+                state.train_losses.append(avg_loss)
+                return avg_loss
+                
+            finally:
+                model.to('cpu')
+                global_model.to('cpu')
+                cleanup_gpu()
+        
     def add_gradient_regularization(self, model_params, reference_params):
         """Add regularization directly to gradients."""
         for param, ref_param in zip(model_params, reference_params):

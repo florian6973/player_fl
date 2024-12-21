@@ -153,7 +153,7 @@ class Experiment:
         while min(completed_runs.values()) < total_runs:
             results_run = {}
             current_run = min(completed_runs.values()) + 1
-            self.logger.info(f"\nStarting Run {current_run}/{total_runs}")
+            self.logger.info(f"Starting Run {current_run}/{total_runs}")
             for hyperparams in hyperparams_list:
                 param = next(iter(hyperparams.values()))
                 results_run[param] = {}
@@ -184,9 +184,8 @@ class Experiment:
         """Run hyperparameter tuning for specific parameters."""
         client_dataloaders = self._initialize_experiment(self.default_params['batch_size'])
         tracking = {}
-        server_types = ['pfedla']
         for server_type in server_types:
-            self.logger.info(f"\nStarting server type: {server_type}")
+            self.logger.info(f"Starting server type: {server_type}")
 
             server = self._create_server_instance(server_type, hyperparams, tuning=True)
             self._add_clients_to_server(server, client_dataloaders)
@@ -198,11 +197,11 @@ class Experiment:
 
     def _run_final_evaluation(self):
         """Run final evaluation with multiple runs"""
-        self.logger.info("\nStarting final evaluation phase")
+        self.logger.info("Starting final evaluation phase")
         results = {}
         for run in range(self.default_params['runs']):
             try:
-                self.logger.info(f"\nStarting run {run + 1}/{self.default_params['runs']}")
+                self.logger.info(f"Starting run {run + 1}/{self.default_params['runs']}")
                 results_run = self._final_evaluation()
                 results = self.results_manager.append_or_create_metric_lists(results, results_run)
                 self.results_manager.save_results(results, self.config.experiment_type)
@@ -222,7 +221,7 @@ class Experiment:
         client_dataloaders = self._initialize_experiment(self.default_params['batch_size'])
 
         for server_type in server_types:
-            self.logger.info(f"\nEvaluating {server_type} model with best hyperparameters")
+            self.logger.info(f"Evaluating {server_type} model with best hyperparameters")
             print(f"Evaluating {server_type} model with best hyperparameters")
             lr = self.results_manager.get_best_parameters(
                 ExperimentType.LEARNING_RATE, server_type)

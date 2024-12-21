@@ -46,9 +46,6 @@ ALGORITHMS = [
     'layerpfl'
 ]
 
-ALGORITHMS = [ 
-    'pfedla'
-]
 
 DATASETS = [
     'FMNIST',

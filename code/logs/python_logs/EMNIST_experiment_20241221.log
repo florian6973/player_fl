@@ -1,34 +1,94 @@
-2024-12-21 12:08:37,031 - EMNIST_experiment - INFO - Starting hyperparameter tuning experiment
-2024-12-21 12:08:37,031 - EMNIST_experiment - INFO - Testing learning rates: [0.005, 0.001, 0.0005, 0.0001, 8e-05]
-2024-12-21 12:08:37,034 - EMNIST_experiment - INFO - 
+2024-12-21 13:20:27,230 - EMNIST_experiment - INFO - Starting hyperparameter tuning experiment
+2024-12-21 13:20:27,231 - EMNIST_experiment - INFO - Testing learning rates: [0.005, 0.001, 0.0005, 0.0001, 8e-05]
+2024-12-21 13:20:27,234 - EMNIST_experiment - INFO - 
 Starting Run 1/5
-2024-12-21 12:08:37,770 - EMNIST_experiment - INFO - 
+2024-12-21 13:20:28,118 - EMNIST_experiment - INFO - 
 Starting server type: local
-2024-12-21 12:08:38,006 - EMNIST_experiment - INFO - Starting training for 10 rounds for server type local
-2024-12-21 12:10:47,760 - EMNIST_experiment - INFO - 
+2024-12-21 13:20:28,340 - EMNIST_experiment - INFO - Starting training for 10 rounds for server type local
+2024-12-21 13:22:35,160 - EMNIST_experiment - INFO - 
 Starting server type: fedavg
-2024-12-21 12:10:47,781 - EMNIST_experiment - INFO - Starting training for 10 rounds for server type fedavg
-2024-12-21 12:12:54,473 - EMNIST_experiment - INFO - 
+2024-12-21 13:22:35,183 - EMNIST_experiment - INFO - Starting training for 10 rounds for server type fedavg
+2024-12-21 13:24:40,548 - EMNIST_experiment - INFO - 
 Starting server type: fedprox
-2024-12-21 12:12:54,501 - EMNIST_experiment - INFO - Starting training for 10 rounds for server type fedprox
-2024-12-21 12:15:06,781 - EMNIST_experiment - INFO - 
+2024-12-21 13:24:40,577 - EMNIST_experiment - INFO - Starting training for 10 rounds for server type fedprox
+2024-12-21 13:26:51,207 - EMNIST_experiment - INFO - 
 Starting server type: pfedme
-2024-12-21 12:15:06,819 - EMNIST_experiment - INFO - Starting training for 10 rounds for server type pfedme
-2024-12-21 12:17:19,183 - EMNIST_experiment - INFO - 
+2024-12-21 13:26:51,244 - EMNIST_experiment - INFO - Starting training for 10 rounds for server type pfedme
+2024-12-21 13:29:02,448 - EMNIST_experiment - INFO - 
 Starting server type: ditto
-2024-12-21 12:17:19,220 - EMNIST_experiment - INFO - Starting training for 10 rounds for server type ditto
-2024-12-21 12:21:35,692 - EMNIST_experiment - INFO - 
+2024-12-21 13:29:02,490 - EMNIST_experiment - INFO - Starting training for 10 rounds for server type ditto
+2024-12-21 13:33:14,666 - EMNIST_experiment - INFO - 
 Starting server type: localadaptation
-2024-12-21 12:21:35,721 - EMNIST_experiment - INFO - Starting training for 10 rounds for server type localadaptation
-2024-12-21 12:24:08,574 - EMNIST_experiment - INFO - 
+2024-12-21 13:33:14,692 - EMNIST_experiment - INFO - Starting training for 10 rounds for server type localadaptation
+2024-12-21 13:35:45,014 - EMNIST_experiment - INFO - 
 Starting server type: babu
-2024-12-21 12:24:08,595 - EMNIST_experiment - INFO - Starting training for 10 rounds for server type babu
-2024-12-21 12:26:40,281 - EMNIST_experiment - INFO - 
+2024-12-21 13:35:45,035 - EMNIST_experiment - INFO - Starting training for 10 rounds for server type babu
+2024-12-21 13:38:14,591 - EMNIST_experiment - INFO - 
 Starting server type: fedlp
-2024-12-21 12:26:40,305 - EMNIST_experiment - INFO - Starting training for 10 rounds for server type fedlp
-2024-12-21 12:28:48,379 - EMNIST_experiment - INFO - 
+2024-12-21 13:38:14,615 - EMNIST_experiment - INFO - Starting training for 10 rounds for server type fedlp
+2024-12-21 13:40:21,189 - EMNIST_experiment - INFO - 
 Starting server type: fedlama
-2024-12-21 12:28:48,404 - EMNIST_experiment - INFO - Starting training for 10 rounds for server type fedlama
-2024-12-21 12:30:55,233 - EMNIST_experiment - INFO - 
+2024-12-21 13:40:21,215 - EMNIST_experiment - INFO - Starting training for 10 rounds for server type fedlama
+2024-12-21 13:42:26,468 - EMNIST_experiment - INFO - 
 Starting server type: pfedla
-2024-12-21 12:30:55,261 - EMNIST_experiment - INFO - Starting training for 10 rounds for server type pfedla
+2024-12-21 13:42:26,497 - EMNIST_experiment - INFO - Starting training for 10 rounds for server type pfedla
+2024-12-21 13:44:33,778 - EMNIST_experiment - INFO - 
+Starting server type: layerpfl
+2024-12-21 13:44:33,810 - EMNIST_experiment - INFO - Starting training for 10 rounds for server type layerpfl
+2024-12-21 13:46:40,815 - EMNIST_experiment - INFO - 
+Starting server type: local
+2024-12-21 13:46:40,841 - EMNIST_experiment - INFO - Starting training for 10 rounds for server type local
+2024-12-21 13:48:46,948 - EMNIST_experiment - INFO - 
+Starting server type: fedavg
+2024-12-21 13:48:47,103 - EMNIST_experiment - INFO - Starting training for 10 rounds for server type fedavg
+2024-12-21 13:50:53,393 - EMNIST_experiment - INFO - 
+Starting server type: fedprox
+2024-12-21 13:50:53,419 - EMNIST_experiment - INFO - Starting training for 10 rounds for server type fedprox
+2024-12-21 13:53:03,815 - EMNIST_experiment - INFO - 
+Starting server type: pfedme
+2024-12-21 13:53:03,845 - EMNIST_experiment - INFO - Starting training for 10 rounds for server type pfedme
+2024-12-21 13:55:14,865 - EMNIST_experiment - INFO - 
+Starting server type: ditto
+2024-12-21 13:55:14,905 - EMNIST_experiment - INFO - Starting training for 10 rounds for server type ditto
+2024-12-21 13:59:26,915 - EMNIST_experiment - INFO - 
+Starting server type: localadaptation
+2024-12-21 13:59:26,942 - EMNIST_experiment - INFO - Starting training for 10 rounds for server type localadaptation
+2024-12-21 14:01:58,460 - EMNIST_experiment - INFO - 
+Starting server type: babu
+2024-12-21 14:01:58,487 - EMNIST_experiment - INFO - Starting training for 10 rounds for server type babu
+2024-12-21 14:04:29,585 - EMNIST_experiment - INFO - 
+Starting server type: fedlp
+2024-12-21 14:04:29,616 - EMNIST_experiment - INFO - Starting training for 10 rounds for server type fedlp
+2024-12-21 14:06:35,996 - EMNIST_experiment - INFO - 
+Starting server type: fedlama
+2024-12-21 14:06:36,021 - EMNIST_experiment - INFO - Starting training for 10 rounds for server type fedlama
+2024-12-21 14:08:41,938 - EMNIST_experiment - INFO - 
+Starting server type: pfedla
+2024-12-21 14:08:41,973 - EMNIST_experiment - INFO - Starting training for 10 rounds for server type pfedla
+2024-12-21 14:10:49,404 - EMNIST_experiment - INFO - 
+Starting server type: layerpfl
+2024-12-21 14:10:49,433 - EMNIST_experiment - INFO - Starting training for 10 rounds for server type layerpfl
+2024-12-21 14:12:56,620 - EMNIST_experiment - INFO - 
+Starting server type: local
+2024-12-21 14:12:56,645 - EMNIST_experiment - INFO - Starting training for 10 rounds for server type local
+2024-12-21 14:15:03,044 - EMNIST_experiment - INFO - 
+Starting server type: fedavg
+2024-12-21 14:15:03,077 - EMNIST_experiment - INFO - Starting training for 10 rounds for server type fedavg
+2024-12-21 14:17:09,633 - EMNIST_experiment - INFO - 
+Starting server type: fedprox
+2024-12-21 14:17:09,665 - EMNIST_experiment - INFO - Starting training for 10 rounds for server type fedprox
+2024-12-21 14:19:20,553 - EMNIST_experiment - INFO - 
+Starting server type: pfedme
+2024-12-21 14:19:20,597 - EMNIST_experiment - INFO - Starting training for 10 rounds for server type pfedme
+2024-12-21 14:21:32,105 - EMNIST_experiment - INFO - 
+Starting server type: ditto
+2024-12-21 14:21:32,142 - EMNIST_experiment - INFO - Starting training for 10 rounds for server type ditto
+2024-12-21 14:25:45,220 - EMNIST_experiment - INFO - 
+Starting server type: localadaptation
+2024-12-21 14:25:45,254 - EMNIST_experiment - INFO - Starting training for 10 rounds for server type localadaptation
+2024-12-21 14:28:16,899 - EMNIST_experiment - INFO - 
+Starting server type: babu
+2024-12-21 14:28:16,928 - EMNIST_experiment - INFO - Starting training for 10 rounds for server type babu
+2024-12-21 14:30:48,280 - EMNIST_experiment - INFO - 
+Starting server type: fedlp
+2024-12-21 14:30:48,313 - EMNIST_experiment - INFO - Starting training for 10 rounds for server type fedlp

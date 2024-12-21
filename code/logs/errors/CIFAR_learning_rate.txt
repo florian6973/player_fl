@@ -1,0 +1,19 @@
+2024-12-21 13:20:27,233 - CIFAR_experiment - INFO - Starting hyperparameter tuning experiment
+2024-12-21 13:20:27,233 - CIFAR_experiment - INFO - Testing learning rates: [0.005, 0.001, 0.0005, 0.0001]
+2024-12-21 13:20:27,234 - CIFAR_experiment - INFO - 
+Starting Run 1/5
+2024-12-21 13:20:28,097 - CIFAR_experiment - INFO - 
+Starting server type: local
+2024-12-21 13:20:28,324 - CIFAR_experiment - INFO - Starting training for 10 rounds for server type local
+2024-12-21 13:35:15,274 - CIFAR_experiment - INFO - 
+Starting server type: fedavg
+2024-12-21 13:35:15,323 - CIFAR_experiment - INFO - Starting training for 10 rounds for server type fedavg
+2024-12-21 13:50:03,483 - CIFAR_experiment - INFO - 
+Starting server type: fedprox
+2024-12-21 13:50:03,550 - CIFAR_experiment - INFO - Starting training for 10 rounds for server type fedprox
+2024-12-21 14:04:58,597 - CIFAR_experiment - INFO - 
+Starting server type: pfedme
+2024-12-21 14:04:58,692 - CIFAR_experiment - INFO - Starting training for 10 rounds for server type pfedme
+2024-12-21 14:19:56,655 - CIFAR_experiment - INFO - 
+Starting server type: ditto
+2024-12-21 14:19:56,748 - CIFAR_experiment - INFO - Starting training for 10 rounds for server type ditto

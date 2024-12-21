@@ -539,7 +539,7 @@ class pFedLAServer(FLServer):
         # Stack client parameters for efficient computation
         layer_params = {}
         for name, params in zip(self.layer_names, zip(*self.client_models)):
-            layer_params[name] = torch.stack(params, dim=0).to(self.device)
+            layer_params[name] = torch.stack(params, dim=0)
         
         personalized_params = OrderedDict()
         for name in self.layer_names:
@@ -547,7 +547,7 @@ class pFedLAServer(FLServer):
                 base_name = name.split('.')[0]
                 weights = alpha[base_name]
             else:
-                weights = torch.zeros(len(self.clients), device=self.device)
+                weights = torch.zeros(len(self.clients))
                 weights[client_id] = 1.0
                 
             weights = weights / weights.sum() if weights.sum() != 0 else torch.ones_like(weights) / len(weights)
