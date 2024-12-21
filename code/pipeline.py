@@ -111,7 +111,7 @@ class Experiment:
         self.root_dir = ROOT_DIR
         self.results_manager = ResultsManager(root_dir=ROOT_DIR, dataset=self.config.dataset, experiment_type = self.config.experiment_type)
         self.default_params = get_parameters_for_dataset(self.config.dataset)
-        #self.logger = performance_logger.get_logger(self.config.dataset, 'experiment')
+        self.logger = performance_logger.get_logger(self.config.dataset, 'experiment')
 
     def run_experiment(self):
         if self.config.experiment_type == ExperimentType.EVALUATION:
@@ -119,43 +119,65 @@ class Experiment:
         else:
             return self._run_hyperparameter_tuning()
             
-    def _check_existing_results(self):
-        """Check existing results and return remaining work to be done."""
+    def _check_existing_results(self, server_types):
+        """
+        Check existing results and return remaining work to be done for each server type.
+        Returns a dictionary of completed runs per server type and the loaded results.
+        """
         results = self.results_manager.load_results(self.config.experiment_type)
-        completed_runs = 0
+        completed_runs = {server_type: 0 for server_type in server_types}
         
         if results is not None:
-            # Count number of elements in any metric list to determine completed runs
-            first_param = next(iter(results.keys()))
-            first_server = next(iter(results[first_param].keys()))
-            completed_runs = len(results[first_param][first_server]['global']['losses'])
-                
-        #self.logger.info(f"Found {completed_runs} completed runs")
-        
+            # Check completion status for each parameter and server type
+            for param in results:
+                for server_type in server_types:
+                    if server_type in results[param]:
+                        # Count completed runs for this server type
+                        runs = len(results[param][server_type]['global']['losses'])
+                        completed_runs[server_type] = max(completed_runs[server_type], runs)
         
         return results, completed_runs
 
     def _run_hyperparameter_tuning(self):
-        """Run LR or Reg param tuning with multiple runs"""
-        results, completed_runs = self._check_existing_results()
+        """Run LR or Reg param tuning with multiple runs, tracking per server type"""
+        self.logger.info("Starting hyperparameter tuning experiment")
+        server_types = ALGORITHMS
+        if self.config.experiment_type == ExperimentType.LEARNING_RATE:
+            hyperparams_list = [{'learning_rate': lr} for lr in self.default_params['learning_rates_try']]
+            self.logger.info(f"Testing learning rates: {self.default_params['learning_rates_try']}")
+            
+        results, completed_runs = self._check_existing_results(server_types)
+        total_runs = self.default_params['runs_lr']
         
-        # Calculate remaining runs
-        remaining_runs = self.default_params['runs_lr'] - completed_runs
-        
-        for run in range(remaining_runs):
-            current_run = completed_runs + run + 1
-            #self.logger.info(f"Starting run {current_run}/{self.default_params['runs_lr']}")
+        # Continue until all server types have completed all runs
+        while min(completed_runs.values()) < total_runs:
             results_run = {}
-            if self.config.experiment_type == ExperimentType.LEARNING_RATE:
-                hyperparams_list = [{'learning_rate': lr} for lr in self.default_params['learning_rates_try']]
-                server_types = ALGORITHMS
+            current_run = min(completed_runs.values()) + 1
+            self.logger.info(f"\nStarting Run {current_run}/{total_runs}")
             for hyperparams in hyperparams_list:
                 param = next(iter(hyperparams.values()))
-                results_run[param] = self._hyperparameter_tuning(hyperparams, server_types)
+                results_run[param] = {}
+                
+                # Only run for server types that need more runs
+                remaining_server_types = [
+                    server_type for server_type in server_types 
+                    if completed_runs[server_type] < total_runs
+                ]
+                
+                if remaining_server_types:
+                    results_run[param].update(
+                        self._hyperparameter_tuning(hyperparams, remaining_server_types)
+                    )
             
+            # Update results and completion tracking
             results = self.results_manager.append_or_create_metric_lists(results, results_run)
             self.results_manager.save_results(results, self.config.experiment_type)
             
+            # Update completion status
+            for server_type in server_types:
+                if server_type in remaining_server_types:
+                    completed_runs[server_type] += 1
+        
         return results
     
     def _hyperparameter_tuning(self, hyperparams, server_types):
@@ -164,32 +186,30 @@ class Experiment:
         tracking = {}
         
         for server_type in server_types:
-            #self.logger.info(f"Training {server_type} model with hyperparameters: {hyperparams}")
-            start_time = time.time()
+            self.logger.info(f"\nStarting server type: {server_type}")
 
-            server = self._create_server_instance(server_type, hyperparams, tuning = True)
+            server = self._create_server_instance(server_type, hyperparams, tuning=True)
             self._add_clients_to_server(server, client_dataloaders)
             metrics = self._train_and_evaluate(server, server.config.rounds)
 
             tracking[server_type] = metrics
-            
-            duration = time.time() - start_time
-            #self.logger.info(f"Completed {server_type} training in {duration:.2f}s")
 
         return tracking
 
     def _run_final_evaluation(self):
         """Run final evaluation with multiple runs"""
+        self.logger.info("\nStarting final evaluation phase")
         results = {}
         for run in range(self.default_params['runs']):
             try:
-                print(f"Starting run {run + 1}/{self.default_params['runs']}")
+                self.logger.info(f"\nStarting run {run + 1}/{self.default_params['runs']}")
                 results_run = self._final_evaluation()
                 results = self.results_manager.append_or_create_metric_lists(results, results_run)
                 self.results_manager.save_results(results, self.config.experiment_type)
+                self.logger.info(f"Successfully completed run {run + 1}")
                 
             except Exception as e:
-                print(f"Run {run + 1} failed with error: {e}")
+                self.logger.error(f"Run {run + 1} failed with error: {str(e)}")
                 if results is not None:
                     self.results_manager.save_results(results,  self.config.experiment_type)
         
@@ -202,6 +222,7 @@ class Experiment:
         client_dataloaders = self._initialize_experiment(self.default_params['batch_size'])
 
         for server_type in server_types:
+            self.logger.info(f"\nEvaluating {server_type} model with best hyperparameters")
             print(f"Evaluating {server_type} model with best hyperparameters")
             lr = self.results_manager.get_best_parameters(
                 ExperimentType.LEARNING_RATE, server_type)
@@ -210,7 +231,7 @@ class Experiment:
             self._add_clients_to_server(server, client_dataloaders)
             metrics = self._train_and_evaluate(server, config.rounds)
             tracking[server_type] = metrics
-
+            self.logger.info(f"Completed {server_type} evaluation")
         return tracking
     
     
@@ -321,33 +342,19 @@ class Experiment:
         return client_df['data'].values, client_df['label'].values
 
 
-    #@log_execution_time
     def _train_and_evaluate(self, server, rounds):
-        #self.logger.info(f"Starting training for {rounds} rounds for server type {server.server_type}")
+        self.logger.info(f"Starting training for {rounds} rounds for server type {server.server_type}")
         
         for round_num in range(rounds):
             round_start = time.time()
             server.train_round()
-            identical, diffs = check_client_models_identical(server, server.config.requires_personal_model)
-            if not identical:
-                pass
-                #print(f"\nRound {round_num + 1}: Models are different!")
             if (round_num +1 == rounds) and (server.server_type in ['localadaptation', 'babu']):
                 server.train_round(final_round = True)
             round_time = time.time() - round_start
             
-            # Log every 20% of rounds
-            if round_num % max(1, rounds // 2) == 0 or round_num + 1 == rounds:
-                #self.logger.info(f"Completed round {round_num + 1}/{rounds} in {round_time:.2f}s")
-                
-                # Get current metrics
-                state = server.serverstate
-                current_loss = state.val_losses[-1]
-                #self.logger.info(f"Current {eval_type} metrics - Loss: {current_loss:.4f}")
         
         if not server.tuning:
             # Final evaluation
-            #self.logger.info("Running final evaluation")
             server.test_global()
         
         state = server.serverstate
@@ -381,8 +388,6 @@ class Experiment:
                 'scores': scores
             }
             
-            # self.logger.info(f"Client {client_id} final metrics - "
-            #                  f"Loss: {losses[-1]:.4f}")
     
         return metrics
 

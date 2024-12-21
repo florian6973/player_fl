@@ -45,11 +45,14 @@ ALGORITHMS = [
     'layerpfl'
 ]
 
-ALGORITHMS = [
-    'local', 
-    'fedavg', 
-    'fedprox', 
-    'pfedme', 
+DATASETS = [
+    'FMNIST',
+    'EMNIST',
+    'CIFAR',
+    'Sentiment',
+    'ISIC',
+    'mimic',
+    'Heart'
 ]
 
 DATASET_ALPHA = {
@@ -117,7 +120,7 @@ DEFAULT_PARAMS = {
         'batch_size': 128,
         'rounds': 10,
         'runs': 50,
-        'runs_lr': 5
+        'runs_lr': 9
     },
     'mimic': {
         'learning_rates_try': [5e-4, 1e-4, 3e-4, 8e-5],

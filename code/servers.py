@@ -167,7 +167,54 @@ class DittoServer(FLServer):
             metrics_calculator=MetricsCalculator(self.config.dataset_name),
             personal_model=personal_model
         )
+    
+    def train_round(self):
+        """Run one round of training."""
+        # First do global model updates (FedAvg style)
+        global_train_loss = 0
+        global_val_loss = 0
+        global_val_score = {}
 
+        # 1. Global model update step (like FedAvg)
+        for client in self.clients.values():
+            # Train and validate global model
+            client_train_loss = client.train(personal=False)  # Force global update
+            client_val_loss, client_val_score = client.validate(personal=False)
+            
+            # Weight metrics by client dataset size
+            global_train_loss += client_train_loss * client.data.weight
+            global_val_loss += client_val_loss * client.data.weight
+            global_val_score = self._aggregate_scores(global_val_score, client_val_score, client.data.weight)
+
+        # Aggregate and distribute global model
+        self.aggregate_models()
+        self.distribute_global_model()
+
+        # 2. Personal model update step (Ditto)
+        personal_train_loss = 0
+        personal_val_loss = 0
+        personal_val_score = {}
+
+        for client in self.clients.values():
+            # Train and validate personal model
+            client_train_loss = client.train(personal=True)  # Personal update
+            client_val_loss, client_val_score = client.validate(personal=True)
+            
+            # Weight metrics by client dataset size
+            personal_train_loss += client_train_loss * client.data.weight
+            personal_val_loss += client_val_loss * client.data.weight
+            personal_val_score = self._aggregate_scores(personal_val_score, client_val_score, client.data.weight)
+
+        self.serverstate.train_losses.append(personal_train_loss)
+        self.serverstate.val_losses.append(personal_val_loss)
+        self.serverstate.val_scores.append(personal_val_score)
+
+        # Update best model if improved (using global model performance)
+        if global_val_loss < self.serverstate.best_loss:
+            self.serverstate.best_loss = global_val_loss
+            self.serverstate.best_model = copy.deepcopy(self.serverstate.model)
+
+        return personal_train_loss, personal_val_loss, personal_val_score
 
 class LocalAdaptationServer(FLServer):
     """Local adaptation server implementation."""
@@ -225,7 +272,8 @@ class LayerServer(FLServer):
         
         # Aggregate only federated layers
         for client in self.clients.values():
-            client_model = client.get_model_state()
+            client_state = client.get_client_state(personal = False)
+            client_model = client_state.model.state_dict()
             for name, param in self.serverstate.model.named_parameters():
                 if any(layer in name for layer in layers_to_include):
                     param.data.add_(client_model[name].data * client.data.weight)
@@ -295,7 +343,7 @@ class FedLPServer(FLServer):
                     if layer_name not in layer_participants:
                         layer_participants[layer_name] = []
                     layer_participants[layer_name].append(client_id)
-        
+
         # Create new state dict for aggregated model
         new_state_dict = self.serverstate.model.state_dict()
         
@@ -344,9 +392,10 @@ class FedLAMAServer(FLServer):
         layer_dims = {name: param.numel() for name, param in self.serverstate.model.named_parameters()}
         
         for client in self.clients.values():
-            client_state = client.get_model_state()
+            client_state = client.get_client_state(personal = False)
+            client_model = client_state.model.state_dict()
             for name, global_param in self.serverstate.model.named_parameters():
-                client_param = client_state[name]
+                client_param = client_model[name]
                 diff_dict[name] += torch.norm(global_param - client_param).item()
                 
         # Normalize by number of clients
@@ -420,15 +469,16 @@ class FedLAMAServer(FLServer):
 
         # Create new state dict for aggregation
         new_state = self.serverstate.model.state_dict()
-        
+
         # Aggregate only layers due for synchronization
         for name, param in new_state.items():
             if self.round < 2 or (self.round % self.aggregation_intervals[name] == 0):
                 param.data.zero_()
                 for client in self.clients.values():
-                    client_state = client.get_model_state()
+                    client_state = client.get_client_state(personal = False)
+                    client_model = client_state.model.state_dict()
                     param.data.add_(
-                        client_state[name].data * client.data.weight
+                        client_model[name].data * client.data.weight
                     )
         self.round += 1
 
@@ -576,7 +626,7 @@ class pFedLAServer(FLServer):
             self.update_hypernetwork(client_id, delta)
             
             # Weight metrics
-            train_loss += client_train_loss[1]['loss'] * client.data.weight
+            train_loss += client_train_loss * client.data.weight
             val_loss += client_val_loss * client.data.weight
             val_score = self._aggregate_scores(val_score, client_val_score, client.data.weight)
 

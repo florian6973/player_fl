@@ -185,7 +185,6 @@ class Client:
 
     def train(self, personal):
         """Train for multiple epochs."""
-        final_loss = 0.0
         for epoch in range(self.config.epochs):
             final_loss = self.train_epoch(personal)
         return final_loss
@@ -520,26 +519,19 @@ class pFedLAClient(Client):
         for name, param in state.model.state_dict().items():
             self.initial_params[name] = param.clone().detach()
 
-    def set_model_state(self, state_dict, personal=False):
+    def set_model_state(self, state_dict):
         """Override to update initial params when model state is set."""
-        super().set_model_state(state_dict, personal) 
+        super().set_model_state(state_dict) 
         self._store_initial_params()
 
     def train(self, personal=False):
         """Train model and return parameter updates."""
         # Train for specified number of epochs
         final_loss = super().train(personal)
-        
-        # Compute updates
-        updates = self.compute_updates()
-        
+                
         # Store current state as initial state for next round
         self._store_initial_params()
-        state = self.get_client_state(personal)
-        return updates, {
-            'loss': final_loss,
-            'model_state': state.model.state_dict()
-        }
+        return  final_loss
 
     def compute_updates(self):
         """Compute parameter updates from initial state."""
