@@ -411,6 +411,12 @@ class LocalAdaptationClient(Client):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+    def train(self, personal, final_round = False):
+        if not final_round:
+            return super().train(personal)
+        else:
+            return self.train_epoch(personal)
+
 class LayerClient(Client):
     """Client for layer-wise federated learning."""
     def __init__(self, *args, **kwargs):

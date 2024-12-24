@@ -156,6 +156,7 @@ class Experiment:
             self.logger.info(f"Starting Run {current_run}/{total_runs}")
             for hyperparams in hyperparams_list:
                 param = next(iter(hyperparams.values()))
+                self.logger.info(f"Starting tuning for: {param}")
                 results_run[param] = {}
                 
                 # Only run for server types that need more runs
@@ -184,15 +185,20 @@ class Experiment:
         """Run hyperparameter tuning for specific parameters."""
         client_dataloaders = self._initialize_experiment(self.default_params['batch_size'])
         tracking = {}
+        
         for server_type in server_types:
             self.logger.info(f"Starting server type: {server_type}")
-
-            server = self._create_server_instance(server_type, hyperparams, tuning=True)
-            self._add_clients_to_server(server, client_dataloaders)
-            metrics = self._train_and_evaluate(server, server.config.rounds)
-
-            tracking[server_type] = metrics
-
+            try:
+                # Create and run server
+                server = self._create_server_instance(server_type, hyperparams, tuning=True)
+                self._add_clients_to_server(server, client_dataloaders)
+                metrics = self._train_and_evaluate(server, server.config.rounds)
+                tracking[server_type] = metrics
+                
+            finally:
+                del server
+                torch.cuda.empty_cache()
+        
         return tracking
 
     def _run_final_evaluation(self):
@@ -342,16 +348,11 @@ class Experiment:
 
 
     def _train_and_evaluate(self, server, rounds):
-        self.logger.info(f"Starting training for {rounds} rounds for server type {server.server_type}")
-        
         for round_num in range(rounds):
-            round_start = time.time()
             server.train_round()
             if (round_num +1 == rounds) and (server.server_type in ['localadaptation', 'babu']):
                 server.train_round(final_round = True)
-            round_time = time.time() - round_start
-            
-        
+ 
         if not server.tuning:
             # Final evaluation
             server.test_global()

@@ -1,19 +1,51 @@
-2024-12-21 14:29:30,416 - Sentiment_experiment - INFO - Starting hyperparameter tuning experiment
-2024-12-21 14:29:30,416 - Sentiment_experiment - INFO - Testing learning rates: [0.001, 0.0005, 0.0001, 8e-05]
-2024-12-21 14:29:30,418 - Sentiment_experiment - INFO - 
-Starting Run 1/3
-2024-12-21 14:29:30,510 - Sentiment_experiment - INFO - 
-Starting server type: local
-2024-12-21 14:29:30,910 - Sentiment_experiment - INFO - Starting training for 10 rounds for server type local
-2024-12-21 14:30:10,690 - Sentiment_experiment - INFO - 
-Starting server type: fedavg
-2024-12-21 14:30:10,845 - Sentiment_experiment - INFO - Starting training for 10 rounds for server type fedavg
-2024-12-21 14:30:48,646 - Sentiment_experiment - INFO - 
-Starting server type: fedprox
-2024-12-21 14:30:48,810 - Sentiment_experiment - INFO - Starting training for 10 rounds for server type fedprox
-2024-12-21 14:31:25,181 - Sentiment_experiment - INFO - 
-Starting server type: pfedme
-2024-12-21 14:31:25,430 - Sentiment_experiment - INFO - Starting training for 10 rounds for server type pfedme
-2024-12-21 14:32:12,012 - Sentiment_experiment - INFO - 
-Starting server type: ditto
-2024-12-21 14:32:12,413 - Sentiment_experiment - INFO - Starting training for 10 rounds for server type ditto
+2024-12-21 17:15:45,431 - Sentiment_experiment - INFO - Starting hyperparameter tuning experiment
+2024-12-21 17:15:45,433 - Sentiment_experiment - INFO - Testing learning rates: [0.001, 0.0005, 0.0001, 8e-05]
+2024-12-21 17:15:45,458 - Sentiment_experiment - INFO - Starting Run 3/3
+2024-12-21 17:15:45,459 - Sentiment_experiment - INFO - Starting tuning for: 0.001
+2024-12-21 17:15:45,699 - Sentiment_experiment - INFO - Starting server type: local
+2024-12-21 17:16:25,785 - Sentiment_experiment - INFO - Starting server type: fedavg
+2024-12-21 17:17:03,964 - Sentiment_experiment - INFO - Starting server type: fedprox
+2024-12-21 17:17:41,067 - Sentiment_experiment - INFO - Starting server type: pfedme
+2024-12-21 17:18:28,742 - Sentiment_experiment - INFO - Starting server type: ditto
+2024-12-21 17:19:54,402 - Sentiment_experiment - INFO - Starting server type: localadaptation
+2024-12-21 17:20:40,330 - Sentiment_experiment - INFO - Starting server type: babu
+2024-12-21 17:21:20,988 - Sentiment_experiment - INFO - Starting server type: fedlp
+2024-12-21 17:21:59,137 - Sentiment_experiment - INFO - Starting server type: fedlama
+2024-12-21 17:22:37,405 - Sentiment_experiment - INFO - Starting server type: pfedla
+2024-12-21 17:23:51,330 - Sentiment_experiment - INFO - Starting server type: layerpfl
+2024-12-21 17:24:29,445 - Sentiment_experiment - INFO - Starting tuning for: 0.0005
+2024-12-21 17:24:29,721 - Sentiment_experiment - INFO - Starting server type: local
+2024-12-21 17:25:07,316 - Sentiment_experiment - INFO - Starting server type: fedavg
+2024-12-21 17:25:45,796 - Sentiment_experiment - INFO - Starting server type: fedprox
+2024-12-21 17:26:22,056 - Sentiment_experiment - INFO - Starting server type: pfedme
+2024-12-21 17:27:07,464 - Sentiment_experiment - INFO - Starting server type: ditto
+2024-12-21 17:28:31,943 - Sentiment_experiment - INFO - Starting server type: localadaptation
+2024-12-21 17:29:17,995 - Sentiment_experiment - INFO - Starting server type: babu
+2024-12-21 17:29:58,992 - Sentiment_experiment - INFO - Starting server type: fedlp
+2024-12-21 17:30:37,305 - Sentiment_experiment - INFO - Starting server type: fedlama
+2024-12-21 17:31:15,853 - Sentiment_experiment - INFO - Starting server type: pfedla
+2024-12-21 17:32:29,893 - Sentiment_experiment - INFO - Starting server type: layerpfl
+2024-12-21 17:33:08,116 - Sentiment_experiment - INFO - Starting tuning for: 0.0001
+2024-12-21 17:33:08,320 - Sentiment_experiment - INFO - Starting server type: local
+2024-12-21 17:33:46,257 - Sentiment_experiment - INFO - Starting server type: fedavg
+2024-12-21 17:34:24,779 - Sentiment_experiment - INFO - Starting server type: fedprox
+2024-12-21 17:35:01,437 - Sentiment_experiment - INFO - Starting server type: pfedme
+2024-12-21 17:35:46,949 - Sentiment_experiment - INFO - Starting server type: ditto
+2024-12-21 17:37:11,972 - Sentiment_experiment - INFO - Starting server type: localadaptation
+2024-12-21 17:37:58,287 - Sentiment_experiment - INFO - Starting server type: babu
+2024-12-21 17:38:39,460 - Sentiment_experiment - INFO - Starting server type: fedlp
+2024-12-21 17:39:17,882 - Sentiment_experiment - INFO - Starting server type: fedlama
+2024-12-21 17:39:56,514 - Sentiment_experiment - INFO - Starting server type: pfedla
+2024-12-21 17:41:10,526 - Sentiment_experiment - INFO - Starting server type: layerpfl
+2024-12-21 17:41:49,055 - Sentiment_experiment - INFO - Starting tuning for: 8e-05
+2024-12-21 17:41:49,282 - Sentiment_experiment - INFO - Starting server type: local
+2024-12-21 17:42:27,433 - Sentiment_experiment - INFO - Starting server type: fedavg
+2024-12-21 17:43:06,044 - Sentiment_experiment - INFO - Starting server type: fedprox
+2024-12-21 17:43:42,584 - Sentiment_experiment - INFO - Starting server type: pfedme
+2024-12-21 17:44:28,175 - Sentiment_experiment - INFO - Starting server type: ditto
+2024-12-21 17:45:53,233 - Sentiment_experiment - INFO - Starting server type: localadaptation
+2024-12-21 17:46:39,591 - Sentiment_experiment - INFO - Starting server type: babu
+2024-12-21 17:47:20,889 - Sentiment_experiment - INFO - Starting server type: fedlp
+2024-12-21 17:47:59,345 - Sentiment_experiment - INFO - Starting server type: fedlama
+2024-12-21 17:48:37,967 - Sentiment_experiment - INFO - Starting server type: pfedla
+2024-12-21 17:49:51,716 - Sentiment_experiment - INFO - Starting server type: layerpfl

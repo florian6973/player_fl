@@ -2,7 +2,7 @@
 
 # List of datasets to process
 datasets=("FMNIST"  "EMNIST" "CIFAR" "Sentiment" "ISIC" "mimic" "Heart")
-datasets=("Sentiment")
+datasets=("CIFAR")
 
 # Options for experiment type
 experiment_types=("learning_rate" "evaluation")
@@ -27,7 +27,7 @@ for dataset in "${datasets[@]}"; do
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=4
-#SBATCH --mem=20G
+#SBATCH --mem=40G
 #SBATCH --gres=gpu:1
 #SBATCH --time=30:00:00
 #SBATCH --output=logs/outputs/${job_name}.txt

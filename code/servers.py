@@ -239,7 +239,7 @@ class LocalAdaptationServer(FLServer):
             val_score = {}
             # Restore best models to clients for final evaluation
             for client in self.clients.values():
-                client_train_loss = client.train(self.personal)
+                client_train_loss = client.train(self.personal, final_round = True)
                 client_val_loss, client_val_score = client.validate(self.personal)
             
             # Weight metrics by client dataset size
@@ -535,7 +535,6 @@ class pFedLAServer(FLServer):
     def generate_client_model(self, client_id):
         """Generate personalized model for client using hypernetwork."""
         alpha = self.hypernetwork(client_id)
-        
         # Stack client parameters for efficient computation
         layer_params = {}
         for name, params in zip(self.layer_names, zip(*self.client_models)):
@@ -545,7 +544,7 @@ class pFedLAServer(FLServer):
         for name in self.layer_names:
             if name in self.trainable_names:
                 base_name = name.split('.')[0]
-                weights = alpha[base_name]
+                weights = alpha[base_name].to('cpu')
             else:
                 weights = torch.zeros(len(self.clients))
                 weights[client_id] = 1.0

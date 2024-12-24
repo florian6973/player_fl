@@ -65,3 +65,340 @@ Starting server type: fedlama
 2024-12-21 14:29:38,557 - mimic_experiment - INFO - 
 Starting server type: pfedla
 2024-12-21 14:29:38,761 - mimic_experiment - INFO - Starting training for 10 rounds for server type pfedla
+2024-12-21 14:32:44,571 - mimic_experiment - INFO - 
+Starting server type: layerpfl
+2024-12-21 14:32:44,777 - mimic_experiment - INFO - Starting training for 10 rounds for server type layerpfl
+2024-12-21 14:35:44,444 - mimic_experiment - INFO - 
+Starting server type: local
+2024-12-21 14:35:44,589 - mimic_experiment - INFO - Starting training for 10 rounds for server type local
+2024-12-21 14:38:48,157 - mimic_experiment - INFO - 
+Starting server type: fedavg
+2024-12-21 14:38:48,321 - mimic_experiment - INFO - Starting training for 10 rounds for server type fedavg
+2024-12-21 14:41:50,714 - mimic_experiment - INFO - 
+Starting server type: fedprox
+2024-12-21 14:41:50,895 - mimic_experiment - INFO - Starting training for 10 rounds for server type fedprox
+2024-12-21 14:44:55,011 - mimic_experiment - INFO - 
+Starting server type: pfedme
+2024-12-21 14:44:55,221 - mimic_experiment - INFO - Starting training for 10 rounds for server type pfedme
+2024-12-21 14:48:08,845 - mimic_experiment - INFO - 
+Starting server type: ditto
+2024-12-21 14:48:09,069 - mimic_experiment - INFO - Starting training for 10 rounds for server type ditto
+2024-12-21 14:54:21,738 - mimic_experiment - INFO - 
+Starting server type: localadaptation
+2024-12-21 14:54:21,887 - mimic_experiment - INFO - Starting training for 10 rounds for server type localadaptation
+2024-12-21 14:58:01,736 - mimic_experiment - INFO - 
+Starting server type: babu
+2024-12-21 14:58:02,042 - mimic_experiment - INFO - Starting training for 10 rounds for server type babu
+2024-12-21 15:01:19,906 - mimic_experiment - INFO - 
+Starting server type: fedlp
+2024-12-21 15:01:20,044 - mimic_experiment - INFO - Starting training for 10 rounds for server type fedlp
+2024-12-21 15:04:20,549 - mimic_experiment - INFO - 
+Starting server type: fedlama
+2024-12-21 15:04:20,707 - mimic_experiment - INFO - Starting training for 10 rounds for server type fedlama
+2024-12-21 15:07:22,461 - mimic_experiment - INFO - 
+Starting server type: pfedla
+2024-12-21 15:07:22,656 - mimic_experiment - INFO - Starting training for 10 rounds for server type pfedla
+2024-12-21 15:10:26,447 - mimic_experiment - INFO - 
+Starting server type: layerpfl
+2024-12-21 15:10:26,625 - mimic_experiment - INFO - Starting training for 10 rounds for server type layerpfl
+2024-12-21 15:13:24,665 - mimic_experiment - INFO - 
+Starting server type: local
+2024-12-21 15:13:24,773 - mimic_experiment - INFO - Starting training for 10 rounds for server type local
+2024-12-21 15:16:23,180 - mimic_experiment - INFO - 
+Starting server type: fedavg
+2024-12-21 15:16:23,302 - mimic_experiment - INFO - Starting training for 10 rounds for server type fedavg
+2024-12-21 15:19:22,462 - mimic_experiment - INFO - 
+Starting server type: fedprox
+2024-12-21 15:19:22,631 - mimic_experiment - INFO - Starting training for 10 rounds for server type fedprox
+2024-12-21 15:22:23,467 - mimic_experiment - INFO - 
+Starting server type: pfedme
+2024-12-21 15:22:23,667 - mimic_experiment - INFO - Starting training for 10 rounds for server type pfedme
+2024-12-21 15:25:33,282 - mimic_experiment - INFO - 
+Starting server type: ditto
+2024-12-21 15:25:33,500 - mimic_experiment - INFO - Starting training for 10 rounds for server type ditto
+2024-12-21 15:31:46,378 - mimic_experiment - INFO - 
+Starting server type: localadaptation
+2024-12-21 15:31:46,536 - mimic_experiment - INFO - Starting training for 10 rounds for server type localadaptation
+2024-12-21 15:35:27,843 - mimic_experiment - INFO - 
+Starting server type: babu
+2024-12-21 15:35:28,006 - mimic_experiment - INFO - Starting training for 10 rounds for server type babu
+2024-12-21 15:38:47,017 - mimic_experiment - INFO - 
+Starting server type: fedlp
+2024-12-21 15:38:47,170 - mimic_experiment - INFO - Starting training for 10 rounds for server type fedlp
+2024-12-21 15:41:50,888 - mimic_experiment - INFO - 
+Starting server type: fedlama
+2024-12-21 15:41:51,069 - mimic_experiment - INFO - Starting training for 10 rounds for server type fedlama
+2024-12-21 15:44:54,637 - mimic_experiment - INFO - 
+Starting server type: pfedla
+2024-12-21 15:44:54,853 - mimic_experiment - INFO - Starting training for 10 rounds for server type pfedla
+2024-12-21 15:48:00,841 - mimic_experiment - INFO - 
+Starting server type: layerpfl
+2024-12-21 15:48:01,043 - mimic_experiment - INFO - Starting training for 10 rounds for server type layerpfl
+2024-12-21 15:51:01,978 - mimic_experiment - INFO - 
+Starting Run 2/3
+2024-12-21 15:51:01,997 - mimic_experiment - INFO - 
+Starting server type: local
+2024-12-21 15:51:02,112 - mimic_experiment - INFO - Starting training for 10 rounds for server type local
+2024-12-21 15:54:04,892 - mimic_experiment - INFO - 
+Starting server type: fedavg
+2024-12-21 15:54:05,049 - mimic_experiment - INFO - Starting training for 10 rounds for server type fedavg
+2024-12-21 15:57:08,780 - mimic_experiment - INFO - 
+Starting server type: fedprox
+2024-12-21 15:57:08,969 - mimic_experiment - INFO - Starting training for 10 rounds for server type fedprox
+2024-12-21 16:00:14,660 - mimic_experiment - INFO - 
+Starting server type: pfedme
+2024-12-21 16:00:14,879 - mimic_experiment - INFO - Starting training for 10 rounds for server type pfedme
+2024-12-21 16:03:25,656 - mimic_experiment - INFO - 
+Starting server type: ditto
+2024-12-21 16:03:25,865 - mimic_experiment - INFO - Starting training for 10 rounds for server type ditto
+2024-12-21 16:09:36,238 - mimic_experiment - INFO - 
+Starting server type: localadaptation
+2024-12-21 16:09:36,386 - mimic_experiment - INFO - Starting training for 10 rounds for server type localadaptation
+2024-12-21 16:13:13,856 - mimic_experiment - INFO - 
+Starting server type: babu
+2024-12-21 16:13:14,008 - mimic_experiment - INFO - Starting training for 10 rounds for server type babu
+2024-12-21 16:16:28,329 - mimic_experiment - INFO - 
+Starting server type: fedlp
+2024-12-21 16:16:28,468 - mimic_experiment - INFO - Starting training for 10 rounds for server type fedlp
+2024-12-21 16:19:30,303 - mimic_experiment - INFO - 
+Starting server type: fedlama
+2024-12-21 16:19:30,476 - mimic_experiment - INFO - Starting training for 10 rounds for server type fedlama
+2024-12-21 16:22:32,451 - mimic_experiment - INFO - 
+Starting server type: pfedla
+2024-12-21 16:22:32,651 - mimic_experiment - INFO - Starting training for 10 rounds for server type pfedla
+2024-12-21 16:25:37,878 - mimic_experiment - INFO - 
+Starting server type: layerpfl
+2024-12-21 16:25:38,071 - mimic_experiment - INFO - Starting training for 10 rounds for server type layerpfl
+2024-12-21 16:28:36,597 - mimic_experiment - INFO - 
+Starting server type: local
+2024-12-21 16:28:36,713 - mimic_experiment - INFO - Starting training for 10 rounds for server type local
+2024-12-21 16:31:37,228 - mimic_experiment - INFO - 
+Starting server type: fedavg
+2024-12-21 16:31:37,383 - mimic_experiment - INFO - Starting training for 10 rounds for server type fedavg
+2024-12-21 16:34:40,290 - mimic_experiment - INFO - 
+Starting server type: fedprox
+2024-12-21 16:34:40,468 - mimic_experiment - INFO - Starting training for 10 rounds for server type fedprox
+2024-12-21 16:37:43,246 - mimic_experiment - INFO - 
+Starting server type: pfedme
+2024-12-21 16:37:43,461 - mimic_experiment - INFO - Starting training for 10 rounds for server type pfedme
+2024-12-21 16:40:57,076 - mimic_experiment - INFO - 
+Starting server type: ditto
+2024-12-21 16:40:57,298 - mimic_experiment - INFO - Starting training for 10 rounds for server type ditto
+2024-12-21 16:47:11,732 - mimic_experiment - INFO - 
+Starting server type: localadaptation
+2024-12-21 16:47:11,875 - mimic_experiment - INFO - Starting training for 10 rounds for server type localadaptation
+2024-12-21 16:50:52,426 - mimic_experiment - INFO - 
+Starting server type: babu
+2024-12-21 16:50:52,576 - mimic_experiment - INFO - Starting training for 10 rounds for server type babu
+2024-12-21 16:54:08,831 - mimic_experiment - INFO - 
+Starting server type: fedlp
+2024-12-21 16:54:08,971 - mimic_experiment - INFO - Starting training for 10 rounds for server type fedlp
+2024-12-21 16:57:11,038 - mimic_experiment - INFO - 
+Starting server type: fedlama
+2024-12-21 16:57:11,206 - mimic_experiment - INFO - Starting training for 10 rounds for server type fedlama
+2024-12-21 17:00:12,224 - mimic_experiment - INFO - 
+Starting server type: pfedla
+2024-12-21 17:00:12,414 - mimic_experiment - INFO - Starting training for 10 rounds for server type pfedla
+2024-12-21 17:03:15,619 - mimic_experiment - INFO - 
+Starting server type: layerpfl
+2024-12-21 17:03:15,802 - mimic_experiment - INFO - Starting training for 10 rounds for server type layerpfl
+2024-12-21 17:06:13,890 - mimic_experiment - INFO - 
+Starting server type: local
+2024-12-21 17:06:13,998 - mimic_experiment - INFO - Starting training for 10 rounds for server type local
+2024-12-21 17:09:13,867 - mimic_experiment - INFO - 
+Starting server type: fedavg
+2024-12-21 17:09:14,012 - mimic_experiment - INFO - Starting training for 10 rounds for server type fedavg
+2024-12-21 17:12:13,660 - mimic_experiment - INFO - 
+Starting server type: fedprox
+2024-12-21 17:12:13,824 - mimic_experiment - INFO - Starting training for 10 rounds for server type fedprox
+2024-12-21 17:15:15,189 - mimic_experiment - INFO - 
+Starting server type: pfedme
+2024-12-21 17:15:15,390 - mimic_experiment - INFO - Starting training for 10 rounds for server type pfedme
+2024-12-21 17:18:27,075 - mimic_experiment - INFO - 
+Starting server type: ditto
+2024-12-21 17:18:27,285 - mimic_experiment - INFO - Starting training for 10 rounds for server type ditto
+2024-12-21 17:24:39,557 - mimic_experiment - INFO - 
+Starting server type: localadaptation
+2024-12-21 17:24:39,707 - mimic_experiment - INFO - Starting training for 10 rounds for server type localadaptation
+2024-12-21 17:28:20,657 - mimic_experiment - INFO - 
+Starting server type: babu
+2024-12-21 17:28:20,816 - mimic_experiment - INFO - Starting training for 10 rounds for server type babu
+2024-12-21 17:31:39,263 - mimic_experiment - INFO - 
+Starting server type: fedlp
+2024-12-21 17:31:39,421 - mimic_experiment - INFO - Starting training for 10 rounds for server type fedlp
+2024-12-21 17:34:42,950 - mimic_experiment - INFO - 
+Starting server type: fedlama
+2024-12-21 17:34:43,136 - mimic_experiment - INFO - Starting training for 10 rounds for server type fedlama
+2024-12-21 17:37:45,364 - mimic_experiment - INFO - 
+Starting server type: pfedla
+2024-12-21 17:37:45,570 - mimic_experiment - INFO - Starting training for 10 rounds for server type pfedla
+2024-12-21 17:40:50,318 - mimic_experiment - INFO - 
+Starting server type: layerpfl
+2024-12-21 17:40:50,510 - mimic_experiment - INFO - Starting training for 10 rounds for server type layerpfl
+2024-12-21 17:43:49,399 - mimic_experiment - INFO - 
+Starting server type: local
+2024-12-21 17:43:49,520 - mimic_experiment - INFO - Starting training for 10 rounds for server type local
+2024-12-21 17:46:51,637 - mimic_experiment - INFO - 
+Starting server type: fedavg
+2024-12-21 17:46:51,789 - mimic_experiment - INFO - Starting training for 10 rounds for server type fedavg
+2024-12-21 17:49:54,361 - mimic_experiment - INFO - 
+Starting server type: fedprox
+2024-12-21 17:49:54,536 - mimic_experiment - INFO - Starting training for 10 rounds for server type fedprox
+2024-12-21 17:52:58,039 - mimic_experiment - INFO - 
+Starting server type: pfedme
+2024-12-21 17:52:58,246 - mimic_experiment - INFO - Starting training for 10 rounds for server type pfedme
+2024-12-21 17:56:11,381 - mimic_experiment - INFO - 
+Starting server type: ditto
+2024-12-21 17:56:11,606 - mimic_experiment - INFO - Starting training for 10 rounds for server type ditto
+2024-12-21 18:02:25,644 - mimic_experiment - INFO - 
+Starting server type: localadaptation
+2024-12-21 18:02:25,782 - mimic_experiment - INFO - Starting training for 10 rounds for server type localadaptation
+2024-12-21 18:06:06,395 - mimic_experiment - INFO - 
+Starting server type: babu
+2024-12-21 18:06:06,562 - mimic_experiment - INFO - Starting training for 10 rounds for server type babu
+2024-12-21 18:09:26,040 - mimic_experiment - INFO - 
+Starting server type: fedlp
+2024-12-21 18:09:26,185 - mimic_experiment - INFO - Starting training for 10 rounds for server type fedlp
+2024-12-21 18:12:29,751 - mimic_experiment - INFO - 
+Starting server type: fedlama
+2024-12-21 18:12:29,931 - mimic_experiment - INFO - Starting training for 10 rounds for server type fedlama
+2024-12-21 18:15:31,148 - mimic_experiment - INFO - 
+Starting server type: pfedla
+2024-12-21 18:15:31,442 - mimic_experiment - INFO - Starting training for 10 rounds for server type pfedla
+2024-12-21 18:18:35,698 - mimic_experiment - INFO - 
+Starting server type: layerpfl
+2024-12-21 18:18:35,905 - mimic_experiment - INFO - Starting training for 10 rounds for server type layerpfl
+2024-12-21 18:21:38,254 - mimic_experiment - INFO - 
+Starting Run 3/3
+2024-12-21 18:21:38,272 - mimic_experiment - INFO - 
+Starting server type: local
+2024-12-21 18:21:38,386 - mimic_experiment - INFO - Starting training for 10 rounds for server type local
+2024-12-21 18:24:39,952 - mimic_experiment - INFO - 
+Starting server type: fedavg
+2024-12-21 18:24:40,100 - mimic_experiment - INFO - Starting training for 10 rounds for server type fedavg
+2024-12-21 18:27:42,662 - mimic_experiment - INFO - 
+Starting server type: fedprox
+2024-12-21 18:27:42,835 - mimic_experiment - INFO - Starting training for 10 rounds for server type fedprox
+2024-12-21 18:30:46,096 - mimic_experiment - INFO - 
+Starting server type: pfedme
+2024-12-21 18:30:46,309 - mimic_experiment - INFO - Starting training for 10 rounds for server type pfedme
+2024-12-21 18:33:58,687 - mimic_experiment - INFO - 
+Starting server type: ditto
+2024-12-21 18:33:58,931 - mimic_experiment - INFO - Starting training for 10 rounds for server type ditto
+2024-12-21 18:40:13,998 - mimic_experiment - INFO - 
+Starting server type: localadaptation
+2024-12-21 18:40:14,154 - mimic_experiment - INFO - Starting training for 10 rounds for server type localadaptation
+2024-12-21 18:43:54,550 - mimic_experiment - INFO - 
+Starting server type: babu
+2024-12-21 18:43:54,709 - mimic_experiment - INFO - Starting training for 10 rounds for server type babu
+2024-12-21 18:47:12,751 - mimic_experiment - INFO - 
+Starting server type: fedlp
+2024-12-21 18:47:12,891 - mimic_experiment - INFO - Starting training for 10 rounds for server type fedlp
+2024-12-21 18:50:15,827 - mimic_experiment - INFO - 
+Starting server type: fedlama
+2024-12-21 18:50:16,002 - mimic_experiment - INFO - Starting training for 10 rounds for server type fedlama
+2024-12-21 18:53:17,465 - mimic_experiment - INFO - 
+Starting server type: pfedla
+2024-12-21 18:53:17,665 - mimic_experiment - INFO - Starting training for 10 rounds for server type pfedla
+2024-12-21 18:56:23,206 - mimic_experiment - INFO - 
+Starting server type: layerpfl
+2024-12-21 18:56:23,397 - mimic_experiment - INFO - Starting training for 10 rounds for server type layerpfl
+2024-12-21 18:59:21,437 - mimic_experiment - INFO - 
+Starting server type: local
+2024-12-21 18:59:21,546 - mimic_experiment - INFO - Starting training for 10 rounds for server type local
+2024-12-21 19:02:22,976 - mimic_experiment - INFO - 
+Starting server type: fedavg
+2024-12-21 19:02:23,116 - mimic_experiment - INFO - Starting training for 10 rounds for server type fedavg
+2024-12-21 19:05:23,206 - mimic_experiment - INFO - 
+Starting server type: fedprox
+2024-12-21 19:05:23,391 - mimic_experiment - INFO - Starting training for 10 rounds for server type fedprox
+2024-12-21 19:08:28,333 - mimic_experiment - INFO - 
+Starting server type: pfedme
+2024-12-21 19:08:28,513 - mimic_experiment - INFO - Starting training for 10 rounds for server type pfedme
+2024-12-21 19:11:40,690 - mimic_experiment - INFO - 
+Starting server type: ditto
+2024-12-21 19:11:40,920 - mimic_experiment - INFO - Starting training for 10 rounds for server type ditto
+2024-12-21 19:17:55,596 - mimic_experiment - INFO - 
+Starting server type: localadaptation
+2024-12-21 19:17:55,730 - mimic_experiment - INFO - Starting training for 10 rounds for server type localadaptation
+2024-12-21 19:21:35,062 - mimic_experiment - INFO - 
+Starting server type: babu
+2024-12-21 19:21:35,229 - mimic_experiment - INFO - Starting training for 10 rounds for server type babu
+2024-12-21 19:24:51,488 - mimic_experiment - INFO - 
+Starting server type: fedlp
+2024-12-21 19:24:51,623 - mimic_experiment - INFO - Starting training for 10 rounds for server type fedlp
+2024-12-21 19:27:55,656 - mimic_experiment - INFO - 
+Starting server type: fedlama
+2024-12-21 19:27:55,835 - mimic_experiment - INFO - Starting training for 10 rounds for server type fedlama
+2024-12-21 19:30:58,969 - mimic_experiment - INFO - 
+Starting server type: pfedla
+2024-12-21 19:30:59,181 - mimic_experiment - INFO - Starting training for 10 rounds for server type pfedla
+2024-12-21 19:34:04,600 - mimic_experiment - INFO - 
+Starting server type: layerpfl
+2024-12-21 19:34:04,796 - mimic_experiment - INFO - Starting training for 10 rounds for server type layerpfl
+2024-12-21 19:37:03,483 - mimic_experiment - INFO - 
+Starting server type: local
+2024-12-21 19:37:03,591 - mimic_experiment - INFO - Starting training for 10 rounds for server type local
+2024-12-21 19:40:01,586 - mimic_experiment - INFO - 
+Starting server type: fedavg
+2024-12-21 19:40:01,701 - mimic_experiment - INFO - Starting training for 10 rounds for server type fedavg
+2024-12-21 19:43:00,385 - mimic_experiment - INFO - 
+Starting server type: fedprox
+2024-12-21 19:43:00,541 - mimic_experiment - INFO - Starting training for 10 rounds for server type fedprox
+2024-12-21 19:46:01,651 - mimic_experiment - INFO - 
+Starting server type: pfedme
+2024-12-21 19:46:01,836 - mimic_experiment - INFO - Starting training for 10 rounds for server type pfedme
+2024-12-21 19:49:14,747 - mimic_experiment - INFO - 
+Starting server type: ditto
+2024-12-21 19:49:14,977 - mimic_experiment - INFO - Starting training for 10 rounds for server type ditto
+2024-12-21 19:55:27,812 - mimic_experiment - INFO - 
+Starting server type: localadaptation
+2024-12-21 19:55:27,955 - mimic_experiment - INFO - Starting training for 10 rounds for server type localadaptation
+2024-12-21 19:59:07,852 - mimic_experiment - INFO - 
+Starting server type: babu
+2024-12-21 19:59:08,003 - mimic_experiment - INFO - Starting training for 10 rounds for server type babu
+2024-12-21 20:02:24,490 - mimic_experiment - INFO - 
+Starting server type: fedlp
+2024-12-21 20:02:24,628 - mimic_experiment - INFO - Starting training for 10 rounds for server type fedlp
+2024-12-21 20:05:27,461 - mimic_experiment - INFO - 
+Starting server type: fedlama
+2024-12-21 20:05:27,635 - mimic_experiment - INFO - Starting training for 10 rounds for server type fedlama
+2024-12-21 20:08:31,369 - mimic_experiment - INFO - 
+Starting server type: pfedla
+2024-12-21 20:08:31,574 - mimic_experiment - INFO - Starting training for 10 rounds for server type pfedla
+2024-12-21 20:11:37,625 - mimic_experiment - INFO - 
+Starting server type: layerpfl
+2024-12-21 20:11:37,828 - mimic_experiment - INFO - Starting training for 10 rounds for server type layerpfl
+2024-12-21 20:14:40,738 - mimic_experiment - INFO - 
+Starting server type: local
+2024-12-21 20:14:40,858 - mimic_experiment - INFO - Starting training for 10 rounds for server type local
+2024-12-21 20:17:43,306 - mimic_experiment - INFO - 
+Starting server type: fedavg
+2024-12-21 20:17:43,453 - mimic_experiment - INFO - Starting training for 10 rounds for server type fedavg
+2024-12-21 20:20:45,203 - mimic_experiment - INFO - 
+Starting server type: fedprox
+2024-12-21 20:20:45,379 - mimic_experiment - INFO - Starting training for 10 rounds for server type fedprox
+2024-12-21 20:23:48,853 - mimic_experiment - INFO - 
+Starting server type: pfedme
+2024-12-21 20:23:49,059 - mimic_experiment - INFO - Starting training for 10 rounds for server type pfedme
+2024-12-21 20:27:02,636 - mimic_experiment - INFO - 
+Starting server type: ditto
+2024-12-21 20:27:02,873 - mimic_experiment - INFO - Starting training for 10 rounds for server type ditto
+2024-12-21 20:33:18,553 - mimic_experiment - INFO - 
+Starting server type: localadaptation
+2024-12-21 20:33:18,701 - mimic_experiment - INFO - Starting training for 10 rounds for server type localadaptation
+2024-12-21 20:36:59,708 - mimic_experiment - INFO - 
+Starting server type: babu
+2024-12-21 20:36:59,866 - mimic_experiment - INFO - Starting training for 10 rounds for server type babu
+2024-12-21 20:40:19,417 - mimic_experiment - INFO - 
+Starting server type: fedlp
+2024-12-21 20:40:19,566 - mimic_experiment - INFO - Starting training for 10 rounds for server type fedlp
+2024-12-21 20:43:23,331 - mimic_experiment - INFO - 
+Starting server type: fedlama
+2024-12-21 20:43:23,514 - mimic_experiment - INFO - Starting training for 10 rounds for server type fedlama
+2024-12-21 20:46:27,703 - mimic_experiment - INFO - 
+Starting server type: pfedla
+2024-12-21 20:46:27,914 - mimic_experiment - INFO - Starting training for 10 rounds for server type pfedla
+2024-12-21 20:49:35,033 - mimic_experiment - INFO - 
+Starting server type: layerpfl
+2024-12-21 20:49:35,237 - mimic_experiment - INFO - Starting training for 10 rounds for server type layerpfl
