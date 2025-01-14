@@ -15,7 +15,6 @@ def get_parameters_for_dataset(DATASET):
     params = DEFAULT_PARAMS.get(DATASET)
     if not params:
         raise ValueError(f"Dataset {DATASET} is not supported.")
-
     return params
 
 def get_algorithm_config(server_type, dataset_name):
@@ -28,7 +27,7 @@ def get_algorithm_config(server_type, dataset_name):
     
     if server_type in ['layerpfl', 'layerpfl_minus_1', 'layerpfl_plus_1']:
         params['layers_to_include'] = LAYERS_TO_FEDERATE_DICT[server_type][dataset_name]
-        params['reg_param'] = REG_PARAMS['layerpfl'][dataset_name]    
+        params['reg_param'] = REG_PARAMS['layerpfl'][dataset_name]    # Optional, not currently used
     
     # FedLP specific parameters
     elif server_type == 'fedlp':
@@ -48,6 +47,7 @@ def get_algorithm_config(server_type, dataset_name):
         params['embedding_dim'] = HYPERNETWORK_PARAMS['embedding_dim'][dataset_name]
         params['hidden_dim'] = HYPERNETWORK_PARAMS['hidden_dim'][dataset_name]
         params['hn_lr'] = HYPERNETWORK_PARAMS['hn_lr'][dataset_name]
+    
     return params
 
 def move_model_to_device(model, device):

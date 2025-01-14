@@ -348,14 +348,13 @@ class MIMICDataset(BaseDataset):
 
 class HeartDataset(BaseDataset):
     """Heart disease dataset handler"""
+    # Define feature names
+    FEATURE_NAMES = ['age', 'sex', 'chest_pain_type', 'resting_bp', 'cholesterol',
+                     'sugar', 'ecg', 'max_hr', 'exercise_angina', 'exercise_ST_depression']
     
     # These are the columns that should be scaled
     COLS_TO_SCALE = ['age', 'chest_pain_type', 'resting_bp', 'cholesterol',
                      'ecg', 'max_hr', 'exercise_ST_depression']
-    
-    # Define feature names in order for clarity
-    FEATURE_NAMES = ['age', 'sex', 'chest_pain_type', 'resting_bp', 'cholesterol',
-                     'sugar', 'ecg', 'max_hr', 'exercise_angina', 'exercise_ST_depression']
     
     def __init__(self, X, y, is_train=True, **kwargs):
         self.scaler = kwargs.get('scaler', None)
