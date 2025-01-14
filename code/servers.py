@@ -23,7 +23,7 @@ class Server:
         return Client(
             config=self.config,  
             data=clientdata, 
-            modelstate=modelstate.copy(),  # Create a copy of the model state
+            modelstate=modelstate.copy(),  
             metrics_calculator=MetricsCalculator(self.config.dataset_name),
             personal_model=personal_model
         )
@@ -139,7 +139,7 @@ class FedProxServer(FLServer):
         return FedProxClient(
             config=self.config,  
             data=clientdata, 
-            modelstate=modelstate.copy(),  # Create a copy of the model state
+            modelstate=modelstate.copy(),  
             metrics_calculator=MetricsCalculator(self.config.dataset_name),
             personal_model=personal_model
         )
@@ -151,7 +151,7 @@ class PFedMeServer(FLServer):
         return PFedMeClient(
             config=self.config,  
             data=clientdata, 
-            modelstate=modelstate.copy(),  # Create a copy of the model state
+            modelstate=modelstate.copy(),  
             metrics_calculator=MetricsCalculator(self.config.dataset_name),
             personal_model=personal_model
         )
@@ -163,7 +163,7 @@ class DittoServer(FLServer):
         return DittoClient(
             config=self.config,  
             data=clientdata, 
-            modelstate=modelstate.copy(),  # Create a copy of the model state
+            modelstate=modelstate.copy(),  
             metrics_calculator=MetricsCalculator(self.config.dataset_name),
             personal_model=personal_model
         )
@@ -223,7 +223,7 @@ class LocalAdaptationServer(FLServer):
         return LocalAdaptationClient(
             config=self.config,  
             data=clientdata, 
-            modelstate=modelstate.copy(),  # Create a copy of the model state
+            modelstate=modelstate.copy(),  
             metrics_calculator=MetricsCalculator(self.config.dataset_name),
             personal_model=personal_model
         )
@@ -237,7 +237,6 @@ class LocalAdaptationServer(FLServer):
             train_loss = 0
             val_loss = 0
             val_score = {}
-            # Restore best models to clients for final evaluation
             for client in self.clients.values():
                 client_train_loss = client.train(self.personal, final_round = True)
                 client_val_loss, client_val_score = client.validate(self.personal)
@@ -252,15 +251,6 @@ class LocalAdaptationServer(FLServer):
     
 class LayerServer(FLServer):
     """Server for layer-wise federated learning."""
-    def _create_client(self, clientdata, modelstate, personal_model = False):
-        """Create a client instance."""
-        return LayerClient(
-            config=self.config,  
-            data=clientdata, 
-            modelstate=modelstate.copy(),  # Create a copy of the model state
-            metrics_calculator=MetricsCalculator(self.config.dataset_name),
-            personal_model=personal_model
-        )
     def aggregate_models(self):
         """Aggregate only specified layers."""
         layers_to_include = self.config.algorithm_params['layers_to_include']
@@ -277,7 +267,40 @@ class LayerServer(FLServer):
             for name, param in self.serverstate.model.named_parameters():
                 if any(layer in name for layer in layers_to_include):
                     param.data.add_(client_model[name].data * client.data.weight)
+                    
+    def distribute_global_model(self):
+        """Distribute only specified layers of global model to clients."""
+        layers_to_include = self.config.algorithm_params['layers_to_include']
+        
+        # Get current global state
+        global_state = self.serverstate.model.state_dict()
+        
+        for client in self.clients.values():
+            # Get current client state
+            current_client_state = client.get_client_state(personal=False).model.state_dict()
+            
+            # Create new state dict combining global and client states
+            new_state = current_client_state.copy()  # Start with current client state
+            
+            # Update only specified layers from global model
+            for name in new_state.keys():
+                if any(layer in name for layer in layers_to_include):
+                    new_state[name] = global_state[name].clone()
+                    
+            # Set complete state dict back to client
+            client.set_model_state(new_state)
 
+class LayerPFLServer(LayerServer):
+    """Server for layer-wise federated learning."""
+    def _create_client(self, clientdata, modelstate, personal_model = False):
+        """Create a client instance."""
+        return LayerPFLClient(
+            config=self.config,  
+            data=clientdata, 
+            modelstate=modelstate.copy(),  
+            metrics_calculator=MetricsCalculator(self.config.dataset_name),
+            personal_model=personal_model
+        )
 class BABUServer(LayerServer):
     """Server implementation for BABU."""
     def _create_client(self, clientdata, modelstate, personal_model = False):
@@ -285,7 +308,7 @@ class BABUServer(LayerServer):
         return BABUClient(
             config=self.config,  
             data=clientdata, 
-            modelstate=modelstate.copy(),  # Create a copy of the model state
+            modelstate=modelstate.copy(),  
             metrics_calculator=MetricsCalculator(self.config.dataset_name),
             personal_model=personal_model
         )
@@ -319,7 +342,7 @@ class FedLPServer(FLServer):
         return FedLPClient(
             config=self.config,  
             data=clientdata, 
-            modelstate=modelstate.copy(),  # Create a copy of the model state
+            modelstate=modelstate.copy(),  
             metrics_calculator=MetricsCalculator(self.config.dataset_name),
             personal_model=personal_model
         )
@@ -381,7 +404,7 @@ class FedLAMAServer(FLServer):
         return FedLAMAClient(
             config=self.config,  
             data=clientdata, 
-            modelstate=modelstate.copy(),  # Create a copy of the model state
+            modelstate=modelstate.copy(),  
             metrics_calculator=MetricsCalculator(self.config.dataset_name),
             personal_model=personal_model
         )
@@ -521,7 +544,7 @@ class pFedLAServer(FLServer):
         return pFedLAClient(
             config=self.config,  
             data=clientdata, 
-            modelstate=modelstate.copy(),  # Create a copy of the model state
+            modelstate=modelstate.copy(),  
             metrics_calculator=MetricsCalculator(self.config.dataset_name),
             personal_model=personal_model
         )

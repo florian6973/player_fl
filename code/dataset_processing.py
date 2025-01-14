@@ -108,12 +108,13 @@ class UnifiedDataLoader:
 
     def _load_heart(self):
         """Handle Heart dataset from CSV files"""
-        columns = [
-            'age', 'sex', 'chest_pain_type', 'resting_bp', 'cholesterol',
-            'sugar', 'ecg', 'max_hr', 'exercise_angina',
-            'exercise_ST_depression', 'target'
-        ]
-        
+        columns = ['age', 'sex', 'chest_pain_type', 'resting_bp', 'cholesterol', 
+                'sugar', 'ecg', 'max_hr', 'exercise_angina', 'exercise_ST_depression',
+                    'slope_ST', 'number_major_vessels', 'thalassemia_hx', 'target']
+        used_columns =  ['age', 'sex', 'chest_pain_type', 'resting_bp', 'cholesterol',
+                        'sugar', 'ecg', 'max_hr', 'exercise_angina', 'exercise_ST_depression',
+                            'target']
+            
         all_data = []
         sites = ['cleveland', 'hungarian', 'switzerland', 'va']
         
@@ -123,11 +124,11 @@ class UnifiedDataLoader:
                 file_path,
                 names=columns,
                 na_values='?',
-                usecols=columns
+                 usecols=used_columns
             ).dropna()
             
             # Convert features to numpy arrays
-            feature_cols = [col for col in columns if col != 'target']
+            feature_cols = [col for col in used_columns if col != 'target']
             features = site_data[feature_cols].values
             
             df = pd.DataFrame({
@@ -225,7 +226,6 @@ class CIFARDataset(BaseDataset):
         image = self.X[idx]
         label = self.y[idx]
         
-        image = image.transpose(1, 2, 0)
         image_tensor = self.transform(image)
         label_tensor = torch.tensor(label, dtype=torch.long)
         
@@ -348,35 +348,64 @@ class MIMICDataset(BaseDataset):
 
 class HeartDataset(BaseDataset):
     """Heart disease dataset handler"""
-    COLS_TO_SCALE = ['age', 'chest_pain_type', 'resting_bp', 'cholesterol', 
+    
+    # These are the columns that should be scaled
+    COLS_TO_SCALE = ['age', 'chest_pain_type', 'resting_bp', 'cholesterol',
                      'ecg', 'max_hr', 'exercise_ST_depression']
-
+    
+    # Define feature names in order for clarity
+    FEATURE_NAMES = ['age', 'sex', 'chest_pain_type', 'resting_bp', 'cholesterol',
+                     'sugar', 'ecg', 'max_hr', 'exercise_angina', 'exercise_ST_depression']
+    
     def __init__(self, X, y, is_train=True, **kwargs):
         self.scaler = kwargs.get('scaler', None)
         
+        # Get indices of columns to scale
+        self.scale_indices = [self.FEATURE_NAMES.index(col) for col in self.COLS_TO_SCALE]
+        
         if is_train:
             scaler = StandardScaler()
-            scaler.mean_ = np.array([
-                53.0972973, 3.22702703, 132.75405405, 220.13648649,
-                0.63513514, 138.74459459, 0.89432432
-            ])
-            scaler.var_ = np.array([
-                7.02459463e+01, 8.16756772e-01, 3.45293057e+02, 4.88330934e+03,
-                5.92069868e-01, 5.29172208e+02, 1.11317517e+00
-            ])
-            scaler.scale_ = np.sqrt(scaler.var_)
-            self.scaler = scaler
             
+            # Initialize arrays for all features
+            means = np.zeros(len(self.FEATURE_NAMES))
+            variances = np.ones(len(self.FEATURE_NAMES))
+            
+            # Set the pre-computed values for columns that should be scaled
+            scale_values = {
+                'age': (53.0972973, 7.02459463e+01),
+                'chest_pain_type': (3.22702703, 8.16756772e-01),
+                'resting_bp': (132.75405405, 3.45293057e+02),
+                'cholesterol': (220.13648649, 4.88330934e+03),
+                'ecg': (0.63513514, 5.92069868e-01),
+                'max_hr': (138.74459459, 5.29172208e+02),
+                'exercise_ST_depression': (0.89432432, 1.11317517e+00)
+            }
+            
+            # Update means and variances for scaled columns
+            for col, (mean, var) in scale_values.items():
+                idx = self.FEATURE_NAMES.index(col)
+                means[idx] = mean
+                variances[idx] = var
+            
+            scaler.mean_ = means
+            scaler.var_ = variances
+            scaler.scale_ = np.sqrt(variances)
+            self.scaler = scaler
+        
         super().__init__(X, y, is_train)
-
+    
     def get_transform(self):
         return self.scaler
-
+    
     def __getitem__(self, idx):
-        features = torch.tensor(self.X[idx], dtype=torch.float32)
+        features = self.X[idx].copy()
+        if self.scaler is not None:
+            features = self.scaler.transform(features.reshape(1, -1)).flatten()
+        
+        features = torch.tensor(features, dtype=torch.float32)
         label = torch.tensor(self.y[idx], dtype=torch.long)
         return features, label
-
+    
     def get_scalers(self):
         return {'scaler': self.scaler}
 
@@ -486,7 +515,7 @@ class DataPreprocessor:
         
         # Split data while handling masks if present
         train_data, val_data, test_data = self._split_data(X, y, masks)
-        
+
         # Create datasets with appropriate components
         train_dataset = self._create_dataset(train_data, is_train=True)
         scaler = getattr(train_dataset, 'get_scalers', lambda: {})()

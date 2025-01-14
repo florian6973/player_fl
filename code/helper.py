@@ -23,8 +23,12 @@ def get_algorithm_config(server_type, dataset_name):
     params = {}
     
     # Layer-based methods
-    if server_type in ['layerpfl', 'babu', 'layerpfl_minus_1', 'layerpfl_plus_1']:
+    if server_type == 'babu':
         params['layers_to_include'] = LAYERS_TO_FEDERATE_DICT[server_type][dataset_name]
+    
+    if server_type in ['layerpfl', 'layerpfl_minus_1', 'layerpfl_plus_1']:
+        params['layers_to_include'] = LAYERS_TO_FEDERATE_DICT[server_type][dataset_name]
+        params['reg_param'] = REG_PARAMS['layerpfl'][dataset_name]    
     
     # FedLP specific parameters
     elif server_type == 'fedlp':

@@ -1,0 +1,1201 @@
+2024-12-24 16:59:39,048 - Heart_evaluation - INFO - Starting final evaluation phase
+2024-12-24 16:59:39,051 - Heart_evaluation - INFO - Starting run 1/50
+2024-12-24 16:59:39,127 - Heart_evaluation - INFO - Evaluating local model with best hyperparameters
+2024-12-24 16:59:41,083 - Heart_evaluation - INFO - Completed local evaluation
+2024-12-24 16:59:41,083 - Heart_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2024-12-24 16:59:42,657 - Heart_evaluation - INFO - Completed fedavg evaluation
+2024-12-24 16:59:42,657 - Heart_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2024-12-24 16:59:44,526 - Heart_evaluation - INFO - Completed fedprox evaluation
+2024-12-24 16:59:44,526 - Heart_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2024-12-24 16:59:46,441 - Heart_evaluation - INFO - Completed pfedme evaluation
+2024-12-24 16:59:46,441 - Heart_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2024-12-24 16:59:49,700 - Heart_evaluation - INFO - Completed ditto evaluation
+2024-12-24 16:59:49,700 - Heart_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2024-12-24 16:59:51,468 - Heart_evaluation - INFO - Completed localadaptation evaluation
+2024-12-24 16:59:51,468 - Heart_evaluation - INFO - Evaluating babu model with best hyperparameters
+2024-12-24 16:59:53,425 - Heart_evaluation - INFO - Completed babu evaluation
+2024-12-24 16:59:53,425 - Heart_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2024-12-24 16:59:54,999 - Heart_evaluation - INFO - Completed fedlp evaluation
+2024-12-24 16:59:55,000 - Heart_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2024-12-24 16:59:56,579 - Heart_evaluation - INFO - Completed fedlama evaluation
+2024-12-24 16:59:56,579 - Heart_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2024-12-24 16:59:58,193 - Heart_evaluation - INFO - Completed pfedla evaluation
+2024-12-24 16:59:58,193 - Heart_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2024-12-24 16:59:59,770 - Heart_evaluation - INFO - Completed layerpfl evaluation
+2024-12-24 16:59:59,782 - Heart_evaluation - INFO - Successfully completed run 1
+2024-12-24 16:59:59,782 - Heart_evaluation - INFO - Starting run 2/50
+2024-12-24 16:59:59,791 - Heart_evaluation - INFO - Evaluating local model with best hyperparameters
+2024-12-24 17:00:01,358 - Heart_evaluation - INFO - Completed local evaluation
+2024-12-24 17:00:01,359 - Heart_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2024-12-24 17:00:02,934 - Heart_evaluation - INFO - Completed fedavg evaluation
+2024-12-24 17:00:02,934 - Heart_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2024-12-24 17:00:04,746 - Heart_evaluation - INFO - Completed fedprox evaluation
+2024-12-24 17:00:04,746 - Heart_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2024-12-24 17:00:06,656 - Heart_evaluation - INFO - Completed pfedme evaluation
+2024-12-24 17:00:06,657 - Heart_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2024-12-24 17:00:09,910 - Heart_evaluation - INFO - Completed ditto evaluation
+2024-12-24 17:00:09,910 - Heart_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2024-12-24 17:00:11,678 - Heart_evaluation - INFO - Completed localadaptation evaluation
+2024-12-24 17:00:11,679 - Heart_evaluation - INFO - Evaluating babu model with best hyperparameters
+2024-12-24 17:00:13,523 - Heart_evaluation - INFO - Completed babu evaluation
+2024-12-24 17:00:13,523 - Heart_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2024-12-24 17:00:15,093 - Heart_evaluation - INFO - Completed fedlp evaluation
+2024-12-24 17:00:15,094 - Heart_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2024-12-24 17:00:16,672 - Heart_evaluation - INFO - Completed fedlama evaluation
+2024-12-24 17:00:16,672 - Heart_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2024-12-24 17:00:18,375 - Heart_evaluation - INFO - Completed pfedla evaluation
+2024-12-24 17:00:18,376 - Heart_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2024-12-24 17:00:19,943 - Heart_evaluation - INFO - Completed layerpfl evaluation
+2024-12-24 17:00:19,948 - Heart_evaluation - INFO - Successfully completed run 2
+2024-12-24 17:00:19,948 - Heart_evaluation - INFO - Starting run 3/50
+2024-12-24 17:00:19,956 - Heart_evaluation - INFO - Evaluating local model with best hyperparameters
+2024-12-24 17:00:21,519 - Heart_evaluation - INFO - Completed local evaluation
+2024-12-24 17:00:21,520 - Heart_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2024-12-24 17:00:23,086 - Heart_evaluation - INFO - Completed fedavg evaluation
+2024-12-24 17:00:23,086 - Heart_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2024-12-24 17:00:24,897 - Heart_evaluation - INFO - Completed fedprox evaluation
+2024-12-24 17:00:24,897 - Heart_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2024-12-24 17:00:26,809 - Heart_evaluation - INFO - Completed pfedme evaluation
+2024-12-24 17:00:26,809 - Heart_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2024-12-24 17:00:30,108 - Heart_evaluation - INFO - Completed ditto evaluation
+2024-12-24 17:00:30,108 - Heart_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2024-12-24 17:00:31,912 - Heart_evaluation - INFO - Completed localadaptation evaluation
+2024-12-24 17:00:31,912 - Heart_evaluation - INFO - Evaluating babu model with best hyperparameters
+2024-12-24 17:00:33,791 - Heart_evaluation - INFO - Completed babu evaluation
+2024-12-24 17:00:33,791 - Heart_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2024-12-24 17:00:35,393 - Heart_evaluation - INFO - Completed fedlp evaluation
+2024-12-24 17:00:35,393 - Heart_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2024-12-24 17:00:36,993 - Heart_evaluation - INFO - Completed fedlama evaluation
+2024-12-24 17:00:36,993 - Heart_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2024-12-24 17:00:38,636 - Heart_evaluation - INFO - Completed pfedla evaluation
+2024-12-24 17:00:38,636 - Heart_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2024-12-24 17:00:40,235 - Heart_evaluation - INFO - Completed layerpfl evaluation
+2024-12-24 17:00:40,239 - Heart_evaluation - INFO - Successfully completed run 3
+2024-12-24 17:00:40,239 - Heart_evaluation - INFO - Starting run 4/50
+2024-12-24 17:00:40,247 - Heart_evaluation - INFO - Evaluating local model with best hyperparameters
+2024-12-24 17:00:41,839 - Heart_evaluation - INFO - Completed local evaluation
+2024-12-24 17:00:41,839 - Heart_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2024-12-24 17:00:43,435 - Heart_evaluation - INFO - Completed fedavg evaluation
+2024-12-24 17:00:43,436 - Heart_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2024-12-24 17:00:45,377 - Heart_evaluation - INFO - Completed fedprox evaluation
+2024-12-24 17:00:45,377 - Heart_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2024-12-24 17:00:47,308 - Heart_evaluation - INFO - Completed pfedme evaluation
+2024-12-24 17:00:47,308 - Heart_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2024-12-24 17:00:50,567 - Heart_evaluation - INFO - Completed ditto evaluation
+2024-12-24 17:00:50,567 - Heart_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2024-12-24 17:00:52,340 - Heart_evaluation - INFO - Completed localadaptation evaluation
+2024-12-24 17:00:52,340 - Heart_evaluation - INFO - Evaluating babu model with best hyperparameters
+2024-12-24 17:00:54,186 - Heart_evaluation - INFO - Completed babu evaluation
+2024-12-24 17:00:54,186 - Heart_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2024-12-24 17:00:55,755 - Heart_evaluation - INFO - Completed fedlp evaluation
+2024-12-24 17:00:55,756 - Heart_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2024-12-24 17:00:57,326 - Heart_evaluation - INFO - Completed fedlama evaluation
+2024-12-24 17:00:57,326 - Heart_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2024-12-24 17:00:58,930 - Heart_evaluation - INFO - Completed pfedla evaluation
+2024-12-24 17:00:58,930 - Heart_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2024-12-24 17:01:00,500 - Heart_evaluation - INFO - Completed layerpfl evaluation
+2024-12-24 17:01:00,504 - Heart_evaluation - INFO - Successfully completed run 4
+2024-12-24 17:01:00,504 - Heart_evaluation - INFO - Starting run 5/50
+2024-12-24 17:01:00,512 - Heart_evaluation - INFO - Evaluating local model with best hyperparameters
+2024-12-24 17:01:02,079 - Heart_evaluation - INFO - Completed local evaluation
+2024-12-24 17:01:02,079 - Heart_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2024-12-24 17:01:03,648 - Heart_evaluation - INFO - Completed fedavg evaluation
+2024-12-24 17:01:03,649 - Heart_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2024-12-24 17:01:05,461 - Heart_evaluation - INFO - Completed fedprox evaluation
+2024-12-24 17:01:05,461 - Heart_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2024-12-24 17:01:07,377 - Heart_evaluation - INFO - Completed pfedme evaluation
+2024-12-24 17:01:07,377 - Heart_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2024-12-24 17:01:10,637 - Heart_evaluation - INFO - Completed ditto evaluation
+2024-12-24 17:01:10,637 - Heart_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2024-12-24 17:01:12,510 - Heart_evaluation - INFO - Completed localadaptation evaluation
+2024-12-24 17:01:12,510 - Heart_evaluation - INFO - Evaluating babu model with best hyperparameters
+2024-12-24 17:01:14,358 - Heart_evaluation - INFO - Completed babu evaluation
+2024-12-24 17:01:14,359 - Heart_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2024-12-24 17:01:15,932 - Heart_evaluation - INFO - Completed fedlp evaluation
+2024-12-24 17:01:15,932 - Heart_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2024-12-24 17:01:17,506 - Heart_evaluation - INFO - Completed fedlama evaluation
+2024-12-24 17:01:17,506 - Heart_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2024-12-24 17:01:19,118 - Heart_evaluation - INFO - Completed pfedla evaluation
+2024-12-24 17:01:19,119 - Heart_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2024-12-24 17:01:20,687 - Heart_evaluation - INFO - Completed layerpfl evaluation
+2024-12-24 17:01:20,691 - Heart_evaluation - INFO - Successfully completed run 5
+2024-12-24 17:01:20,691 - Heart_evaluation - INFO - Starting run 6/50
+2024-12-24 17:01:20,699 - Heart_evaluation - INFO - Evaluating local model with best hyperparameters
+2024-12-24 17:01:22,266 - Heart_evaluation - INFO - Completed local evaluation
+2024-12-24 17:01:22,266 - Heart_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2024-12-24 17:01:23,838 - Heart_evaluation - INFO - Completed fedavg evaluation
+2024-12-24 17:01:23,838 - Heart_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2024-12-24 17:01:25,644 - Heart_evaluation - INFO - Completed fedprox evaluation
+2024-12-24 17:01:25,645 - Heart_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2024-12-24 17:01:27,556 - Heart_evaluation - INFO - Completed pfedme evaluation
+2024-12-24 17:01:27,556 - Heart_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2024-12-24 17:01:30,809 - Heart_evaluation - INFO - Completed ditto evaluation
+2024-12-24 17:01:30,810 - Heart_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2024-12-24 17:01:32,582 - Heart_evaluation - INFO - Completed localadaptation evaluation
+2024-12-24 17:01:32,582 - Heart_evaluation - INFO - Evaluating babu model with best hyperparameters
+2024-12-24 17:01:34,429 - Heart_evaluation - INFO - Completed babu evaluation
+2024-12-24 17:01:34,429 - Heart_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2024-12-24 17:01:36,001 - Heart_evaluation - INFO - Completed fedlp evaluation
+2024-12-24 17:01:36,002 - Heart_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2024-12-24 17:01:37,577 - Heart_evaluation - INFO - Completed fedlama evaluation
+2024-12-24 17:01:37,577 - Heart_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2024-12-24 17:01:39,282 - Heart_evaluation - INFO - Completed pfedla evaluation
+2024-12-24 17:01:39,282 - Heart_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2024-12-24 17:01:40,850 - Heart_evaluation - INFO - Completed layerpfl evaluation
+2024-12-24 17:01:40,854 - Heart_evaluation - INFO - Successfully completed run 6
+2024-12-24 17:01:40,855 - Heart_evaluation - INFO - Starting run 7/50
+2024-12-24 17:01:40,863 - Heart_evaluation - INFO - Evaluating local model with best hyperparameters
+2024-12-24 17:01:42,424 - Heart_evaluation - INFO - Completed local evaluation
+2024-12-24 17:01:42,425 - Heart_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2024-12-24 17:01:43,991 - Heart_evaluation - INFO - Completed fedavg evaluation
+2024-12-24 17:01:43,991 - Heart_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2024-12-24 17:01:45,801 - Heart_evaluation - INFO - Completed fedprox evaluation
+2024-12-24 17:01:45,802 - Heart_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2024-12-24 17:01:47,714 - Heart_evaluation - INFO - Completed pfedme evaluation
+2024-12-24 17:01:47,715 - Heart_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2024-12-24 17:01:50,968 - Heart_evaluation - INFO - Completed ditto evaluation
+2024-12-24 17:01:50,968 - Heart_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2024-12-24 17:01:52,745 - Heart_evaluation - INFO - Completed localadaptation evaluation
+2024-12-24 17:01:52,745 - Heart_evaluation - INFO - Evaluating babu model with best hyperparameters
+2024-12-24 17:01:54,597 - Heart_evaluation - INFO - Completed babu evaluation
+2024-12-24 17:01:54,597 - Heart_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2024-12-24 17:01:56,170 - Heart_evaluation - INFO - Completed fedlp evaluation
+2024-12-24 17:01:56,171 - Heart_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2024-12-24 17:01:57,740 - Heart_evaluation - INFO - Completed fedlama evaluation
+2024-12-24 17:01:57,740 - Heart_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2024-12-24 17:01:59,350 - Heart_evaluation - INFO - Completed pfedla evaluation
+2024-12-24 17:01:59,350 - Heart_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2024-12-24 17:02:00,921 - Heart_evaluation - INFO - Completed layerpfl evaluation
+2024-12-24 17:02:00,926 - Heart_evaluation - INFO - Successfully completed run 7
+2024-12-24 17:02:00,926 - Heart_evaluation - INFO - Starting run 8/50
+2024-12-24 17:02:00,934 - Heart_evaluation - INFO - Evaluating local model with best hyperparameters
+2024-12-24 17:02:02,500 - Heart_evaluation - INFO - Completed local evaluation
+2024-12-24 17:02:02,500 - Heart_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2024-12-24 17:02:04,072 - Heart_evaluation - INFO - Completed fedavg evaluation
+2024-12-24 17:02:04,072 - Heart_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2024-12-24 17:02:05,984 - Heart_evaluation - INFO - Completed fedprox evaluation
+2024-12-24 17:02:05,984 - Heart_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2024-12-24 17:02:07,897 - Heart_evaluation - INFO - Completed pfedme evaluation
+2024-12-24 17:02:07,897 - Heart_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2024-12-24 17:02:11,156 - Heart_evaluation - INFO - Completed ditto evaluation
+2024-12-24 17:02:11,156 - Heart_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2024-12-24 17:02:12,930 - Heart_evaluation - INFO - Completed localadaptation evaluation
+2024-12-24 17:02:12,930 - Heart_evaluation - INFO - Evaluating babu model with best hyperparameters
+2024-12-24 17:02:14,775 - Heart_evaluation - INFO - Completed babu evaluation
+2024-12-24 17:02:14,775 - Heart_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2024-12-24 17:02:16,356 - Heart_evaluation - INFO - Completed fedlp evaluation
+2024-12-24 17:02:16,356 - Heart_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2024-12-24 17:02:17,930 - Heart_evaluation - INFO - Completed fedlama evaluation
+2024-12-24 17:02:17,930 - Heart_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2024-12-24 17:02:19,542 - Heart_evaluation - INFO - Completed pfedla evaluation
+2024-12-24 17:02:19,542 - Heart_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2024-12-24 17:02:21,118 - Heart_evaluation - INFO - Completed layerpfl evaluation
+2024-12-24 17:02:21,124 - Heart_evaluation - INFO - Successfully completed run 8
+2024-12-24 17:02:21,124 - Heart_evaluation - INFO - Starting run 9/50
+2024-12-24 17:02:21,132 - Heart_evaluation - INFO - Evaluating local model with best hyperparameters
+2024-12-24 17:02:22,700 - Heart_evaluation - INFO - Completed local evaluation
+2024-12-24 17:02:22,700 - Heart_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2024-12-24 17:02:24,269 - Heart_evaluation - INFO - Completed fedavg evaluation
+2024-12-24 17:02:24,270 - Heart_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2024-12-24 17:02:26,079 - Heart_evaluation - INFO - Completed fedprox evaluation
+2024-12-24 17:02:26,079 - Heart_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2024-12-24 17:02:27,989 - Heart_evaluation - INFO - Completed pfedme evaluation
+2024-12-24 17:02:27,989 - Heart_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2024-12-24 17:02:31,248 - Heart_evaluation - INFO - Completed ditto evaluation
+2024-12-24 17:02:31,248 - Heart_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2024-12-24 17:02:33,119 - Heart_evaluation - INFO - Completed localadaptation evaluation
+2024-12-24 17:02:33,119 - Heart_evaluation - INFO - Evaluating babu model with best hyperparameters
+2024-12-24 17:02:34,968 - Heart_evaluation - INFO - Completed babu evaluation
+2024-12-24 17:02:34,969 - Heart_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2024-12-24 17:02:36,544 - Heart_evaluation - INFO - Completed fedlp evaluation
+2024-12-24 17:02:36,545 - Heart_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2024-12-24 17:02:38,119 - Heart_evaluation - INFO - Completed fedlama evaluation
+2024-12-24 17:02:38,119 - Heart_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2024-12-24 17:02:39,727 - Heart_evaluation - INFO - Completed pfedla evaluation
+2024-12-24 17:02:39,727 - Heart_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2024-12-24 17:02:41,304 - Heart_evaluation - INFO - Completed layerpfl evaluation
+2024-12-24 17:02:41,309 - Heart_evaluation - INFO - Successfully completed run 9
+2024-12-24 17:02:41,310 - Heart_evaluation - INFO - Starting run 10/50
+2024-12-24 17:02:41,318 - Heart_evaluation - INFO - Evaluating local model with best hyperparameters
+2024-12-24 17:02:42,883 - Heart_evaluation - INFO - Completed local evaluation
+2024-12-24 17:02:42,883 - Heart_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2024-12-24 17:02:44,455 - Heart_evaluation - INFO - Completed fedavg evaluation
+2024-12-24 17:02:44,455 - Heart_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2024-12-24 17:02:46,268 - Heart_evaluation - INFO - Completed fedprox evaluation
+2024-12-24 17:02:46,269 - Heart_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2024-12-24 17:02:48,181 - Heart_evaluation - INFO - Completed pfedme evaluation
+2024-12-24 17:02:48,181 - Heart_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2024-12-24 17:02:51,434 - Heart_evaluation - INFO - Completed ditto evaluation
+2024-12-24 17:02:51,435 - Heart_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2024-12-24 17:02:53,211 - Heart_evaluation - INFO - Completed localadaptation evaluation
+2024-12-24 17:02:53,211 - Heart_evaluation - INFO - Evaluating babu model with best hyperparameters
+2024-12-24 17:02:55,055 - Heart_evaluation - INFO - Completed babu evaluation
+2024-12-24 17:02:55,055 - Heart_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2024-12-24 17:02:56,632 - Heart_evaluation - INFO - Completed fedlp evaluation
+2024-12-24 17:02:56,632 - Heart_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2024-12-24 17:02:58,203 - Heart_evaluation - INFO - Completed fedlama evaluation
+2024-12-24 17:02:58,203 - Heart_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2024-12-24 17:02:59,915 - Heart_evaluation - INFO - Completed pfedla evaluation
+2024-12-24 17:02:59,916 - Heart_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2024-12-24 17:03:01,491 - Heart_evaluation - INFO - Completed layerpfl evaluation
+2024-12-24 17:03:01,496 - Heart_evaluation - INFO - Successfully completed run 10
+2024-12-24 17:03:01,496 - Heart_evaluation - INFO - Starting run 11/50
+2024-12-24 17:03:01,504 - Heart_evaluation - INFO - Evaluating local model with best hyperparameters
+2024-12-24 17:03:03,070 - Heart_evaluation - INFO - Completed local evaluation
+2024-12-24 17:03:03,070 - Heart_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2024-12-24 17:03:04,638 - Heart_evaluation - INFO - Completed fedavg evaluation
+2024-12-24 17:03:04,638 - Heart_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2024-12-24 17:03:06,453 - Heart_evaluation - INFO - Completed fedprox evaluation
+2024-12-24 17:03:06,453 - Heart_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2024-12-24 17:03:08,366 - Heart_evaluation - INFO - Completed pfedme evaluation
+2024-12-24 17:03:08,366 - Heart_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2024-12-24 17:03:11,630 - Heart_evaluation - INFO - Completed ditto evaluation
+2024-12-24 17:03:11,630 - Heart_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2024-12-24 17:03:13,403 - Heart_evaluation - INFO - Completed localadaptation evaluation
+2024-12-24 17:03:13,404 - Heart_evaluation - INFO - Evaluating babu model with best hyperparameters
+2024-12-24 17:03:15,253 - Heart_evaluation - INFO - Completed babu evaluation
+2024-12-24 17:03:15,254 - Heart_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2024-12-24 17:03:16,822 - Heart_evaluation - INFO - Completed fedlp evaluation
+2024-12-24 17:03:16,823 - Heart_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2024-12-24 17:03:18,391 - Heart_evaluation - INFO - Completed fedlama evaluation
+2024-12-24 17:03:18,391 - Heart_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2024-12-24 17:03:20,000 - Heart_evaluation - INFO - Completed pfedla evaluation
+2024-12-24 17:03:20,001 - Heart_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2024-12-24 17:03:21,573 - Heart_evaluation - INFO - Completed layerpfl evaluation
+2024-12-24 17:03:21,579 - Heart_evaluation - INFO - Successfully completed run 11
+2024-12-24 17:03:21,579 - Heart_evaluation - INFO - Starting run 12/50
+2024-12-24 17:03:21,587 - Heart_evaluation - INFO - Evaluating local model with best hyperparameters
+2024-12-24 17:03:23,147 - Heart_evaluation - INFO - Completed local evaluation
+2024-12-24 17:03:23,147 - Heart_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2024-12-24 17:03:24,715 - Heart_evaluation - INFO - Completed fedavg evaluation
+2024-12-24 17:03:24,715 - Heart_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2024-12-24 17:03:26,627 - Heart_evaluation - INFO - Completed fedprox evaluation
+2024-12-24 17:03:26,627 - Heart_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2024-12-24 17:03:28,538 - Heart_evaluation - INFO - Completed pfedme evaluation
+2024-12-24 17:03:28,538 - Heart_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2024-12-24 17:03:31,801 - Heart_evaluation - INFO - Completed ditto evaluation
+2024-12-24 17:03:31,801 - Heart_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2024-12-24 17:03:33,575 - Heart_evaluation - INFO - Completed localadaptation evaluation
+2024-12-24 17:03:33,575 - Heart_evaluation - INFO - Evaluating babu model with best hyperparameters
+2024-12-24 17:03:35,422 - Heart_evaluation - INFO - Completed babu evaluation
+2024-12-24 17:03:35,422 - Heart_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2024-12-24 17:03:36,998 - Heart_evaluation - INFO - Completed fedlp evaluation
+2024-12-24 17:03:36,999 - Heart_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2024-12-24 17:03:38,573 - Heart_evaluation - INFO - Completed fedlama evaluation
+2024-12-24 17:03:38,573 - Heart_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2024-12-24 17:03:40,185 - Heart_evaluation - INFO - Completed pfedla evaluation
+2024-12-24 17:03:40,185 - Heart_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2024-12-24 17:03:41,759 - Heart_evaluation - INFO - Completed layerpfl evaluation
+2024-12-24 17:03:41,765 - Heart_evaluation - INFO - Successfully completed run 12
+2024-12-24 17:03:41,765 - Heart_evaluation - INFO - Starting run 13/50
+2024-12-24 17:03:41,773 - Heart_evaluation - INFO - Evaluating local model with best hyperparameters
+2024-12-24 17:03:43,340 - Heart_evaluation - INFO - Completed local evaluation
+2024-12-24 17:03:43,340 - Heart_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2024-12-24 17:03:44,915 - Heart_evaluation - INFO - Completed fedavg evaluation
+2024-12-24 17:03:44,915 - Heart_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2024-12-24 17:03:46,730 - Heart_evaluation - INFO - Completed fedprox evaluation
+2024-12-24 17:03:46,730 - Heart_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2024-12-24 17:03:48,645 - Heart_evaluation - INFO - Completed pfedme evaluation
+2024-12-24 17:03:48,645 - Heart_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2024-12-24 17:03:51,907 - Heart_evaluation - INFO - Completed ditto evaluation
+2024-12-24 17:03:51,907 - Heart_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2024-12-24 17:03:53,789 - Heart_evaluation - INFO - Completed localadaptation evaluation
+2024-12-24 17:03:53,790 - Heart_evaluation - INFO - Evaluating babu model with best hyperparameters
+2024-12-24 17:03:55,645 - Heart_evaluation - INFO - Completed babu evaluation
+2024-12-24 17:03:55,645 - Heart_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2024-12-24 17:03:57,219 - Heart_evaluation - INFO - Completed fedlp evaluation
+2024-12-24 17:03:57,219 - Heart_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2024-12-24 17:03:58,797 - Heart_evaluation - INFO - Completed fedlama evaluation
+2024-12-24 17:03:58,797 - Heart_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2024-12-24 17:04:00,405 - Heart_evaluation - INFO - Completed pfedla evaluation
+2024-12-24 17:04:00,405 - Heart_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2024-12-24 17:04:01,980 - Heart_evaluation - INFO - Completed layerpfl evaluation
+2024-12-24 17:04:01,986 - Heart_evaluation - INFO - Successfully completed run 13
+2024-12-24 17:04:01,986 - Heart_evaluation - INFO - Starting run 14/50
+2024-12-24 17:04:01,994 - Heart_evaluation - INFO - Evaluating local model with best hyperparameters
+2024-12-24 17:04:03,557 - Heart_evaluation - INFO - Completed local evaluation
+2024-12-24 17:04:03,558 - Heart_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2024-12-24 17:04:05,136 - Heart_evaluation - INFO - Completed fedavg evaluation
+2024-12-24 17:04:05,136 - Heart_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2024-12-24 17:04:06,945 - Heart_evaluation - INFO - Completed fedprox evaluation
+2024-12-24 17:04:06,946 - Heart_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2024-12-24 17:04:08,859 - Heart_evaluation - INFO - Completed pfedme evaluation
+2024-12-24 17:04:08,859 - Heart_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2024-12-24 17:04:12,123 - Heart_evaluation - INFO - Completed ditto evaluation
+2024-12-24 17:04:12,123 - Heart_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2024-12-24 17:04:13,895 - Heart_evaluation - INFO - Completed localadaptation evaluation
+2024-12-24 17:04:13,895 - Heart_evaluation - INFO - Evaluating babu model with best hyperparameters
+2024-12-24 17:04:15,746 - Heart_evaluation - INFO - Completed babu evaluation
+2024-12-24 17:04:15,746 - Heart_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2024-12-24 17:04:17,323 - Heart_evaluation - INFO - Completed fedlp evaluation
+2024-12-24 17:04:17,323 - Heart_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2024-12-24 17:04:18,899 - Heart_evaluation - INFO - Completed fedlama evaluation
+2024-12-24 17:04:18,899 - Heart_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2024-12-24 17:04:20,615 - Heart_evaluation - INFO - Completed pfedla evaluation
+2024-12-24 17:04:20,615 - Heart_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2024-12-24 17:04:22,189 - Heart_evaluation - INFO - Completed layerpfl evaluation
+2024-12-24 17:04:22,197 - Heart_evaluation - INFO - Successfully completed run 14
+2024-12-24 17:04:22,197 - Heart_evaluation - INFO - Starting run 15/50
+2024-12-24 17:04:22,205 - Heart_evaluation - INFO - Evaluating local model with best hyperparameters
+2024-12-24 17:04:23,776 - Heart_evaluation - INFO - Completed local evaluation
+2024-12-24 17:04:23,776 - Heart_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2024-12-24 17:04:25,355 - Heart_evaluation - INFO - Completed fedavg evaluation
+2024-12-24 17:04:25,355 - Heart_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2024-12-24 17:04:27,175 - Heart_evaluation - INFO - Completed fedprox evaluation
+2024-12-24 17:04:27,175 - Heart_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2024-12-24 17:04:29,092 - Heart_evaluation - INFO - Completed pfedme evaluation
+2024-12-24 17:04:29,092 - Heart_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2024-12-24 17:04:32,349 - Heart_evaluation - INFO - Completed ditto evaluation
+2024-12-24 17:04:32,350 - Heart_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2024-12-24 17:04:34,123 - Heart_evaluation - INFO - Completed localadaptation evaluation
+2024-12-24 17:04:34,123 - Heart_evaluation - INFO - Evaluating babu model with best hyperparameters
+2024-12-24 17:04:35,975 - Heart_evaluation - INFO - Completed babu evaluation
+2024-12-24 17:04:35,975 - Heart_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2024-12-24 17:04:37,554 - Heart_evaluation - INFO - Completed fedlp evaluation
+2024-12-24 17:04:37,554 - Heart_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2024-12-24 17:04:39,135 - Heart_evaluation - INFO - Completed fedlama evaluation
+2024-12-24 17:04:39,135 - Heart_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2024-12-24 17:04:40,747 - Heart_evaluation - INFO - Completed pfedla evaluation
+2024-12-24 17:04:40,747 - Heart_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2024-12-24 17:04:42,319 - Heart_evaluation - INFO - Completed layerpfl evaluation
+2024-12-24 17:04:42,326 - Heart_evaluation - INFO - Successfully completed run 15
+2024-12-24 17:04:42,326 - Heart_evaluation - INFO - Starting run 16/50
+2024-12-24 17:04:42,334 - Heart_evaluation - INFO - Evaluating local model with best hyperparameters
+2024-12-24 17:04:43,903 - Heart_evaluation - INFO - Completed local evaluation
+2024-12-24 17:04:43,903 - Heart_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2024-12-24 17:04:45,579 - Heart_evaluation - INFO - Completed fedavg evaluation
+2024-12-24 17:04:45,579 - Heart_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2024-12-24 17:04:47,396 - Heart_evaluation - INFO - Completed fedprox evaluation
+2024-12-24 17:04:47,396 - Heart_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2024-12-24 17:04:49,316 - Heart_evaluation - INFO - Completed pfedme evaluation
+2024-12-24 17:04:49,316 - Heart_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2024-12-24 17:04:52,622 - Heart_evaluation - INFO - Completed ditto evaluation
+2024-12-24 17:04:52,622 - Heart_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2024-12-24 17:04:54,428 - Heart_evaluation - INFO - Completed localadaptation evaluation
+2024-12-24 17:04:54,428 - Heart_evaluation - INFO - Evaluating babu model with best hyperparameters
+2024-12-24 17:04:56,315 - Heart_evaluation - INFO - Completed babu evaluation
+2024-12-24 17:04:56,315 - Heart_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2024-12-24 17:04:57,918 - Heart_evaluation - INFO - Completed fedlp evaluation
+2024-12-24 17:04:57,919 - Heart_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2024-12-24 17:04:59,521 - Heart_evaluation - INFO - Completed fedlama evaluation
+2024-12-24 17:04:59,522 - Heart_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2024-12-24 17:05:01,164 - Heart_evaluation - INFO - Completed pfedla evaluation
+2024-12-24 17:05:01,165 - Heart_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2024-12-24 17:05:02,769 - Heart_evaluation - INFO - Completed layerpfl evaluation
+2024-12-24 17:05:02,776 - Heart_evaluation - INFO - Successfully completed run 16
+2024-12-24 17:05:02,776 - Heart_evaluation - INFO - Starting run 17/50
+2024-12-24 17:05:02,784 - Heart_evaluation - INFO - Evaluating local model with best hyperparameters
+2024-12-24 17:05:04,380 - Heart_evaluation - INFO - Completed local evaluation
+2024-12-24 17:05:04,380 - Heart_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2024-12-24 17:05:05,981 - Heart_evaluation - INFO - Completed fedavg evaluation
+2024-12-24 17:05:05,981 - Heart_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2024-12-24 17:05:07,819 - Heart_evaluation - INFO - Completed fedprox evaluation
+2024-12-24 17:05:07,820 - Heart_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2024-12-24 17:05:09,762 - Heart_evaluation - INFO - Completed pfedme evaluation
+2024-12-24 17:05:09,762 - Heart_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2024-12-24 17:05:13,070 - Heart_evaluation - INFO - Completed ditto evaluation
+2024-12-24 17:05:13,070 - Heart_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2024-12-24 17:05:14,973 - Heart_evaluation - INFO - Completed localadaptation evaluation
+2024-12-24 17:05:14,974 - Heart_evaluation - INFO - Evaluating babu model with best hyperparameters
+2024-12-24 17:05:16,857 - Heart_evaluation - INFO - Completed babu evaluation
+2024-12-24 17:05:16,857 - Heart_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2024-12-24 17:05:18,461 - Heart_evaluation - INFO - Completed fedlp evaluation
+2024-12-24 17:05:18,461 - Heart_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2024-12-24 17:05:20,066 - Heart_evaluation - INFO - Completed fedlama evaluation
+2024-12-24 17:05:20,067 - Heart_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2024-12-24 17:05:21,707 - Heart_evaluation - INFO - Completed pfedla evaluation
+2024-12-24 17:05:21,707 - Heart_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2024-12-24 17:05:23,309 - Heart_evaluation - INFO - Completed layerpfl evaluation
+2024-12-24 17:05:23,317 - Heart_evaluation - INFO - Successfully completed run 17
+2024-12-24 17:05:23,317 - Heart_evaluation - INFO - Starting run 18/50
+2024-12-24 17:05:23,325 - Heart_evaluation - INFO - Evaluating local model with best hyperparameters
+2024-12-24 17:05:24,918 - Heart_evaluation - INFO - Completed local evaluation
+2024-12-24 17:05:24,918 - Heart_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2024-12-24 17:05:26,527 - Heart_evaluation - INFO - Completed fedavg evaluation
+2024-12-24 17:05:26,527 - Heart_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2024-12-24 17:05:28,368 - Heart_evaluation - INFO - Completed fedprox evaluation
+2024-12-24 17:05:28,368 - Heart_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2024-12-24 17:05:30,307 - Heart_evaluation - INFO - Completed pfedme evaluation
+2024-12-24 17:05:30,308 - Heart_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2024-12-24 17:05:33,610 - Heart_evaluation - INFO - Completed ditto evaluation
+2024-12-24 17:05:33,611 - Heart_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2024-12-24 17:05:35,413 - Heart_evaluation - INFO - Completed localadaptation evaluation
+2024-12-24 17:05:35,413 - Heart_evaluation - INFO - Evaluating babu model with best hyperparameters
+2024-12-24 17:05:37,299 - Heart_evaluation - INFO - Completed babu evaluation
+2024-12-24 17:05:37,299 - Heart_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2024-12-24 17:05:38,898 - Heart_evaluation - INFO - Completed fedlp evaluation
+2024-12-24 17:05:38,898 - Heart_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2024-12-24 17:05:40,606 - Heart_evaluation - INFO - Completed fedlama evaluation
+2024-12-24 17:05:40,607 - Heart_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2024-12-24 17:05:42,250 - Heart_evaluation - INFO - Completed pfedla evaluation
+2024-12-24 17:05:42,250 - Heart_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2024-12-24 17:05:43,830 - Heart_evaluation - INFO - Completed layerpfl evaluation
+2024-12-24 17:05:43,839 - Heart_evaluation - INFO - Successfully completed run 18
+2024-12-24 17:05:43,839 - Heart_evaluation - INFO - Starting run 19/50
+2024-12-24 17:05:43,847 - Heart_evaluation - INFO - Evaluating local model with best hyperparameters
+2024-12-24 17:05:45,416 - Heart_evaluation - INFO - Completed local evaluation
+2024-12-24 17:05:45,417 - Heart_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2024-12-24 17:05:46,992 - Heart_evaluation - INFO - Completed fedavg evaluation
+2024-12-24 17:05:46,992 - Heart_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2024-12-24 17:05:48,811 - Heart_evaluation - INFO - Completed fedprox evaluation
+2024-12-24 17:05:48,811 - Heart_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2024-12-24 17:05:50,725 - Heart_evaluation - INFO - Completed pfedme evaluation
+2024-12-24 17:05:50,726 - Heart_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2024-12-24 17:05:53,986 - Heart_evaluation - INFO - Completed ditto evaluation
+2024-12-24 17:05:53,986 - Heart_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2024-12-24 17:05:55,764 - Heart_evaluation - INFO - Completed localadaptation evaluation
+2024-12-24 17:05:55,764 - Heart_evaluation - INFO - Evaluating babu model with best hyperparameters
+2024-12-24 17:05:57,619 - Heart_evaluation - INFO - Completed babu evaluation
+2024-12-24 17:05:57,619 - Heart_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2024-12-24 17:05:59,196 - Heart_evaluation - INFO - Completed fedlp evaluation
+2024-12-24 17:05:59,196 - Heart_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2024-12-24 17:06:00,773 - Heart_evaluation - INFO - Completed fedlama evaluation
+2024-12-24 17:06:00,773 - Heart_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2024-12-24 17:06:02,387 - Heart_evaluation - INFO - Completed pfedla evaluation
+2024-12-24 17:06:02,387 - Heart_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2024-12-24 17:06:03,959 - Heart_evaluation - INFO - Completed layerpfl evaluation
+2024-12-24 17:06:03,968 - Heart_evaluation - INFO - Successfully completed run 19
+2024-12-24 17:06:03,968 - Heart_evaluation - INFO - Starting run 20/50
+2024-12-24 17:06:03,976 - Heart_evaluation - INFO - Evaluating local model with best hyperparameters
+2024-12-24 17:06:05,542 - Heart_evaluation - INFO - Completed local evaluation
+2024-12-24 17:06:05,543 - Heart_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2024-12-24 17:06:07,221 - Heart_evaluation - INFO - Completed fedavg evaluation
+2024-12-24 17:06:07,221 - Heart_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2024-12-24 17:06:09,033 - Heart_evaluation - INFO - Completed fedprox evaluation
+2024-12-24 17:06:09,033 - Heart_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2024-12-24 17:06:10,948 - Heart_evaluation - INFO - Completed pfedme evaluation
+2024-12-24 17:06:10,948 - Heart_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2024-12-24 17:06:14,210 - Heart_evaluation - INFO - Completed ditto evaluation
+2024-12-24 17:06:14,210 - Heart_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2024-12-24 17:06:15,987 - Heart_evaluation - INFO - Completed localadaptation evaluation
+2024-12-24 17:06:15,987 - Heart_evaluation - INFO - Evaluating babu model with best hyperparameters
+2024-12-24 17:06:17,840 - Heart_evaluation - INFO - Completed babu evaluation
+2024-12-24 17:06:17,840 - Heart_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2024-12-24 17:06:19,418 - Heart_evaluation - INFO - Completed fedlp evaluation
+2024-12-24 17:06:19,418 - Heart_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2024-12-24 17:06:21,001 - Heart_evaluation - INFO - Completed fedlama evaluation
+2024-12-24 17:06:21,001 - Heart_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2024-12-24 17:06:22,617 - Heart_evaluation - INFO - Completed pfedla evaluation
+2024-12-24 17:06:22,617 - Heart_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2024-12-24 17:06:24,194 - Heart_evaluation - INFO - Completed layerpfl evaluation
+2024-12-24 17:06:24,203 - Heart_evaluation - INFO - Successfully completed run 20
+2024-12-24 17:06:24,203 - Heart_evaluation - INFO - Starting run 21/50
+2024-12-24 17:06:24,211 - Heart_evaluation - INFO - Evaluating local model with best hyperparameters
+2024-12-24 17:06:25,784 - Heart_evaluation - INFO - Completed local evaluation
+2024-12-24 17:06:25,784 - Heart_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2024-12-24 17:06:27,363 - Heart_evaluation - INFO - Completed fedavg evaluation
+2024-12-24 17:06:27,363 - Heart_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2024-12-24 17:06:29,182 - Heart_evaluation - INFO - Completed fedprox evaluation
+2024-12-24 17:06:29,182 - Heart_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2024-12-24 17:06:31,097 - Heart_evaluation - INFO - Completed pfedme evaluation
+2024-12-24 17:06:31,097 - Heart_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2024-12-24 17:06:34,361 - Heart_evaluation - INFO - Completed ditto evaluation
+2024-12-24 17:06:34,362 - Heart_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2024-12-24 17:06:36,242 - Heart_evaluation - INFO - Completed localadaptation evaluation
+2024-12-24 17:06:36,242 - Heart_evaluation - INFO - Evaluating babu model with best hyperparameters
+2024-12-24 17:06:38,100 - Heart_evaluation - INFO - Completed babu evaluation
+2024-12-24 17:06:38,100 - Heart_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2024-12-24 17:06:39,680 - Heart_evaluation - INFO - Completed fedlp evaluation
+2024-12-24 17:06:39,680 - Heart_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2024-12-24 17:06:41,261 - Heart_evaluation - INFO - Completed fedlama evaluation
+2024-12-24 17:06:41,261 - Heart_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2024-12-24 17:06:42,876 - Heart_evaluation - INFO - Completed pfedla evaluation
+2024-12-24 17:06:42,876 - Heart_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2024-12-24 17:06:44,443 - Heart_evaluation - INFO - Completed layerpfl evaluation
+2024-12-24 17:06:44,452 - Heart_evaluation - INFO - Successfully completed run 21
+2024-12-24 17:06:44,452 - Heart_evaluation - INFO - Starting run 22/50
+2024-12-24 17:06:44,460 - Heart_evaluation - INFO - Evaluating local model with best hyperparameters
+2024-12-24 17:06:46,027 - Heart_evaluation - INFO - Completed local evaluation
+2024-12-24 17:06:46,028 - Heart_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2024-12-24 17:06:47,601 - Heart_evaluation - INFO - Completed fedavg evaluation
+2024-12-24 17:06:47,601 - Heart_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2024-12-24 17:06:49,413 - Heart_evaluation - INFO - Completed fedprox evaluation
+2024-12-24 17:06:49,413 - Heart_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2024-12-24 17:06:51,328 - Heart_evaluation - INFO - Completed pfedme evaluation
+2024-12-24 17:06:51,328 - Heart_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2024-12-24 17:06:54,594 - Heart_evaluation - INFO - Completed ditto evaluation
+2024-12-24 17:06:54,594 - Heart_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2024-12-24 17:06:56,370 - Heart_evaluation - INFO - Completed localadaptation evaluation
+2024-12-24 17:06:56,370 - Heart_evaluation - INFO - Evaluating babu model with best hyperparameters
+2024-12-24 17:06:58,224 - Heart_evaluation - INFO - Completed babu evaluation
+2024-12-24 17:06:58,225 - Heart_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2024-12-24 17:06:59,805 - Heart_evaluation - INFO - Completed fedlp evaluation
+2024-12-24 17:06:59,805 - Heart_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2024-12-24 17:07:01,383 - Heart_evaluation - INFO - Completed fedlama evaluation
+2024-12-24 17:07:01,384 - Heart_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2024-12-24 17:07:03,100 - Heart_evaluation - INFO - Completed pfedla evaluation
+2024-12-24 17:07:03,100 - Heart_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2024-12-24 17:07:04,672 - Heart_evaluation - INFO - Completed layerpfl evaluation
+2024-12-24 17:07:04,683 - Heart_evaluation - INFO - Successfully completed run 22
+2024-12-24 17:07:04,683 - Heart_evaluation - INFO - Starting run 23/50
+2024-12-24 17:07:04,691 - Heart_evaluation - INFO - Evaluating local model with best hyperparameters
+2024-12-24 17:07:06,258 - Heart_evaluation - INFO - Completed local evaluation
+2024-12-24 17:07:06,258 - Heart_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2024-12-24 17:07:07,833 - Heart_evaluation - INFO - Completed fedavg evaluation
+2024-12-24 17:07:07,833 - Heart_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2024-12-24 17:07:09,655 - Heart_evaluation - INFO - Completed fedprox evaluation
+2024-12-24 17:07:09,655 - Heart_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2024-12-24 17:07:11,574 - Heart_evaluation - INFO - Completed pfedme evaluation
+2024-12-24 17:07:11,574 - Heart_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2024-12-24 17:07:14,839 - Heart_evaluation - INFO - Completed ditto evaluation
+2024-12-24 17:07:14,839 - Heart_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2024-12-24 17:07:16,615 - Heart_evaluation - INFO - Completed localadaptation evaluation
+2024-12-24 17:07:16,616 - Heart_evaluation - INFO - Evaluating babu model with best hyperparameters
+2024-12-24 17:07:18,469 - Heart_evaluation - INFO - Completed babu evaluation
+2024-12-24 17:07:18,470 - Heart_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2024-12-24 17:07:20,053 - Heart_evaluation - INFO - Completed fedlp evaluation
+2024-12-24 17:07:20,053 - Heart_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2024-12-24 17:07:21,629 - Heart_evaluation - INFO - Completed fedlama evaluation
+2024-12-24 17:07:21,629 - Heart_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2024-12-24 17:07:23,246 - Heart_evaluation - INFO - Completed pfedla evaluation
+2024-12-24 17:07:23,246 - Heart_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2024-12-24 17:07:24,823 - Heart_evaluation - INFO - Completed layerpfl evaluation
+2024-12-24 17:07:24,832 - Heart_evaluation - INFO - Successfully completed run 23
+2024-12-24 17:07:24,832 - Heart_evaluation - INFO - Starting run 24/50
+2024-12-24 17:07:24,840 - Heart_evaluation - INFO - Evaluating local model with best hyperparameters
+2024-12-24 17:07:26,411 - Heart_evaluation - INFO - Completed local evaluation
+2024-12-24 17:07:26,411 - Heart_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2024-12-24 17:07:27,987 - Heart_evaluation - INFO - Completed fedavg evaluation
+2024-12-24 17:07:27,987 - Heart_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2024-12-24 17:07:29,905 - Heart_evaluation - INFO - Completed fedprox evaluation
+2024-12-24 17:07:29,905 - Heart_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2024-12-24 17:07:31,825 - Heart_evaluation - INFO - Completed pfedme evaluation
+2024-12-24 17:07:31,826 - Heart_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2024-12-24 17:07:35,085 - Heart_evaluation - INFO - Completed ditto evaluation
+2024-12-24 17:07:35,085 - Heart_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2024-12-24 17:07:36,867 - Heart_evaluation - INFO - Completed localadaptation evaluation
+2024-12-24 17:07:36,867 - Heart_evaluation - INFO - Evaluating babu model with best hyperparameters
+2024-12-24 17:07:38,723 - Heart_evaluation - INFO - Completed babu evaluation
+2024-12-24 17:07:38,723 - Heart_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2024-12-24 17:07:40,300 - Heart_evaluation - INFO - Completed fedlp evaluation
+2024-12-24 17:07:40,300 - Heart_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2024-12-24 17:07:41,881 - Heart_evaluation - INFO - Completed fedlama evaluation
+2024-12-24 17:07:41,881 - Heart_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2024-12-24 17:07:43,495 - Heart_evaluation - INFO - Completed pfedla evaluation
+2024-12-24 17:07:43,495 - Heart_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2024-12-24 17:07:45,078 - Heart_evaluation - INFO - Completed layerpfl evaluation
+2024-12-24 17:07:45,088 - Heart_evaluation - INFO - Successfully completed run 24
+2024-12-24 17:07:45,088 - Heart_evaluation - INFO - Starting run 25/50
+2024-12-24 17:07:45,097 - Heart_evaluation - INFO - Evaluating local model with best hyperparameters
+2024-12-24 17:07:46,668 - Heart_evaluation - INFO - Completed local evaluation
+2024-12-24 17:07:46,668 - Heart_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2024-12-24 17:07:48,245 - Heart_evaluation - INFO - Completed fedavg evaluation
+2024-12-24 17:07:48,245 - Heart_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2024-12-24 17:07:50,064 - Heart_evaluation - INFO - Completed fedprox evaluation
+2024-12-24 17:07:50,064 - Heart_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2024-12-24 17:07:51,986 - Heart_evaluation - INFO - Completed pfedme evaluation
+2024-12-24 17:07:51,987 - Heart_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2024-12-24 17:07:55,290 - Heart_evaluation - INFO - Completed ditto evaluation
+2024-12-24 17:07:55,290 - Heart_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2024-12-24 17:07:57,202 - Heart_evaluation - INFO - Completed localadaptation evaluation
+2024-12-24 17:07:57,202 - Heart_evaluation - INFO - Evaluating babu model with best hyperparameters
+2024-12-24 17:07:59,093 - Heart_evaluation - INFO - Completed babu evaluation
+2024-12-24 17:07:59,093 - Heart_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2024-12-24 17:08:00,695 - Heart_evaluation - INFO - Completed fedlp evaluation
+2024-12-24 17:08:00,696 - Heart_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2024-12-24 17:08:02,276 - Heart_evaluation - INFO - Completed fedlama evaluation
+2024-12-24 17:08:02,276 - Heart_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2024-12-24 17:08:03,895 - Heart_evaluation - INFO - Completed pfedla evaluation
+2024-12-24 17:08:03,895 - Heart_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2024-12-24 17:08:05,474 - Heart_evaluation - INFO - Completed layerpfl evaluation
+2024-12-24 17:08:05,484 - Heart_evaluation - INFO - Successfully completed run 25
+2024-12-24 17:08:05,484 - Heart_evaluation - INFO - Starting run 26/50
+2024-12-24 17:08:05,493 - Heart_evaluation - INFO - Evaluating local model with best hyperparameters
+2024-12-24 17:08:07,059 - Heart_evaluation - INFO - Completed local evaluation
+2024-12-24 17:08:07,059 - Heart_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2024-12-24 17:08:08,640 - Heart_evaluation - INFO - Completed fedavg evaluation
+2024-12-24 17:08:08,640 - Heart_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2024-12-24 17:08:10,456 - Heart_evaluation - INFO - Completed fedprox evaluation
+2024-12-24 17:08:10,457 - Heart_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2024-12-24 17:08:12,373 - Heart_evaluation - INFO - Completed pfedme evaluation
+2024-12-24 17:08:12,373 - Heart_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2024-12-24 17:08:15,636 - Heart_evaluation - INFO - Completed ditto evaluation
+2024-12-24 17:08:15,637 - Heart_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2024-12-24 17:08:17,408 - Heart_evaluation - INFO - Completed localadaptation evaluation
+2024-12-24 17:08:17,408 - Heart_evaluation - INFO - Evaluating babu model with best hyperparameters
+2024-12-24 17:08:19,256 - Heart_evaluation - INFO - Completed babu evaluation
+2024-12-24 17:08:19,256 - Heart_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2024-12-24 17:08:20,831 - Heart_evaluation - INFO - Completed fedlp evaluation
+2024-12-24 17:08:20,831 - Heart_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2024-12-24 17:08:22,405 - Heart_evaluation - INFO - Completed fedlama evaluation
+2024-12-24 17:08:22,406 - Heart_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2024-12-24 17:08:24,121 - Heart_evaluation - INFO - Completed pfedla evaluation
+2024-12-24 17:08:24,121 - Heart_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2024-12-24 17:08:25,697 - Heart_evaluation - INFO - Completed layerpfl evaluation
+2024-12-24 17:08:25,708 - Heart_evaluation - INFO - Successfully completed run 26
+2024-12-24 17:08:25,708 - Heart_evaluation - INFO - Starting run 27/50
+2024-12-24 17:08:25,716 - Heart_evaluation - INFO - Evaluating local model with best hyperparameters
+2024-12-24 17:08:27,285 - Heart_evaluation - INFO - Completed local evaluation
+2024-12-24 17:08:27,285 - Heart_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2024-12-24 17:08:28,863 - Heart_evaluation - INFO - Completed fedavg evaluation
+2024-12-24 17:08:28,863 - Heart_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2024-12-24 17:08:30,678 - Heart_evaluation - INFO - Completed fedprox evaluation
+2024-12-24 17:08:30,678 - Heart_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2024-12-24 17:08:32,592 - Heart_evaluation - INFO - Completed pfedme evaluation
+2024-12-24 17:08:32,592 - Heart_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2024-12-24 17:08:35,855 - Heart_evaluation - INFO - Completed ditto evaluation
+2024-12-24 17:08:35,856 - Heart_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2024-12-24 17:08:37,630 - Heart_evaluation - INFO - Completed localadaptation evaluation
+2024-12-24 17:08:37,630 - Heart_evaluation - INFO - Evaluating babu model with best hyperparameters
+2024-12-24 17:08:39,487 - Heart_evaluation - INFO - Completed babu evaluation
+2024-12-24 17:08:39,487 - Heart_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2024-12-24 17:08:41,066 - Heart_evaluation - INFO - Completed fedlp evaluation
+2024-12-24 17:08:41,066 - Heart_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2024-12-24 17:08:42,648 - Heart_evaluation - INFO - Completed fedlama evaluation
+2024-12-24 17:08:42,648 - Heart_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2024-12-24 17:08:44,261 - Heart_evaluation - INFO - Completed pfedla evaluation
+2024-12-24 17:08:44,261 - Heart_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2024-12-24 17:08:45,838 - Heart_evaluation - INFO - Completed layerpfl evaluation
+2024-12-24 17:08:45,849 - Heart_evaluation - INFO - Successfully completed run 27
+2024-12-24 17:08:45,849 - Heart_evaluation - INFO - Starting run 28/50
+2024-12-24 17:08:45,857 - Heart_evaluation - INFO - Evaluating local model with best hyperparameters
+2024-12-24 17:08:47,427 - Heart_evaluation - INFO - Completed local evaluation
+2024-12-24 17:08:47,427 - Heart_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2024-12-24 17:08:49,006 - Heart_evaluation - INFO - Completed fedavg evaluation
+2024-12-24 17:08:49,006 - Heart_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2024-12-24 17:08:50,921 - Heart_evaluation - INFO - Completed fedprox evaluation
+2024-12-24 17:08:50,921 - Heart_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2024-12-24 17:08:52,838 - Heart_evaluation - INFO - Completed pfedme evaluation
+2024-12-24 17:08:52,838 - Heart_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2024-12-24 17:08:56,105 - Heart_evaluation - INFO - Completed ditto evaluation
+2024-12-24 17:08:56,105 - Heart_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2024-12-24 17:08:57,881 - Heart_evaluation - INFO - Completed localadaptation evaluation
+2024-12-24 17:08:57,882 - Heart_evaluation - INFO - Evaluating babu model with best hyperparameters
+2024-12-24 17:08:59,735 - Heart_evaluation - INFO - Completed babu evaluation
+2024-12-24 17:08:59,735 - Heart_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2024-12-24 17:09:01,314 - Heart_evaluation - INFO - Completed fedlp evaluation
+2024-12-24 17:09:01,315 - Heart_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2024-12-24 17:09:02,893 - Heart_evaluation - INFO - Completed fedlama evaluation
+2024-12-24 17:09:02,893 - Heart_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2024-12-24 17:09:04,507 - Heart_evaluation - INFO - Completed pfedla evaluation
+2024-12-24 17:09:04,507 - Heart_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2024-12-24 17:09:06,083 - Heart_evaluation - INFO - Completed layerpfl evaluation
+2024-12-24 17:09:06,095 - Heart_evaluation - INFO - Successfully completed run 28
+2024-12-24 17:09:06,095 - Heart_evaluation - INFO - Starting run 29/50
+2024-12-24 17:09:06,103 - Heart_evaluation - INFO - Evaluating local model with best hyperparameters
+2024-12-24 17:09:07,673 - Heart_evaluation - INFO - Completed local evaluation
+2024-12-24 17:09:07,673 - Heart_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2024-12-24 17:09:09,253 - Heart_evaluation - INFO - Completed fedavg evaluation
+2024-12-24 17:09:09,253 - Heart_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2024-12-24 17:09:11,071 - Heart_evaluation - INFO - Completed fedprox evaluation
+2024-12-24 17:09:11,071 - Heart_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2024-12-24 17:09:12,989 - Heart_evaluation - INFO - Completed pfedme evaluation
+2024-12-24 17:09:12,989 - Heart_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2024-12-24 17:09:16,249 - Heart_evaluation - INFO - Completed ditto evaluation
+2024-12-24 17:09:16,249 - Heart_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2024-12-24 17:09:18,159 - Heart_evaluation - INFO - Completed localadaptation evaluation
+2024-12-24 17:09:18,159 - Heart_evaluation - INFO - Evaluating babu model with best hyperparameters
+2024-12-24 17:09:20,052 - Heart_evaluation - INFO - Completed babu evaluation
+2024-12-24 17:09:20,052 - Heart_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2024-12-24 17:09:21,655 - Heart_evaluation - INFO - Completed fedlp evaluation
+2024-12-24 17:09:21,656 - Heart_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2024-12-24 17:09:23,262 - Heart_evaluation - INFO - Completed fedlama evaluation
+2024-12-24 17:09:23,262 - Heart_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2024-12-24 17:09:24,910 - Heart_evaluation - INFO - Completed pfedla evaluation
+2024-12-24 17:09:24,910 - Heart_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2024-12-24 17:09:26,515 - Heart_evaluation - INFO - Completed layerpfl evaluation
+2024-12-24 17:09:26,527 - Heart_evaluation - INFO - Successfully completed run 29
+2024-12-24 17:09:26,527 - Heart_evaluation - INFO - Starting run 30/50
+2024-12-24 17:09:26,535 - Heart_evaluation - INFO - Evaluating local model with best hyperparameters
+2024-12-24 17:09:28,134 - Heart_evaluation - INFO - Completed local evaluation
+2024-12-24 17:09:28,134 - Heart_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2024-12-24 17:09:29,742 - Heart_evaluation - INFO - Completed fedavg evaluation
+2024-12-24 17:09:29,743 - Heart_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2024-12-24 17:09:31,591 - Heart_evaluation - INFO - Completed fedprox evaluation
+2024-12-24 17:09:31,592 - Heart_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2024-12-24 17:09:33,543 - Heart_evaluation - INFO - Completed pfedme evaluation
+2024-12-24 17:09:33,543 - Heart_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2024-12-24 17:09:36,872 - Heart_evaluation - INFO - Completed ditto evaluation
+2024-12-24 17:09:36,872 - Heart_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2024-12-24 17:09:38,679 - Heart_evaluation - INFO - Completed localadaptation evaluation
+2024-12-24 17:09:38,680 - Heart_evaluation - INFO - Evaluating babu model with best hyperparameters
+2024-12-24 17:09:40,551 - Heart_evaluation - INFO - Completed babu evaluation
+2024-12-24 17:09:40,552 - Heart_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2024-12-24 17:09:42,124 - Heart_evaluation - INFO - Completed fedlp evaluation
+2024-12-24 17:09:42,125 - Heart_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2024-12-24 17:09:43,708 - Heart_evaluation - INFO - Completed fedlama evaluation
+2024-12-24 17:09:43,708 - Heart_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2024-12-24 17:09:45,428 - Heart_evaluation - INFO - Completed pfedla evaluation
+2024-12-24 17:09:45,428 - Heart_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2024-12-24 17:09:47,007 - Heart_evaluation - INFO - Completed layerpfl evaluation
+2024-12-24 17:09:47,019 - Heart_evaluation - INFO - Successfully completed run 30
+2024-12-24 17:09:47,019 - Heart_evaluation - INFO - Starting run 31/50
+2024-12-24 17:09:47,027 - Heart_evaluation - INFO - Evaluating local model with best hyperparameters
+2024-12-24 17:09:48,599 - Heart_evaluation - INFO - Completed local evaluation
+2024-12-24 17:09:48,599 - Heart_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2024-12-24 17:09:50,181 - Heart_evaluation - INFO - Completed fedavg evaluation
+2024-12-24 17:09:50,181 - Heart_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2024-12-24 17:09:52,001 - Heart_evaluation - INFO - Completed fedprox evaluation
+2024-12-24 17:09:52,001 - Heart_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2024-12-24 17:09:53,920 - Heart_evaluation - INFO - Completed pfedme evaluation
+2024-12-24 17:09:53,920 - Heart_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2024-12-24 17:09:57,186 - Heart_evaluation - INFO - Completed ditto evaluation
+2024-12-24 17:09:57,186 - Heart_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2024-12-24 17:09:58,972 - Heart_evaluation - INFO - Completed localadaptation evaluation
+2024-12-24 17:09:58,972 - Heart_evaluation - INFO - Evaluating babu model with best hyperparameters
+2024-12-24 17:10:00,833 - Heart_evaluation - INFO - Completed babu evaluation
+2024-12-24 17:10:00,833 - Heart_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2024-12-24 17:10:02,418 - Heart_evaluation - INFO - Completed fedlp evaluation
+2024-12-24 17:10:02,418 - Heart_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2024-12-24 17:10:04,001 - Heart_evaluation - INFO - Completed fedlama evaluation
+2024-12-24 17:10:04,002 - Heart_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2024-12-24 17:10:05,619 - Heart_evaluation - INFO - Completed pfedla evaluation
+2024-12-24 17:10:05,619 - Heart_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2024-12-24 17:10:07,195 - Heart_evaluation - INFO - Completed layerpfl evaluation
+2024-12-24 17:10:07,207 - Heart_evaluation - INFO - Successfully completed run 31
+2024-12-24 17:10:07,207 - Heart_evaluation - INFO - Starting run 32/50
+2024-12-24 17:10:07,215 - Heart_evaluation - INFO - Evaluating local model with best hyperparameters
+2024-12-24 17:10:08,782 - Heart_evaluation - INFO - Completed local evaluation
+2024-12-24 17:10:08,782 - Heart_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2024-12-24 17:10:10,361 - Heart_evaluation - INFO - Completed fedavg evaluation
+2024-12-24 17:10:10,361 - Heart_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2024-12-24 17:10:12,284 - Heart_evaluation - INFO - Completed fedprox evaluation
+2024-12-24 17:10:12,284 - Heart_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2024-12-24 17:10:14,205 - Heart_evaluation - INFO - Completed pfedme evaluation
+2024-12-24 17:10:14,205 - Heart_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2024-12-24 17:10:17,472 - Heart_evaluation - INFO - Completed ditto evaluation
+2024-12-24 17:10:17,472 - Heart_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2024-12-24 17:10:19,245 - Heart_evaluation - INFO - Completed localadaptation evaluation
+2024-12-24 17:10:19,245 - Heart_evaluation - INFO - Evaluating babu model with best hyperparameters
+2024-12-24 17:10:21,103 - Heart_evaluation - INFO - Completed babu evaluation
+2024-12-24 17:10:21,103 - Heart_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2024-12-24 17:10:22,683 - Heart_evaluation - INFO - Completed fedlp evaluation
+2024-12-24 17:10:22,683 - Heart_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2024-12-24 17:10:24,281 - Heart_evaluation - INFO - Completed fedlama evaluation
+2024-12-24 17:10:24,281 - Heart_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2024-12-24 17:10:25,928 - Heart_evaluation - INFO - Completed pfedla evaluation
+2024-12-24 17:10:25,929 - Heart_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2024-12-24 17:10:27,531 - Heart_evaluation - INFO - Completed layerpfl evaluation
+2024-12-24 17:10:27,544 - Heart_evaluation - INFO - Successfully completed run 32
+2024-12-24 17:10:27,544 - Heart_evaluation - INFO - Starting run 33/50
+2024-12-24 17:10:27,552 - Heart_evaluation - INFO - Evaluating local model with best hyperparameters
+2024-12-24 17:10:29,156 - Heart_evaluation - INFO - Completed local evaluation
+2024-12-24 17:10:29,156 - Heart_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2024-12-24 17:10:30,760 - Heart_evaluation - INFO - Completed fedavg evaluation
+2024-12-24 17:10:30,760 - Heart_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2024-12-24 17:10:32,607 - Heart_evaluation - INFO - Completed fedprox evaluation
+2024-12-24 17:10:32,607 - Heart_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2024-12-24 17:10:34,555 - Heart_evaluation - INFO - Completed pfedme evaluation
+2024-12-24 17:10:34,555 - Heart_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2024-12-24 17:10:37,869 - Heart_evaluation - INFO - Completed ditto evaluation
+2024-12-24 17:10:37,869 - Heart_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2024-12-24 17:10:39,682 - Heart_evaluation - INFO - Completed localadaptation evaluation
+2024-12-24 17:10:39,682 - Heart_evaluation - INFO - Evaluating babu model with best hyperparameters
+2024-12-24 17:10:41,679 - Heart_evaluation - INFO - Completed babu evaluation
+2024-12-24 17:10:41,679 - Heart_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2024-12-24 17:10:43,287 - Heart_evaluation - INFO - Completed fedlp evaluation
+2024-12-24 17:10:43,287 - Heart_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2024-12-24 17:10:44,890 - Heart_evaluation - INFO - Completed fedlama evaluation
+2024-12-24 17:10:44,890 - Heart_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2024-12-24 17:10:46,503 - Heart_evaluation - INFO - Completed pfedla evaluation
+2024-12-24 17:10:46,503 - Heart_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2024-12-24 17:10:48,082 - Heart_evaluation - INFO - Completed layerpfl evaluation
+2024-12-24 17:10:48,097 - Heart_evaluation - INFO - Successfully completed run 33
+2024-12-24 17:10:48,097 - Heart_evaluation - INFO - Starting run 34/50
+2024-12-24 17:10:48,105 - Heart_evaluation - INFO - Evaluating local model with best hyperparameters
+2024-12-24 17:10:49,674 - Heart_evaluation - INFO - Completed local evaluation
+2024-12-24 17:10:49,675 - Heart_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2024-12-24 17:10:51,251 - Heart_evaluation - INFO - Completed fedavg evaluation
+2024-12-24 17:10:51,252 - Heart_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2024-12-24 17:10:53,069 - Heart_evaluation - INFO - Completed fedprox evaluation
+2024-12-24 17:10:53,069 - Heart_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2024-12-24 17:10:54,987 - Heart_evaluation - INFO - Completed pfedme evaluation
+2024-12-24 17:10:54,987 - Heart_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2024-12-24 17:10:58,253 - Heart_evaluation - INFO - Completed ditto evaluation
+2024-12-24 17:10:58,253 - Heart_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2024-12-24 17:11:00,034 - Heart_evaluation - INFO - Completed localadaptation evaluation
+2024-12-24 17:11:00,034 - Heart_evaluation - INFO - Evaluating babu model with best hyperparameters
+2024-12-24 17:11:01,889 - Heart_evaluation - INFO - Completed babu evaluation
+2024-12-24 17:11:01,889 - Heart_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2024-12-24 17:11:03,465 - Heart_evaluation - INFO - Completed fedlp evaluation
+2024-12-24 17:11:03,465 - Heart_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2024-12-24 17:11:05,043 - Heart_evaluation - INFO - Completed fedlama evaluation
+2024-12-24 17:11:05,043 - Heart_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2024-12-24 17:11:06,660 - Heart_evaluation - INFO - Completed pfedla evaluation
+2024-12-24 17:11:06,660 - Heart_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2024-12-24 17:11:08,344 - Heart_evaluation - INFO - Completed layerpfl evaluation
+2024-12-24 17:11:08,357 - Heart_evaluation - INFO - Successfully completed run 34
+2024-12-24 17:11:08,358 - Heart_evaluation - INFO - Starting run 35/50
+2024-12-24 17:11:08,366 - Heart_evaluation - INFO - Evaluating local model with best hyperparameters
+2024-12-24 17:11:09,933 - Heart_evaluation - INFO - Completed local evaluation
+2024-12-24 17:11:09,934 - Heart_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2024-12-24 17:11:11,509 - Heart_evaluation - INFO - Completed fedavg evaluation
+2024-12-24 17:11:11,509 - Heart_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2024-12-24 17:11:13,323 - Heart_evaluation - INFO - Completed fedprox evaluation
+2024-12-24 17:11:13,323 - Heart_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2024-12-24 17:11:15,233 - Heart_evaluation - INFO - Completed pfedme evaluation
+2024-12-24 17:11:15,233 - Heart_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2024-12-24 17:11:18,492 - Heart_evaluation - INFO - Completed ditto evaluation
+2024-12-24 17:11:18,492 - Heart_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2024-12-24 17:11:20,269 - Heart_evaluation - INFO - Completed localadaptation evaluation
+2024-12-24 17:11:20,269 - Heart_evaluation - INFO - Evaluating babu model with best hyperparameters
+2024-12-24 17:11:22,117 - Heart_evaluation - INFO - Completed babu evaluation
+2024-12-24 17:11:22,117 - Heart_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2024-12-24 17:11:23,692 - Heart_evaluation - INFO - Completed fedlp evaluation
+2024-12-24 17:11:23,692 - Heart_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2024-12-24 17:11:25,270 - Heart_evaluation - INFO - Completed fedlama evaluation
+2024-12-24 17:11:25,271 - Heart_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2024-12-24 17:11:26,885 - Heart_evaluation - INFO - Completed pfedla evaluation
+2024-12-24 17:11:26,886 - Heart_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2024-12-24 17:11:28,458 - Heart_evaluation - INFO - Completed layerpfl evaluation
+2024-12-24 17:11:28,471 - Heart_evaluation - INFO - Successfully completed run 35
+2024-12-24 17:11:28,471 - Heart_evaluation - INFO - Starting run 36/50
+2024-12-24 17:11:28,479 - Heart_evaluation - INFO - Evaluating local model with best hyperparameters
+2024-12-24 17:11:30,048 - Heart_evaluation - INFO - Completed local evaluation
+2024-12-24 17:11:30,048 - Heart_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2024-12-24 17:11:31,626 - Heart_evaluation - INFO - Completed fedavg evaluation
+2024-12-24 17:11:31,626 - Heart_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2024-12-24 17:11:33,444 - Heart_evaluation - INFO - Completed fedprox evaluation
+2024-12-24 17:11:33,444 - Heart_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2024-12-24 17:11:35,469 - Heart_evaluation - INFO - Completed pfedme evaluation
+2024-12-24 17:11:35,469 - Heart_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2024-12-24 17:11:38,735 - Heart_evaluation - INFO - Completed ditto evaluation
+2024-12-24 17:11:38,736 - Heart_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2024-12-24 17:11:40,517 - Heart_evaluation - INFO - Completed localadaptation evaluation
+2024-12-24 17:11:40,517 - Heart_evaluation - INFO - Evaluating babu model with best hyperparameters
+2024-12-24 17:11:42,377 - Heart_evaluation - INFO - Completed babu evaluation
+2024-12-24 17:11:42,377 - Heart_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2024-12-24 17:11:43,960 - Heart_evaluation - INFO - Completed fedlp evaluation
+2024-12-24 17:11:43,960 - Heart_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2024-12-24 17:11:45,544 - Heart_evaluation - INFO - Completed fedlama evaluation
+2024-12-24 17:11:45,544 - Heart_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2024-12-24 17:11:47,164 - Heart_evaluation - INFO - Completed pfedla evaluation
+2024-12-24 17:11:47,164 - Heart_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2024-12-24 17:11:48,751 - Heart_evaluation - INFO - Completed layerpfl evaluation
+2024-12-24 17:11:48,764 - Heart_evaluation - INFO - Successfully completed run 36
+2024-12-24 17:11:48,764 - Heart_evaluation - INFO - Starting run 37/50
+2024-12-24 17:11:48,772 - Heart_evaluation - INFO - Evaluating local model with best hyperparameters
+2024-12-24 17:11:50,344 - Heart_evaluation - INFO - Completed local evaluation
+2024-12-24 17:11:50,345 - Heart_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2024-12-24 17:11:51,924 - Heart_evaluation - INFO - Completed fedavg evaluation
+2024-12-24 17:11:51,924 - Heart_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2024-12-24 17:11:53,743 - Heart_evaluation - INFO - Completed fedprox evaluation
+2024-12-24 17:11:53,744 - Heart_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2024-12-24 17:11:55,681 - Heart_evaluation - INFO - Completed pfedme evaluation
+2024-12-24 17:11:55,681 - Heart_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2024-12-24 17:11:58,990 - Heart_evaluation - INFO - Completed ditto evaluation
+2024-12-24 17:11:58,991 - Heart_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2024-12-24 17:12:00,797 - Heart_evaluation - INFO - Completed localadaptation evaluation
+2024-12-24 17:12:00,798 - Heart_evaluation - INFO - Evaluating babu model with best hyperparameters
+2024-12-24 17:12:02,772 - Heart_evaluation - INFO - Completed babu evaluation
+2024-12-24 17:12:02,772 - Heart_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2024-12-24 17:12:04,353 - Heart_evaluation - INFO - Completed fedlp evaluation
+2024-12-24 17:12:04,353 - Heart_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2024-12-24 17:12:05,935 - Heart_evaluation - INFO - Completed fedlama evaluation
+2024-12-24 17:12:05,935 - Heart_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2024-12-24 17:12:07,550 - Heart_evaluation - INFO - Completed pfedla evaluation
+2024-12-24 17:12:07,550 - Heart_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2024-12-24 17:12:09,131 - Heart_evaluation - INFO - Completed layerpfl evaluation
+2024-12-24 17:12:09,145 - Heart_evaluation - INFO - Successfully completed run 37
+2024-12-24 17:12:09,145 - Heart_evaluation - INFO - Starting run 38/50
+2024-12-24 17:12:09,153 - Heart_evaluation - INFO - Evaluating local model with best hyperparameters
+2024-12-24 17:12:10,722 - Heart_evaluation - INFO - Completed local evaluation
+2024-12-24 17:12:10,723 - Heart_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2024-12-24 17:12:12,302 - Heart_evaluation - INFO - Completed fedavg evaluation
+2024-12-24 17:12:12,302 - Heart_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2024-12-24 17:12:14,117 - Heart_evaluation - INFO - Completed fedprox evaluation
+2024-12-24 17:12:14,117 - Heart_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2024-12-24 17:12:16,032 - Heart_evaluation - INFO - Completed pfedme evaluation
+2024-12-24 17:12:16,032 - Heart_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2024-12-24 17:12:19,291 - Heart_evaluation - INFO - Completed ditto evaluation
+2024-12-24 17:12:19,291 - Heart_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2024-12-24 17:12:21,067 - Heart_evaluation - INFO - Completed localadaptation evaluation
+2024-12-24 17:12:21,067 - Heart_evaluation - INFO - Evaluating babu model with best hyperparameters
+2024-12-24 17:12:22,920 - Heart_evaluation - INFO - Completed babu evaluation
+2024-12-24 17:12:22,920 - Heart_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2024-12-24 17:12:24,498 - Heart_evaluation - INFO - Completed fedlp evaluation
+2024-12-24 17:12:24,498 - Heart_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2024-12-24 17:12:26,076 - Heart_evaluation - INFO - Completed fedlama evaluation
+2024-12-24 17:12:26,076 - Heart_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2024-12-24 17:12:27,689 - Heart_evaluation - INFO - Completed pfedla evaluation
+2024-12-24 17:12:27,689 - Heart_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2024-12-24 17:12:29,370 - Heart_evaluation - INFO - Completed layerpfl evaluation
+2024-12-24 17:12:29,384 - Heart_evaluation - INFO - Successfully completed run 38
+2024-12-24 17:12:29,384 - Heart_evaluation - INFO - Starting run 39/50
+2024-12-24 17:12:29,392 - Heart_evaluation - INFO - Evaluating local model with best hyperparameters
+2024-12-24 17:12:30,961 - Heart_evaluation - INFO - Completed local evaluation
+2024-12-24 17:12:30,961 - Heart_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2024-12-24 17:12:32,539 - Heart_evaluation - INFO - Completed fedavg evaluation
+2024-12-24 17:12:32,540 - Heart_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2024-12-24 17:12:34,361 - Heart_evaluation - INFO - Completed fedprox evaluation
+2024-12-24 17:12:34,361 - Heart_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2024-12-24 17:12:36,274 - Heart_evaluation - INFO - Completed pfedme evaluation
+2024-12-24 17:12:36,274 - Heart_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2024-12-24 17:12:39,534 - Heart_evaluation - INFO - Completed ditto evaluation
+2024-12-24 17:12:39,535 - Heart_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2024-12-24 17:12:41,309 - Heart_evaluation - INFO - Completed localadaptation evaluation
+2024-12-24 17:12:41,309 - Heart_evaluation - INFO - Evaluating babu model with best hyperparameters
+2024-12-24 17:12:43,167 - Heart_evaluation - INFO - Completed babu evaluation
+2024-12-24 17:12:43,168 - Heart_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2024-12-24 17:12:44,746 - Heart_evaluation - INFO - Completed fedlp evaluation
+2024-12-24 17:12:44,746 - Heart_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2024-12-24 17:12:46,327 - Heart_evaluation - INFO - Completed fedlama evaluation
+2024-12-24 17:12:46,327 - Heart_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2024-12-24 17:12:47,941 - Heart_evaluation - INFO - Completed pfedla evaluation
+2024-12-24 17:12:47,941 - Heart_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2024-12-24 17:12:49,520 - Heart_evaluation - INFO - Completed layerpfl evaluation
+2024-12-24 17:12:49,534 - Heart_evaluation - INFO - Successfully completed run 39
+2024-12-24 17:12:49,534 - Heart_evaluation - INFO - Starting run 40/50
+2024-12-24 17:12:49,542 - Heart_evaluation - INFO - Evaluating local model with best hyperparameters
+2024-12-24 17:12:51,116 - Heart_evaluation - INFO - Completed local evaluation
+2024-12-24 17:12:51,116 - Heart_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2024-12-24 17:12:52,696 - Heart_evaluation - INFO - Completed fedavg evaluation
+2024-12-24 17:12:52,696 - Heart_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2024-12-24 17:12:54,515 - Heart_evaluation - INFO - Completed fedprox evaluation
+2024-12-24 17:12:54,515 - Heart_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2024-12-24 17:12:56,538 - Heart_evaluation - INFO - Completed pfedme evaluation
+2024-12-24 17:12:56,539 - Heart_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2024-12-24 17:12:59,798 - Heart_evaluation - INFO - Completed ditto evaluation
+2024-12-24 17:12:59,799 - Heart_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2024-12-24 17:13:01,575 - Heart_evaluation - INFO - Completed localadaptation evaluation
+2024-12-24 17:13:01,575 - Heart_evaluation - INFO - Evaluating babu model with best hyperparameters
+2024-12-24 17:13:03,432 - Heart_evaluation - INFO - Completed babu evaluation
+2024-12-24 17:13:03,432 - Heart_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2024-12-24 17:13:05,013 - Heart_evaluation - INFO - Completed fedlp evaluation
+2024-12-24 17:13:05,013 - Heart_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2024-12-24 17:13:06,595 - Heart_evaluation - INFO - Completed fedlama evaluation
+2024-12-24 17:13:06,595 - Heart_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2024-12-24 17:13:08,210 - Heart_evaluation - INFO - Completed pfedla evaluation
+2024-12-24 17:13:08,210 - Heart_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2024-12-24 17:13:09,796 - Heart_evaluation - INFO - Completed layerpfl evaluation
+2024-12-24 17:13:09,810 - Heart_evaluation - INFO - Successfully completed run 40
+2024-12-24 17:13:09,810 - Heart_evaluation - INFO - Starting run 41/50
+2024-12-24 17:13:09,818 - Heart_evaluation - INFO - Evaluating local model with best hyperparameters
+2024-12-24 17:13:11,386 - Heart_evaluation - INFO - Completed local evaluation
+2024-12-24 17:13:11,386 - Heart_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2024-12-24 17:13:12,961 - Heart_evaluation - INFO - Completed fedavg evaluation
+2024-12-24 17:13:12,961 - Heart_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2024-12-24 17:13:14,779 - Heart_evaluation - INFO - Completed fedprox evaluation
+2024-12-24 17:13:14,779 - Heart_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2024-12-24 17:13:16,698 - Heart_evaluation - INFO - Completed pfedme evaluation
+2024-12-24 17:13:16,698 - Heart_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2024-12-24 17:13:19,954 - Heart_evaluation - INFO - Completed ditto evaluation
+2024-12-24 17:13:19,955 - Heart_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2024-12-24 17:13:21,732 - Heart_evaluation - INFO - Completed localadaptation evaluation
+2024-12-24 17:13:21,732 - Heart_evaluation - INFO - Evaluating babu model with best hyperparameters
+2024-12-24 17:13:23,689 - Heart_evaluation - INFO - Completed babu evaluation
+2024-12-24 17:13:23,689 - Heart_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2024-12-24 17:13:25,271 - Heart_evaluation - INFO - Completed fedlp evaluation
+2024-12-24 17:13:25,271 - Heart_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2024-12-24 17:13:26,849 - Heart_evaluation - INFO - Completed fedlama evaluation
+2024-12-24 17:13:26,849 - Heart_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2024-12-24 17:13:28,464 - Heart_evaluation - INFO - Completed pfedla evaluation
+2024-12-24 17:13:28,464 - Heart_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2024-12-24 17:13:30,039 - Heart_evaluation - INFO - Completed layerpfl evaluation
+2024-12-24 17:13:30,054 - Heart_evaluation - INFO - Successfully completed run 41
+2024-12-24 17:13:30,054 - Heart_evaluation - INFO - Starting run 42/50
+2024-12-24 17:13:30,062 - Heart_evaluation - INFO - Evaluating local model with best hyperparameters
+2024-12-24 17:13:31,632 - Heart_evaluation - INFO - Completed local evaluation
+2024-12-24 17:13:31,632 - Heart_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2024-12-24 17:13:33,209 - Heart_evaluation - INFO - Completed fedavg evaluation
+2024-12-24 17:13:33,209 - Heart_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2024-12-24 17:13:35,025 - Heart_evaluation - INFO - Completed fedprox evaluation
+2024-12-24 17:13:35,025 - Heart_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2024-12-24 17:13:36,941 - Heart_evaluation - INFO - Completed pfedme evaluation
+2024-12-24 17:13:36,941 - Heart_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2024-12-24 17:13:40,191 - Heart_evaluation - INFO - Completed ditto evaluation
+2024-12-24 17:13:40,191 - Heart_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2024-12-24 17:13:41,959 - Heart_evaluation - INFO - Completed localadaptation evaluation
+2024-12-24 17:13:41,959 - Heart_evaluation - INFO - Evaluating babu model with best hyperparameters
+2024-12-24 17:13:43,809 - Heart_evaluation - INFO - Completed babu evaluation
+2024-12-24 17:13:43,810 - Heart_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2024-12-24 17:13:45,384 - Heart_evaluation - INFO - Completed fedlp evaluation
+2024-12-24 17:13:45,385 - Heart_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2024-12-24 17:13:46,965 - Heart_evaluation - INFO - Completed fedlama evaluation
+2024-12-24 17:13:46,966 - Heart_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2024-12-24 17:13:48,577 - Heart_evaluation - INFO - Completed pfedla evaluation
+2024-12-24 17:13:48,577 - Heart_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2024-12-24 17:13:50,263 - Heart_evaluation - INFO - Completed layerpfl evaluation
+2024-12-24 17:13:50,278 - Heart_evaluation - INFO - Successfully completed run 42
+2024-12-24 17:13:50,278 - Heart_evaluation - INFO - Starting run 43/50
+2024-12-24 17:13:50,286 - Heart_evaluation - INFO - Evaluating local model with best hyperparameters
+2024-12-24 17:13:51,857 - Heart_evaluation - INFO - Completed local evaluation
+2024-12-24 17:13:51,857 - Heart_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2024-12-24 17:13:53,430 - Heart_evaluation - INFO - Completed fedavg evaluation
+2024-12-24 17:13:53,431 - Heart_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2024-12-24 17:13:55,246 - Heart_evaluation - INFO - Completed fedprox evaluation
+2024-12-24 17:13:55,246 - Heart_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2024-12-24 17:13:57,162 - Heart_evaluation - INFO - Completed pfedme evaluation
+2024-12-24 17:13:57,162 - Heart_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2024-12-24 17:14:00,415 - Heart_evaluation - INFO - Completed ditto evaluation
+2024-12-24 17:14:00,415 - Heart_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2024-12-24 17:14:02,191 - Heart_evaluation - INFO - Completed localadaptation evaluation
+2024-12-24 17:14:02,191 - Heart_evaluation - INFO - Evaluating babu model with best hyperparameters
+2024-12-24 17:14:04,046 - Heart_evaluation - INFO - Completed babu evaluation
+2024-12-24 17:14:04,046 - Heart_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2024-12-24 17:14:05,621 - Heart_evaluation - INFO - Completed fedlp evaluation
+2024-12-24 17:14:05,622 - Heart_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2024-12-24 17:14:07,199 - Heart_evaluation - INFO - Completed fedlama evaluation
+2024-12-24 17:14:07,199 - Heart_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2024-12-24 17:14:08,814 - Heart_evaluation - INFO - Completed pfedla evaluation
+2024-12-24 17:14:08,815 - Heart_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2024-12-24 17:14:10,390 - Heart_evaluation - INFO - Completed layerpfl evaluation
+2024-12-24 17:14:10,406 - Heart_evaluation - INFO - Successfully completed run 43
+2024-12-24 17:14:10,406 - Heart_evaluation - INFO - Starting run 44/50
+2024-12-24 17:14:10,414 - Heart_evaluation - INFO - Evaluating local model with best hyperparameters
+2024-12-24 17:14:11,987 - Heart_evaluation - INFO - Completed local evaluation
+2024-12-24 17:14:11,987 - Heart_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2024-12-24 17:14:13,564 - Heart_evaluation - INFO - Completed fedavg evaluation
+2024-12-24 17:14:13,564 - Heart_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2024-12-24 17:14:15,382 - Heart_evaluation - INFO - Completed fedprox evaluation
+2024-12-24 17:14:15,382 - Heart_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2024-12-24 17:14:17,300 - Heart_evaluation - INFO - Completed pfedme evaluation
+2024-12-24 17:14:17,300 - Heart_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2024-12-24 17:14:20,667 - Heart_evaluation - INFO - Completed ditto evaluation
+2024-12-24 17:14:20,667 - Heart_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2024-12-24 17:14:22,446 - Heart_evaluation - INFO - Completed localadaptation evaluation
+2024-12-24 17:14:22,446 - Heart_evaluation - INFO - Evaluating babu model with best hyperparameters
+2024-12-24 17:14:24,301 - Heart_evaluation - INFO - Completed babu evaluation
+2024-12-24 17:14:24,301 - Heart_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2024-12-24 17:14:25,878 - Heart_evaluation - INFO - Completed fedlp evaluation
+2024-12-24 17:14:25,878 - Heart_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2024-12-24 17:14:27,455 - Heart_evaluation - INFO - Completed fedlama evaluation
+2024-12-24 17:14:27,455 - Heart_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2024-12-24 17:14:29,068 - Heart_evaluation - INFO - Completed pfedla evaluation
+2024-12-24 17:14:29,068 - Heart_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2024-12-24 17:14:30,647 - Heart_evaluation - INFO - Completed layerpfl evaluation
+2024-12-24 17:14:30,664 - Heart_evaluation - INFO - Successfully completed run 44
+2024-12-24 17:14:30,664 - Heart_evaluation - INFO - Starting run 45/50
+2024-12-24 17:14:30,672 - Heart_evaluation - INFO - Evaluating local model with best hyperparameters
+2024-12-24 17:14:32,239 - Heart_evaluation - INFO - Completed local evaluation
+2024-12-24 17:14:32,239 - Heart_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2024-12-24 17:14:33,813 - Heart_evaluation - INFO - Completed fedavg evaluation
+2024-12-24 17:14:33,813 - Heart_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2024-12-24 17:14:35,629 - Heart_evaluation - INFO - Completed fedprox evaluation
+2024-12-24 17:14:35,629 - Heart_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2024-12-24 17:14:37,564 - Heart_evaluation - INFO - Completed pfedme evaluation
+2024-12-24 17:14:37,564 - Heart_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2024-12-24 17:14:40,877 - Heart_evaluation - INFO - Completed ditto evaluation
+2024-12-24 17:14:40,878 - Heart_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2024-12-24 17:14:42,685 - Heart_evaluation - INFO - Completed localadaptation evaluation
+2024-12-24 17:14:42,685 - Heart_evaluation - INFO - Evaluating babu model with best hyperparameters
+2024-12-24 17:14:44,574 - Heart_evaluation - INFO - Completed babu evaluation
+2024-12-24 17:14:44,574 - Heart_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2024-12-24 17:14:46,282 - Heart_evaluation - INFO - Completed fedlp evaluation
+2024-12-24 17:14:46,283 - Heart_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2024-12-24 17:14:47,889 - Heart_evaluation - INFO - Completed fedlama evaluation
+2024-12-24 17:14:47,889 - Heart_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2024-12-24 17:14:49,533 - Heart_evaluation - INFO - Completed pfedla evaluation
+2024-12-24 17:14:49,533 - Heart_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2024-12-24 17:14:51,139 - Heart_evaluation - INFO - Completed layerpfl evaluation
+2024-12-24 17:14:51,156 - Heart_evaluation - INFO - Successfully completed run 45
+2024-12-24 17:14:51,156 - Heart_evaluation - INFO - Starting run 46/50
+2024-12-24 17:14:51,164 - Heart_evaluation - INFO - Evaluating local model with best hyperparameters
+2024-12-24 17:14:52,760 - Heart_evaluation - INFO - Completed local evaluation
+2024-12-24 17:14:52,760 - Heart_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2024-12-24 17:14:54,365 - Heart_evaluation - INFO - Completed fedavg evaluation
+2024-12-24 17:14:54,365 - Heart_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2024-12-24 17:14:56,211 - Heart_evaluation - INFO - Completed fedprox evaluation
+2024-12-24 17:14:56,212 - Heart_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2024-12-24 17:14:58,156 - Heart_evaluation - INFO - Completed pfedme evaluation
+2024-12-24 17:14:58,156 - Heart_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2024-12-24 17:15:01,478 - Heart_evaluation - INFO - Completed ditto evaluation
+2024-12-24 17:15:01,478 - Heart_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2024-12-24 17:15:03,293 - Heart_evaluation - INFO - Completed localadaptation evaluation
+2024-12-24 17:15:03,294 - Heart_evaluation - INFO - Evaluating babu model with best hyperparameters
+2024-12-24 17:15:05,183 - Heart_evaluation - INFO - Completed babu evaluation
+2024-12-24 17:15:05,184 - Heart_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2024-12-24 17:15:06,796 - Heart_evaluation - INFO - Completed fedlp evaluation
+2024-12-24 17:15:06,796 - Heart_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2024-12-24 17:15:08,404 - Heart_evaluation - INFO - Completed fedlama evaluation
+2024-12-24 17:15:08,404 - Heart_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2024-12-24 17:15:10,052 - Heart_evaluation - INFO - Completed pfedla evaluation
+2024-12-24 17:15:10,052 - Heart_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2024-12-24 17:15:11,666 - Heart_evaluation - INFO - Completed layerpfl evaluation
+2024-12-24 17:15:11,683 - Heart_evaluation - INFO - Successfully completed run 46
+2024-12-24 17:15:11,683 - Heart_evaluation - INFO - Starting run 47/50
+2024-12-24 17:15:11,691 - Heart_evaluation - INFO - Evaluating local model with best hyperparameters
+2024-12-24 17:15:13,394 - Heart_evaluation - INFO - Completed local evaluation
+2024-12-24 17:15:13,394 - Heart_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2024-12-24 17:15:14,998 - Heart_evaluation - INFO - Completed fedavg evaluation
+2024-12-24 17:15:14,999 - Heart_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2024-12-24 17:15:16,849 - Heart_evaluation - INFO - Completed fedprox evaluation
+2024-12-24 17:15:16,849 - Heart_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2024-12-24 17:15:18,796 - Heart_evaluation - INFO - Completed pfedme evaluation
+2024-12-24 17:15:18,796 - Heart_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2024-12-24 17:15:22,108 - Heart_evaluation - INFO - Completed ditto evaluation
+2024-12-24 17:15:22,108 - Heart_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2024-12-24 17:15:23,920 - Heart_evaluation - INFO - Completed localadaptation evaluation
+2024-12-24 17:15:23,920 - Heart_evaluation - INFO - Evaluating babu model with best hyperparameters
+2024-12-24 17:15:25,815 - Heart_evaluation - INFO - Completed babu evaluation
+2024-12-24 17:15:25,815 - Heart_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2024-12-24 17:15:27,405 - Heart_evaluation - INFO - Completed fedlp evaluation
+2024-12-24 17:15:27,406 - Heart_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2024-12-24 17:15:28,985 - Heart_evaluation - INFO - Completed fedlama evaluation
+2024-12-24 17:15:28,985 - Heart_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2024-12-24 17:15:30,612 - Heart_evaluation - INFO - Completed pfedla evaluation
+2024-12-24 17:15:30,612 - Heart_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2024-12-24 17:15:32,211 - Heart_evaluation - INFO - Completed layerpfl evaluation
+2024-12-24 17:15:32,228 - Heart_evaluation - INFO - Successfully completed run 47
+2024-12-24 17:15:32,228 - Heart_evaluation - INFO - Starting run 48/50
+2024-12-24 17:15:32,236 - Heart_evaluation - INFO - Evaluating local model with best hyperparameters
+2024-12-24 17:15:33,832 - Heart_evaluation - INFO - Completed local evaluation
+2024-12-24 17:15:33,832 - Heart_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2024-12-24 17:15:35,436 - Heart_evaluation - INFO - Completed fedavg evaluation
+2024-12-24 17:15:35,436 - Heart_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2024-12-24 17:15:37,281 - Heart_evaluation - INFO - Completed fedprox evaluation
+2024-12-24 17:15:37,281 - Heart_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2024-12-24 17:15:39,224 - Heart_evaluation - INFO - Completed pfedme evaluation
+2024-12-24 17:15:39,225 - Heart_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2024-12-24 17:15:42,650 - Heart_evaluation - INFO - Completed ditto evaluation
+2024-12-24 17:15:42,651 - Heart_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2024-12-24 17:15:44,459 - Heart_evaluation - INFO - Completed localadaptation evaluation
+2024-12-24 17:15:44,459 - Heart_evaluation - INFO - Evaluating babu model with best hyperparameters
+2024-12-24 17:15:46,352 - Heart_evaluation - INFO - Completed babu evaluation
+2024-12-24 17:15:46,353 - Heart_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2024-12-24 17:15:47,964 - Heart_evaluation - INFO - Completed fedlp evaluation
+2024-12-24 17:15:47,964 - Heart_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2024-12-24 17:15:49,567 - Heart_evaluation - INFO - Completed fedlama evaluation
+2024-12-24 17:15:49,567 - Heart_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2024-12-24 17:15:51,215 - Heart_evaluation - INFO - Completed pfedla evaluation
+2024-12-24 17:15:51,215 - Heart_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2024-12-24 17:15:52,820 - Heart_evaluation - INFO - Completed layerpfl evaluation
+2024-12-24 17:15:52,837 - Heart_evaluation - INFO - Successfully completed run 48
+2024-12-24 17:15:52,837 - Heart_evaluation - INFO - Starting run 49/50
+2024-12-24 17:15:52,845 - Heart_evaluation - INFO - Evaluating local model with best hyperparameters
+2024-12-24 17:15:54,443 - Heart_evaluation - INFO - Completed local evaluation
+2024-12-24 17:15:54,443 - Heart_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2024-12-24 17:15:56,045 - Heart_evaluation - INFO - Completed fedavg evaluation
+2024-12-24 17:15:56,046 - Heart_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2024-12-24 17:15:57,892 - Heart_evaluation - INFO - Completed fedprox evaluation
+2024-12-24 17:15:57,892 - Heart_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2024-12-24 17:15:59,832 - Heart_evaluation - INFO - Completed pfedme evaluation
+2024-12-24 17:15:59,833 - Heart_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2024-12-24 17:16:03,104 - Heart_evaluation - INFO - Completed ditto evaluation
+2024-12-24 17:16:03,104 - Heart_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2024-12-24 17:16:04,875 - Heart_evaluation - INFO - Completed localadaptation evaluation
+2024-12-24 17:16:04,875 - Heart_evaluation - INFO - Evaluating babu model with best hyperparameters
+2024-12-24 17:16:06,732 - Heart_evaluation - INFO - Completed babu evaluation
+2024-12-24 17:16:06,732 - Heart_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2024-12-24 17:16:08,314 - Heart_evaluation - INFO - Completed fedlp evaluation
+2024-12-24 17:16:08,314 - Heart_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2024-12-24 17:16:09,996 - Heart_evaluation - INFO - Completed fedlama evaluation
+2024-12-24 17:16:09,996 - Heart_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2024-12-24 17:16:11,611 - Heart_evaluation - INFO - Completed pfedla evaluation
+2024-12-24 17:16:11,611 - Heart_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2024-12-24 17:16:13,183 - Heart_evaluation - INFO - Completed layerpfl evaluation
+2024-12-24 17:16:13,200 - Heart_evaluation - INFO - Successfully completed run 49
+2024-12-24 17:16:13,200 - Heart_evaluation - INFO - Starting run 50/50
+2024-12-24 17:16:13,208 - Heart_evaluation - INFO - Evaluating local model with best hyperparameters
+2024-12-24 17:16:14,781 - Heart_evaluation - INFO - Completed local evaluation
+2024-12-24 17:16:14,781 - Heart_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2024-12-24 17:16:16,360 - Heart_evaluation - INFO - Completed fedavg evaluation
+2024-12-24 17:16:16,360 - Heart_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2024-12-24 17:16:18,176 - Heart_evaluation - INFO - Completed fedprox evaluation
+2024-12-24 17:16:18,176 - Heart_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2024-12-24 17:16:20,090 - Heart_evaluation - INFO - Completed pfedme evaluation
+2024-12-24 17:16:20,090 - Heart_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2024-12-24 17:16:23,373 - Heart_evaluation - INFO - Completed ditto evaluation
+2024-12-24 17:16:23,374 - Heart_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2024-12-24 17:16:25,183 - Heart_evaluation - INFO - Completed localadaptation evaluation
+2024-12-24 17:16:25,183 - Heart_evaluation - INFO - Evaluating babu model with best hyperparameters
+2024-12-24 17:16:27,074 - Heart_evaluation - INFO - Completed babu evaluation
+2024-12-24 17:16:27,074 - Heart_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2024-12-24 17:16:28,682 - Heart_evaluation - INFO - Completed fedlp evaluation
+2024-12-24 17:16:28,683 - Heart_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2024-12-24 17:16:30,295 - Heart_evaluation - INFO - Completed fedlama evaluation
+2024-12-24 17:16:30,295 - Heart_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2024-12-24 17:16:31,946 - Heart_evaluation - INFO - Completed pfedla evaluation
+2024-12-24 17:16:31,946 - Heart_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2024-12-24 17:16:33,557 - Heart_evaluation - INFO - Completed layerpfl evaluation
+2024-12-24 17:16:33,575 - Heart_evaluation - INFO - Successfully completed run 50

@@ -7,9 +7,9 @@ class PerformanceLogger:
         os.makedirs(log_dir, exist_ok=True)
         self.loggers = {}
         
-    def get_logger(self, dataset, name, algorithm_type=None):
+    def get_logger(self, dataset, name):
         """Get logger with optional algorithm type."""
-        logger_name = f"{dataset}_{algorithm_type}_{name}" if algorithm_type else f"{dataset}_{name}"
+        logger_name = f"{dataset}_{name}"
         
         if logger_name not in self.loggers:
             logger = logging.getLogger(logger_name)

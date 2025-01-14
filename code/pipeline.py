@@ -111,7 +111,7 @@ class Experiment:
         self.root_dir = ROOT_DIR
         self.results_manager = ResultsManager(root_dir=ROOT_DIR, dataset=self.config.dataset, experiment_type = self.config.experiment_type)
         self.default_params = get_parameters_for_dataset(self.config.dataset)
-        self.logger = performance_logger.get_logger(self.config.dataset, 'experiment')
+        self.logger = performance_logger.get_logger(self.config.dataset, self.config.experiment_type) #Import instantiated object from performance_logging.py
 
     def run_experiment(self):
         if self.config.experiment_type == ExperimentType.EVALUATION:
@@ -135,7 +135,6 @@ class Experiment:
                         # Count completed runs for this server type
                         runs = len(results[param][server_type]['global']['losses'])
                         completed_runs[server_type] = max(completed_runs[server_type], runs)
-        
         return results, completed_runs
 
     def _run_hyperparameter_tuning(self):
@@ -231,10 +230,10 @@ class Experiment:
             print(f"Evaluating {server_type} model with best hyperparameters")
             lr = self.results_manager.get_best_parameters(
                 ExperimentType.LEARNING_RATE, server_type)
-            config = self._create_trainer_config(lr)
-            server = self._create_server_instance(server_type, config, tuning = False)
+            hyperparms = {'learning_rate': lr}
+            server = self._create_server_instance(server_type, hyperparms, tuning = False)
             self._add_clients_to_server(server, client_dataloaders)
-            metrics = self._train_and_evaluate(server, config.rounds)
+            metrics = self._train_and_evaluate(server, server.config.rounds)
             tracking[server_type] = metrics
             self.logger.info(f"Completed {server_type} evaluation")
         return tracking
@@ -277,7 +276,7 @@ class Experiment:
             "FMNIST": nn.CrossEntropyLoss(),
             "ISIC": MulticlassFocalLoss(num_classes=classes, alpha = [0.87868852, 0.88131148, 0.82793443, 0.41206557], gamma = 1),
             "Sentiment": nn.CrossEntropyLoss(),
-            "Heart": MulticlassFocalLoss(num_classes=classes, alpha = [0.12939189, 0.18108108, 0.22331081, 0.22364865, 0.24256757], gamma = 3),
+            "Heart": MulticlassFocalLoss(num_classes=classes, alpha = [0.12939189, 0.18108108, 0.22331081, 0.22364865, 0.24256757], gamma = 1),
             "mimic":MulticlassFocalLoss(num_classes=classes, alpha = [0.15,0.85], gamma = 1),
         }.get(self.config.dataset, None)
 

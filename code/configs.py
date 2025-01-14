@@ -210,6 +210,16 @@ REG_PARAMS = {
             "Heart": 0.1,
             "mimic":0.1
             },
+    
+    'layerpfl': {
+            'EMNIST': 0.1,
+            'CIFAR': 0.1,
+            "FMNIST":0.1,
+            'ISIC':0.1,
+            "Sentiment":0.1,
+            "Heart": 0.1,
+            "mimic":0.1
+            },
     }
 
 LAYER_PRESERVATION_RATES = {

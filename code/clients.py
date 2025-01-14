@@ -81,14 +81,12 @@ class ModelState:
             self.best_metrics['loss'] = loss
             updated = True
             
-        # Check each metric improvement
-        for metric_name, value in metrics_dict.items():
-            if metric_name not in self.best_metrics:
-                self.best_metrics[metric_name] = value
-                updated = True
-            elif value > self.best_metrics[metric_name]: 
-                self.best_metrics[metric_name] = value
-                updated = True
+            # Update metrics if loss improves
+            for metric_name, value in metrics_dict.items():
+                if metric_name not in self.best_metrics:
+                    self.best_metrics[metric_name] = value
+                else: 
+                    self.best_metrics[metric_name] = value
                 
         return updated
 
@@ -345,9 +343,7 @@ class PFedMeClient(Client):
 
     def train(self, personal=True):
         """Main training loop defaulting to personal model."""
-        final_loss = 0.0
-        for epoch in range(self.config.epochs):
-            final_loss = self.train_epoch(personal)
+        final_loss = super().train(personal)
         return final_loss
     
     def compute_proximal_term(self, model_params, reference_params):
@@ -433,12 +429,64 @@ class LayerClient(Client):
                 current_state[name].copy_(param)
         state.model.load_state_dict(current_state)    
 
+class LayerPFLClient(LayerClient):
+    """Client that performs additional local training after federation."""
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+    # def train_epoch(self, personal=False):        
+    #     try:
+    #         state = self.get_client_state(personal)
+    #         model = state.model.train().to(self.device)
+    #         total_loss = 0.0
+    #         for batch_x, batch_y in self.data.train_loader:
+    #             batch_x = move_to_device(batch_x, self.device)
+    #             batch_y = move_to_device(batch_y, self.device)
+                
+    #             state.optimizer.zero_grad()
+    #             outputs = model(batch_x)
+    #             loss = state.criterion(outputs, batch_y)
+                
+    #             proximal_term = self.compute_proximal_term(
+    #                 model.named_parameters(),
+    #                 self.global_state.model.named_parameters(),
+    #             )
+                
+    #             total_loss_batch = loss + proximal_term
+    #             total_loss_batch.backward()
+        
+                
+    #             state.optimizer.step()
+    #             total_loss += loss.item()
+
+    #         avg_loss = total_loss / len(self.data.train_loader)
+    #         state.train_losses.append(avg_loss)
+    #         return avg_loss
+            
+    #     finally:
+    #         model.to('cpu')
+    #         cleanup_gpu()
+    
+    # def compute_proximal_term(self, model_params, reference_params):
+    #     """Calculate proximal term between two sets of model parameters."""
+    #     proximal_term = 0.0
+    #     for (name, param), (ref_name, ref_param) in zip(model_params, reference_params):
+    #         # Only add proximal term for layers NOT included in federation
+    #         if not any(layer in name for layer in self.layers_to_include):
+    #             proximal_term += (self.reg_param / 2) * torch.norm(param - ref_param) ** 2
+    #     return proximal_term
+
 class BABUClient(LayerClient):
     """Client implementation for BABU."""
 
     def set_head_body_training(self, train_head):
         state = self.get_client_state(personal = False)
         model = state.model
+        
+        # Reset optimizer state when switching modes
+        state.optimizer = type(state.optimizer)(
+            model.parameters(), 
+            **state.optimizer.defaults
+        )
         head_params = []
         body_params = []
         
