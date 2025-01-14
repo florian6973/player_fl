@@ -225,7 +225,7 @@ class CIFARDataset(BaseDataset):
     def __getitem__(self, idx):
         image = self.X[idx]
         label = self.y[idx]
-        
+        image = image.transpose(1, 2, 0)
         image_tensor = self.transform(image)
         label_tensor = torch.tensor(label, dtype=torch.long)
         
