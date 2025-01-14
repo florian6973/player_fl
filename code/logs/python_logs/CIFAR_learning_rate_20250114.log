@@ -1,0 +1,5 @@
+2025-01-14 16:42:57,537 - CIFAR_learning_rate - INFO - Starting hyperparameter tuning experiment
+2025-01-14 16:42:57,537 - CIFAR_learning_rate - INFO - Testing learning rates: [0.005, 0.001, 0.0005, 0.0001]
+2025-01-14 16:42:57,601 - CIFAR_learning_rate - INFO - Starting Run 3/5
+2025-01-14 16:42:57,601 - CIFAR_learning_rate - INFO - Starting tuning for: 0.005
+2025-01-14 16:42:58,476 - CIFAR_learning_rate - INFO - Starting server type: local
