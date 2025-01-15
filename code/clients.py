@@ -72,24 +72,6 @@ class ModelState:
             criterion= self.criterion 
         )
     
-    def update_best_metrics(self, metrics_dict, loss):
-        """Update best metrics if improved."""
-        updated = False
-        
-        # Check loss improvement
-        if loss < self.best_metrics['loss']:
-            self.best_metrics['loss'] = loss
-            updated = True
-            
-            # Update metrics if loss improves
-            for metric_name, value in metrics_dict.items():
-                if metric_name not in self.best_metrics:
-                    self.best_metrics[metric_name] = value
-                else: 
-                    self.best_metrics[metric_name] = value
-                
-        return updated
-
 class MetricsCalculator:
     def __init__(self, dataset_name):
         self.dataset_name = dataset_name
@@ -176,9 +158,9 @@ class Client:
             return avg_loss
             
         finally:
+            del batch_x, batch_y, outputs, loss
             model.to('cpu')
-            if self.device == 'cuda':
-                torch.cuda.empty_cache()
+            cleanup_gpu()
 
     def train(self, personal):
         """Train for multiple epochs."""
@@ -218,9 +200,9 @@ class Client:
             return avg_loss, metrics
             
         finally:
+            del batch_x, batch_y, outputs, loss
             model.to('cpu')
-            if self.device == 'cuda':
-                torch.cuda.empty_cache()
+            cleanup_gpu()
 
     def validate(self, personal):
         """Validate current model."""
@@ -289,6 +271,7 @@ class FedProxClient(Client):
             return avg_loss
             
         finally:
+            del batch_x, batch_y, outputs, loss
             model.to('cpu')
             cleanup_gpu()
 
@@ -337,6 +320,7 @@ class PFedMeClient(Client):
             return avg_loss
             
         finally:
+            del batch_x, batch_y, outputs, loss
             model.to('cpu')
             global_model.to('cpu')
             cleanup_gpu()
@@ -391,6 +375,7 @@ class DittoClient(Client):
                 return avg_loss
                 
             finally:
+                del batch_x, batch_y, outputs, loss
                 model.to('cpu')
                 global_model.to('cpu')
                 cleanup_gpu()

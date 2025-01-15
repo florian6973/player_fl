@@ -1,43 +1,113 @@
-2025-01-14 16:42:57,537 - CIFAR_learning_rate - INFO - Starting hyperparameter tuning experiment
-2025-01-14 16:42:57,537 - CIFAR_learning_rate - INFO - Testing learning rates: [0.005, 0.001, 0.0005, 0.0001]
-2025-01-14 16:42:57,601 - CIFAR_learning_rate - INFO - Starting Run 3/5
-2025-01-14 16:42:57,601 - CIFAR_learning_rate - INFO - Starting tuning for: 0.005
-2025-01-14 16:42:58,476 - CIFAR_learning_rate - INFO - Starting server type: local
-Traceback (most recent call last):
-  File "/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl/code/run.py", line 38, in <module>
-    main()
-  File "/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl/code/run.py", line 31, in main
-    run_experiments(args.dataset, experiment_type)
-  File "/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl/code/run.py", line 11, in run_experiments
-    return experiment.run_experiment()
-  File "/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl/code/pipeline.py", line 120, in run_experiment
-    return self._run_hyperparameter_tuning()
-  File "/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl/code/pipeline.py", line 169, in _run_hyperparameter_tuning
-    self._hyperparameter_tuning(hyperparams, remaining_server_types)
-  File "/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl/code/pipeline.py", line 194, in _hyperparameter_tuning
-    metrics = self._train_and_evaluate(server, server.config.rounds)
-  File "/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl/code/pipeline.py", line 351, in _train_and_evaluate
-    server.train_round()
-  File "/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl/code/servers.py", line 66, in train_round
-    client_train_loss = client.train(self.personal)
-  File "/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl/code/clients.py", line 186, in train
-    final_loss = self.train_epoch(personal)
-  File "/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl/code/clients.py", line 161, in train_epoch
-    for batch_x, batch_y in self.data.train_loader:
-  File "/gpfs/commons/home/aelhussein/anaconda3/envs/cuda_env_ne1/lib/python3.9/site-packages/torch/utils/data/dataloader.py", line 701, in __next__
-    data = self._next_data()
-  File "/gpfs/commons/home/aelhussein/anaconda3/envs/cuda_env_ne1/lib/python3.9/site-packages/torch/utils/data/dataloader.py", line 757, in _next_data
-    data = self._dataset_fetcher.fetch(index)  # may raise StopIteration
-  File "/gpfs/commons/home/aelhussein/anaconda3/envs/cuda_env_ne1/lib/python3.9/site-packages/torch/utils/data/_utils/fetch.py", line 52, in fetch
-    data = [self.dataset[idx] for idx in possibly_batched_index]
-  File "/gpfs/commons/home/aelhussein/anaconda3/envs/cuda_env_ne1/lib/python3.9/site-packages/torch/utils/data/_utils/fetch.py", line 52, in <listcomp>
-    data = [self.dataset[idx] for idx in possibly_batched_index]
-  File "/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl/code/dataset_processing.py", line 229, in __getitem__
-    image_tensor = self.transform(image)
-  File "/gpfs/commons/home/aelhussein/anaconda3/envs/cuda_env_ne1/lib/python3.9/site-packages/torchvision/transforms/transforms.py", line 95, in __call__
-    img = t(img)
-  File "/gpfs/commons/home/aelhussein/anaconda3/envs/cuda_env_ne1/lib/python3.9/site-packages/torchvision/transforms/transforms.py", line 234, in __call__
-    return F.to_pil_image(pic, self.mode)
-  File "/gpfs/commons/home/aelhussein/anaconda3/envs/cuda_env_ne1/lib/python3.9/site-packages/torchvision/transforms/functional.py", line 277, in to_pil_image
-    raise ValueError(f"pic should not have > 4 channels. Got {pic.shape[-1]} channels.")
-ValueError: pic should not have > 4 channels. Got 32 channels.
+2025-01-14 16:51:43,688 - CIFAR_learning_rate - INFO - Starting hyperparameter tuning experiment
+2025-01-14 16:51:43,695 - CIFAR_learning_rate - INFO - Testing learning rates: [0.005, 0.001, 0.0005, 0.0001]
+2025-01-14 16:51:43,695 - CIFAR_learning_rate - INFO - Starting Run 1/5
+2025-01-14 16:51:43,695 - CIFAR_learning_rate - INFO - Starting tuning for: 0.005
+2025-01-14 16:51:44,629 - CIFAR_learning_rate - INFO - Starting server type: local
+2025-01-14 17:04:45,586 - CIFAR_learning_rate - INFO - Starting server type: fedavg
+2025-01-14 17:17:43,166 - CIFAR_learning_rate - INFO - Starting server type: fedprox
+2025-01-14 17:30:49,578 - CIFAR_learning_rate - INFO - Starting server type: pfedme
+2025-01-14 17:43:59,886 - CIFAR_learning_rate - INFO - Starting server type: ditto
+2025-01-14 18:10:02,918 - CIFAR_learning_rate - INFO - Starting server type: localadaptation
+2025-01-14 18:24:39,294 - CIFAR_learning_rate - INFO - Starting server type: babu
+2025-01-14 18:40:09,101 - CIFAR_learning_rate - INFO - Starting server type: fedlp
+2025-01-14 18:53:07,725 - CIFAR_learning_rate - INFO - Starting server type: fedlama
+2025-01-14 19:06:06,409 - CIFAR_learning_rate - INFO - Starting server type: pfedla
+2025-01-14 19:19:11,620 - CIFAR_learning_rate - INFO - Starting server type: layerpfl
+2025-01-14 19:32:10,447 - CIFAR_learning_rate - INFO - Starting tuning for: 0.001
+2025-01-14 19:32:10,889 - CIFAR_learning_rate - INFO - Starting server type: local
+2025-01-14 19:45:09,540 - CIFAR_learning_rate - INFO - Starting server type: fedavg
+2025-01-14 19:58:09,659 - CIFAR_learning_rate - INFO - Starting server type: fedprox
+2025-01-14 20:11:17,455 - CIFAR_learning_rate - INFO - Starting server type: pfedme
+2025-01-14 20:24:27,889 - CIFAR_learning_rate - INFO - Starting server type: ditto
+2025-01-14 20:50:32,170 - CIFAR_learning_rate - INFO - Starting server type: localadaptation
+2025-01-14 21:05:07,846 - CIFAR_learning_rate - INFO - Starting server type: babu
+2025-01-14 21:20:38,344 - CIFAR_learning_rate - INFO - Starting server type: fedlp
+2025-01-14 21:33:37,449 - CIFAR_learning_rate - INFO - Starting server type: fedlama
+2025-01-14 21:46:35,867 - CIFAR_learning_rate - INFO - Starting server type: pfedla
+2025-01-14 21:59:39,511 - CIFAR_learning_rate - INFO - Starting server type: layerpfl
+2025-01-14 22:12:38,962 - CIFAR_learning_rate - INFO - Starting tuning for: 0.0005
+2025-01-14 22:12:39,362 - CIFAR_learning_rate - INFO - Starting server type: local
+2025-01-14 22:25:39,702 - CIFAR_learning_rate - INFO - Starting server type: fedavg
+2025-01-14 22:38:40,983 - CIFAR_learning_rate - INFO - Starting server type: fedprox
+2025-01-14 22:51:51,231 - CIFAR_learning_rate - INFO - Starting server type: pfedme
+2025-01-14 23:05:04,562 - CIFAR_learning_rate - INFO - Starting server type: ditto
+2025-01-14 23:31:12,275 - CIFAR_learning_rate - INFO - Starting server type: localadaptation
+2025-01-14 23:45:50,783 - CIFAR_learning_rate - INFO - Starting server type: babu
+2025-01-15 00:01:24,224 - CIFAR_learning_rate - INFO - Starting server type: fedlp
+2025-01-15 00:14:25,630 - CIFAR_learning_rate - INFO - Starting server type: fedlama
+2025-01-15 00:27:27,065 - CIFAR_learning_rate - INFO - Starting server type: pfedla
+2025-01-15 00:40:32,288 - CIFAR_learning_rate - INFO - Starting server type: layerpfl
+2025-01-15 00:53:33,371 - CIFAR_learning_rate - INFO - Starting tuning for: 0.0001
+2025-01-15 00:53:33,701 - CIFAR_learning_rate - INFO - Starting server type: local
+2025-01-15 01:06:35,885 - CIFAR_learning_rate - INFO - Starting server type: fedavg
+2025-01-15 01:19:37,891 - CIFAR_learning_rate - INFO - Starting server type: fedprox
+2025-01-15 01:32:49,414 - CIFAR_learning_rate - INFO - Starting server type: pfedme
+2025-01-15 01:46:03,857 - CIFAR_learning_rate - INFO - Starting server type: ditto
+2025-01-15 02:12:12,057 - CIFAR_learning_rate - INFO - Starting server type: localadaptation
+2025-01-15 02:26:51,016 - CIFAR_learning_rate - INFO - Starting server type: babu
+2025-01-15 02:42:24,425 - CIFAR_learning_rate - INFO - Starting server type: fedlp
+2025-01-15 02:55:26,385 - CIFAR_learning_rate - INFO - Starting server type: fedlama
+2025-01-15 03:08:27,724 - CIFAR_learning_rate - INFO - Starting server type: pfedla
+2025-01-15 03:21:32,021 - CIFAR_learning_rate - INFO - Starting server type: layerpfl
+2025-01-15 03:34:32,707 - CIFAR_learning_rate - INFO - Starting Run 2/5
+2025-01-15 03:34:32,707 - CIFAR_learning_rate - INFO - Starting tuning for: 0.005
+2025-01-15 03:34:33,024 - CIFAR_learning_rate - INFO - Starting server type: local
+2025-01-15 03:47:33,063 - CIFAR_learning_rate - INFO - Starting server type: fedavg
+2025-01-15 04:00:33,998 - CIFAR_learning_rate - INFO - Starting server type: fedprox
+2025-01-15 04:13:44,664 - CIFAR_learning_rate - INFO - Starting server type: pfedme
+2025-01-15 04:26:58,798 - CIFAR_learning_rate - INFO - Starting server type: ditto
+2025-01-15 04:53:06,094 - CIFAR_learning_rate - INFO - Starting server type: localadaptation
+2025-01-15 05:07:45,448 - CIFAR_learning_rate - INFO - Starting server type: babu
+2025-01-15 05:23:20,085 - CIFAR_learning_rate - INFO - Starting server type: fedlp
+2025-01-15 05:36:22,570 - CIFAR_learning_rate - INFO - Starting server type: fedlama
+2025-01-15 05:49:24,024 - CIFAR_learning_rate - INFO - Starting server type: pfedla
+2025-01-15 06:02:30,247 - CIFAR_learning_rate - INFO - Starting server type: layerpfl
+2025-01-15 06:15:32,895 - CIFAR_learning_rate - INFO - Starting tuning for: 0.001
+2025-01-15 06:15:33,225 - CIFAR_learning_rate - INFO - Starting server type: local
+2025-01-15 06:28:34,705 - CIFAR_learning_rate - INFO - Starting server type: fedavg
+2025-01-15 06:41:36,247 - CIFAR_learning_rate - INFO - Starting server type: fedprox
+2025-01-15 06:54:46,984 - CIFAR_learning_rate - INFO - Starting server type: pfedme
+2025-01-15 07:08:01,696 - CIFAR_learning_rate - INFO - Starting server type: ditto
+2025-01-15 07:34:09,102 - CIFAR_learning_rate - INFO - Starting server type: localadaptation
+2025-01-15 07:48:47,736 - CIFAR_learning_rate - INFO - Starting server type: babu
+2025-01-15 08:04:21,815 - CIFAR_learning_rate - INFO - Starting server type: fedlp
+2025-01-15 08:17:24,477 - CIFAR_learning_rate - INFO - Starting server type: fedlama
+2025-01-15 08:30:26,506 - CIFAR_learning_rate - INFO - Starting server type: pfedla
+2025-01-15 08:43:31,901 - CIFAR_learning_rate - INFO - Starting server type: layerpfl
+2025-01-15 08:56:33,999 - CIFAR_learning_rate - INFO - Starting tuning for: 0.0005
+2025-01-15 08:56:34,384 - CIFAR_learning_rate - INFO - Starting server type: local
+2025-01-15 09:09:37,457 - CIFAR_learning_rate - INFO - Starting server type: fedavg
+2025-01-15 09:22:41,053 - CIFAR_learning_rate - INFO - Starting server type: fedprox
+2025-01-15 09:35:53,392 - CIFAR_learning_rate - INFO - Starting server type: pfedme
+2025-01-15 09:49:08,955 - CIFAR_learning_rate - INFO - Starting server type: ditto
+2025-01-15 10:15:19,473 - CIFAR_learning_rate - INFO - Starting server type: localadaptation
+2025-01-15 10:30:00,162 - CIFAR_learning_rate - INFO - Starting server type: babu
+2025-01-15 10:45:35,292 - CIFAR_learning_rate - INFO - Starting server type: fedlp
+2025-01-15 10:58:38,597 - CIFAR_learning_rate - INFO - Starting server type: fedlama
+2025-01-15 11:11:40,833 - CIFAR_learning_rate - INFO - Starting server type: pfedla
+2025-01-15 11:24:47,291 - CIFAR_learning_rate - INFO - Starting server type: layerpfl
+2025-01-15 11:37:50,319 - CIFAR_learning_rate - INFO - Starting tuning for: 0.0001
+2025-01-15 11:37:50,723 - CIFAR_learning_rate - INFO - Starting server type: local
+2025-01-15 11:50:54,008 - CIFAR_learning_rate - INFO - Starting server type: fedavg
+2025-01-15 12:03:57,000 - CIFAR_learning_rate - INFO - Starting server type: fedprox
+2025-01-15 12:17:09,168 - CIFAR_learning_rate - INFO - Starting server type: pfedme
+2025-01-15 12:30:24,819 - CIFAR_learning_rate - INFO - Starting server type: ditto
+2025-01-15 12:56:35,247 - CIFAR_learning_rate - INFO - Starting server type: localadaptation
+2025-01-15 13:11:15,910 - CIFAR_learning_rate - INFO - Starting server type: babu
+2025-01-15 13:26:52,817 - CIFAR_learning_rate - INFO - Starting server type: fedlp
+2025-01-15 13:39:57,258 - CIFAR_learning_rate - INFO - Starting server type: fedlama
+2025-01-15 13:53:01,135 - CIFAR_learning_rate - INFO - Starting server type: pfedla
+2025-01-15 14:06:09,477 - CIFAR_learning_rate - INFO - Starting server type: layerpfl
+2025-01-15 14:19:14,683 - CIFAR_learning_rate - INFO - Starting Run 3/5
+2025-01-15 14:19:14,686 - CIFAR_learning_rate - INFO - Starting tuning for: 0.005
+2025-01-15 14:19:15,517 - CIFAR_learning_rate - INFO - Starting server type: local
+2025-01-15 14:32:22,279 - CIFAR_learning_rate - INFO - Starting server type: fedavg
+2025-01-15 14:45:29,679 - CIFAR_learning_rate - INFO - Starting server type: fedprox
+2025-01-15 14:58:48,583 - CIFAR_learning_rate - INFO - Starting server type: pfedme
+2025-01-15 15:12:10,265 - CIFAR_learning_rate - INFO - Starting server type: ditto
+2025-01-15 15:38:29,761 - CIFAR_learning_rate - INFO - Starting server type: localadaptation
+2025-01-15 15:53:14,623 - CIFAR_learning_rate - INFO - Starting server type: babu
+2025-01-15 16:08:55,018 - CIFAR_learning_rate - INFO - Starting server type: fedlp
+2025-01-15 16:22:01,952 - CIFAR_learning_rate - INFO - Starting server type: fedlama
+2025-01-15 16:35:10,802 - CIFAR_learning_rate - INFO - Starting server type: pfedla
+2025-01-15 16:48:37,283 - CIFAR_learning_rate - INFO - Starting server type: layerpfl

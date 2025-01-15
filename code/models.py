@@ -46,32 +46,32 @@ class CIFAR(nn.Module):
         super().__init__()
     
         self.layer1 = nn.Sequential(
-            nn.Conv2d(3, 32, 3, padding=2),
+            nn.Conv2d(3, 64, 3, padding=2),
             nn.ReLU(),
             nn.Dropout(0.3)
         )
         self.layer2 = nn.Sequential(
-            nn.Conv2d(32, 64, 3, padding=2),
+            nn.Conv2d(64, 128, 3, padding=2),
             nn.ReLU(),
             nn.MaxPool2d(2, 2),
             nn.Dropout(0.3)
         )
 
         self.layer3 = nn.Sequential(
-            nn.Conv2d(64, 128, 3, padding=2),
+            nn.Conv2d(128, 256, 3, padding=2),
             nn.ReLU(),
             nn.Dropout(0.3)
         )
 
         self.layer4 = nn.Sequential(
-            nn.Conv2d(128, 256, 3, padding=2),
+            nn.Conv2d(256, 512, 3, padding=2),
             nn.ReLU(),
             nn.MaxPool2d(2, 2),
             nn.Dropout(0.3)
         )
 
         self.layer5 = nn.Sequential(
-            nn.Conv2d(256, 512, 3, padding=2),
+            nn.Conv2d(512, 512, 3, padding=2),
             nn.ReLU(),
             nn.Dropout(0.3)
         )
@@ -102,7 +102,6 @@ class CIFAR(nn.Module):
         x = self.fc1(x)
         out = self.fc2(x)
         return out
-
 
 class FMNIST(nn.Module):
     def __init__(self, CLASSES):

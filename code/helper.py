@@ -50,18 +50,11 @@ def get_algorithm_config(server_type, dataset_name):
     
     return params
 
-def move_model_to_device(model, device):
-    """Safely move model to device with proper cleanup."""
-    try:
-        return model.to(device)
-    finally:
-        if device == 'cuda':
-            torch.cuda.empty_cache()
-
 def cleanup_gpu():
     """Clean up GPU memory."""
     if torch.cuda.is_available():
         torch.cuda.empty_cache()
+        gc.collect()
 
 def move_to_device(batch, device):
     """Move batch data to device, handling both single tensors and lists/tuples of tensors."""

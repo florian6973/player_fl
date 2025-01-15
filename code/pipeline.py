@@ -196,7 +196,7 @@ class Experiment:
                 
             finally:
                 del server
-                torch.cuda.empty_cache()
+                cleanup_gpu()
         
         return tracking
 
@@ -228,14 +228,19 @@ class Experiment:
         for server_type in server_types:
             self.logger.info(f"Evaluating {server_type} model with best hyperparameters")
             print(f"Evaluating {server_type} model with best hyperparameters")
-            lr = self.results_manager.get_best_parameters(
-                ExperimentType.LEARNING_RATE, server_type)
-            hyperparms = {'learning_rate': lr}
-            server = self._create_server_instance(server_type, hyperparms, tuning = False)
-            self._add_clients_to_server(server, client_dataloaders)
-            metrics = self._train_and_evaluate(server, server.config.rounds)
-            tracking[server_type] = metrics
-            self.logger.info(f"Completed {server_type} evaluation")
+            try:
+                lr = self.results_manager.get_best_parameters(
+                    ExperimentType.LEARNING_RATE, server_type)
+                hyperparms = {'learning_rate': lr}
+                server = self._create_server_instance(server_type, hyperparms, tuning = False)
+                self._add_clients_to_server(server, client_dataloaders)
+                metrics = self._train_and_evaluate(server, server.config.rounds)
+                tracking[server_type] = metrics
+                self.logger.info(f"Completed {server_type} evaluation")
+            finally:
+                del server
+                cleanup_gpu()
+                
         return tracking
     
     
@@ -261,7 +266,7 @@ class Experiment:
             device=DEVICE,
             learning_rate=learning_rate,
             batch_size=self.default_params['batch_size'],
-            epochs=5,
+            epochs=self.default_params['epochs_per_round'],
             rounds=self.default_params['rounds'],
             num_clients=self.default_params['num_clients'],
             requires_personal_model= True if server_type in ['pfedme', 'ditto'] else False,

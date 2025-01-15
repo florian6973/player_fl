@@ -86,7 +86,7 @@ class Server:
         return train_loss, val_loss, val_score
 
     def test_global(self):
-        """Test the global model across all clients."""
+        """Test the model across all clients."""
         test_loss = 0
         test_score = {}
         

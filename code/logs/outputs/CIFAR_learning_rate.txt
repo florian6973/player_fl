@@ -1,1 +1,0 @@
-Error running experiments: pic should not have > 4 channels. Got 32 channels.

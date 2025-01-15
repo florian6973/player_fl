@@ -29,6 +29,8 @@ import logging
 from datetime import datetime
 from functools import wraps
 import os
+import gc
+from concurrent.futures import ThreadPoolExecutor
 
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -70,7 +72,8 @@ DEFAULT_PARAMS = {
         'sizes_per_client': 3000,
         'classes': 62,
         'batch_size': 128,
-        'rounds': 10,
+        'epochs_per_round': 1,
+        'rounds': 75,
         'runs': 50,
         'runs_lr': 5
     },
@@ -80,7 +83,8 @@ DEFAULT_PARAMS = {
         'sizes_per_client': 10000,
         'classes': 10,
         'batch_size': 128,
-        'rounds': 10,
+        'epochs_per_round': 1,
+        'rounds': 50,
         'runs': 20,
         'runs_lr': 5
     },
@@ -90,7 +94,8 @@ DEFAULT_PARAMS = {
         'sizes_per_client': 2000,
         'classes': 10,
         'batch_size': 128,
-        'rounds': 10,
+        'epochs_per_round': 1,
+        'rounds': 75,
         'runs': 50,
         'runs_lr': 5
     },
@@ -100,7 +105,8 @@ DEFAULT_PARAMS = {
         'sizes_per_client': None,
         'classes': 4,
         'batch_size': 32,
-        'rounds': 10,
+        'epochs_per_round': 1,
+        'rounds': 50,
         'runs': 3,
         'runs_lr': 1
     },
@@ -110,7 +116,8 @@ DEFAULT_PARAMS = {
         'sizes_per_client': None,
         'classes': 2,
         'batch_size': 128,
-        'rounds': 10,
+        'epochs_per_round': 1,
+        'rounds': 50,
         'runs': 10,
         'runs_lr': 3
     },
@@ -120,7 +127,8 @@ DEFAULT_PARAMS = {
         'sizes_per_client': None,
         'classes': 5,
         'batch_size': 128,
-        'rounds': 10,
+        'epochs_per_round': 1,
+        'rounds': 50,
         'runs': 50,
         'runs_lr': 5
     },
@@ -130,6 +138,7 @@ DEFAULT_PARAMS = {
         'sizes_per_client': None,
         'classes': 2,
         'batch_size': 128,
+        'epochs_per_round': 1,
         'rounds': 10,
         'runs': 10,
         'runs_lr': 3
