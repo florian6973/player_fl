@@ -2,7 +2,7 @@
 
 # List of datasets to process
 datasets=("Heart" "FMNIST"  "EMNIST" "CIFAR" "Sentiment" "ISIC" "mimic")
-datasets=("Sentiment")
+datasets=("FMNIST")
 
 # Options for experiment type
 experiment_types=("learning_rate" "evaluation")
@@ -26,7 +26,7 @@ for dataset in "${datasets[@]}"; do
 #SBATCH --mail-user=aelhussein@nygenome.org
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=4
+#SBATCH --cpus-per-task=6
 #SBATCH --mem=40G
 #SBATCH --gres=gpu:1
 #SBATCH --time=30:00:00

@@ -1,0 +1,5 @@
+2025-01-16 14:02:34,255 - ISIC_learning_rate - INFO - Starting hyperparameter tuning experiment
+2025-01-16 14:02:34,255 - ISIC_learning_rate - INFO - Testing learning rates: [0.001, 0.005, 0.0001]
+2025-01-16 14:02:34,259 - ISIC_learning_rate - INFO - Starting Run 1/1
+2025-01-16 14:02:34,259 - ISIC_learning_rate - INFO - Starting tuning for: 0.001
+2025-01-16 14:02:34,336 - ISIC_learning_rate - INFO - Starting server type: local

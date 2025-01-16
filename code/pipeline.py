@@ -6,6 +6,7 @@ from losses import MulticlassFocalLoss
 from clients import *
 from servers import *
 from performance_logging import *
+import time
 class ExperimentType:
     LEARNING_RATE = 'learning_rate'
     EVALUATION = 'evaluation'
@@ -353,7 +354,13 @@ class Experiment:
 
     def _train_and_evaluate(self, server, rounds):
         for round_num in range(rounds):
+            
+            start_time = time.time()  # Start the timer
             server.train_round()
+            end_time = time.time()  # End the timer
+            elapsed_time = end_time - start_time
+            print(f"Round {round_num + 1}/{rounds} completed in {elapsed_time:.2f} seconds.")
+        
             if (round_num +1 == rounds) and (server.server_type in ['localadaptation', 'babu']):
                 server.train_round(final_round = True)
  

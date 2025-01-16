@@ -111,3 +111,5 @@
 2025-01-15 16:22:01,952 - CIFAR_learning_rate - INFO - Starting server type: fedlama
 2025-01-15 16:35:10,802 - CIFAR_learning_rate - INFO - Starting server type: pfedla
 2025-01-15 16:48:37,283 - CIFAR_learning_rate - INFO - Starting server type: layerpfl
+2025-01-15 17:01:55,941 - CIFAR_learning_rate - INFO - Starting tuning for: 0.001
+2025-01-15 17:01:56,815 - CIFAR_learning_rate - INFO - Starting server type: local

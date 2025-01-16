@@ -523,9 +523,9 @@ class DataPreprocessor:
         test_dataset = self._create_dataset(test_data, is_train=False, **scaler)
         
         return (
-            DataLoader(train_dataset, batch_size=self.batch_size, shuffle=True),
-            DataLoader(val_dataset, batch_size=self.batch_size, shuffle=False),
-            DataLoader(test_dataset, batch_size=self.batch_size, shuffle=False)
+            DataLoader(train_dataset, batch_size=self.batch_size, shuffle=True, pin_memory=True, num_workers=2 ),
+            DataLoader(val_dataset, batch_size=self.batch_size, shuffle=False, pin_memory=True, num_workers=2 ),
+            DataLoader(test_dataset, batch_size=self.batch_size, shuffle=False, pin_memory=True, num_workers=2 )
         )
     
     def _create_dataset(self, data, is_train=True, **kwargs):

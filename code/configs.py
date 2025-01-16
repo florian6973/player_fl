@@ -30,9 +30,12 @@ from datetime import datetime
 from functools import wraps
 import os
 import gc
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ProcessPoolExecutor, as_completed, wait
+import torch.multiprocessing as mp
 
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
+
+N_WORKERS = 4
 
 ALGORITHMS = [
     'local', 
@@ -71,7 +74,7 @@ DEFAULT_PARAMS = {
         'num_clients': 5,
         'sizes_per_client': 3000,
         'classes': 62,
-        'batch_size': 128,
+        'batch_size': 256,
         'epochs_per_round': 1,
         'rounds': 75,
         'runs': 50,
@@ -82,7 +85,7 @@ DEFAULT_PARAMS = {
         'num_clients': 5,
         'sizes_per_client': 10000,
         'classes': 10,
-        'batch_size': 128,
+        'batch_size': 512,
         'epochs_per_round': 1,
         'rounds': 50,
         'runs': 20,
@@ -104,7 +107,7 @@ DEFAULT_PARAMS = {
         'num_clients': 4,
         'sizes_per_client': None,
         'classes': 4,
-        'batch_size': 32,
+        'batch_size': 128,
         'epochs_per_round': 1,
         'rounds': 50,
         'runs': 3,
