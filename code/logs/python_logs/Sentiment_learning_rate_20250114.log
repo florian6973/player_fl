@@ -1,5 +1,0 @@
-2025-01-14 17:07:33,744 - Sentiment_learning_rate - INFO - Starting hyperparameter tuning experiment
-2025-01-14 17:07:33,744 - Sentiment_learning_rate - INFO - Testing learning rates: [0.001, 0.0005, 0.0001, 8e-05]
-2025-01-14 17:07:33,746 - Sentiment_learning_rate - INFO - Starting Run 1/3
-2025-01-14 17:07:33,746 - Sentiment_learning_rate - INFO - Starting tuning for: 0.001
-2025-01-14 17:07:34,162 - Sentiment_learning_rate - INFO - Starting server type: local

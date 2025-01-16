@@ -53,12 +53,12 @@ class ModelState:
 
     def __post_init__(self):
         if self.best_model is None and self.model is not None:
-            self.best_model = copy.deepcopy(self.model)
+            self.best_model = copy.deepcopy(self.model).to(next(self.model.parameters()).device)
     
     def copy(self):
         """Create a new ModelState with copied model and optimizer."""
         # Create new model instance
-        new_model = copy.deepcopy(self.model)
+        new_model = copy.deepcopy(self.model).to(next(self.model.parameters()).device)
         
         # Setup optimizer
         optimizer_state = copy.deepcopy(self.optimizer.state_dict())
@@ -130,16 +130,15 @@ class Client:
         
         if loss < state.best_loss:
             state.best_loss = loss
-            state.best_model = copy.deepcopy(state.model)
+            state.best_model = copy.deepcopy(state.model).to(self.device)
             return True
         return False
 
     def train_epoch(self, personal):
         """Train for one epoch."""
         try:
-            start_time = time.time()
             state = self.get_client_state(personal)
-            model = state.model.train().to(self.device)
+            model = state.model.train()#.to(self.device)
             total_loss = 0.0
             for batch_x, batch_y in self.data.train_loader:
                 batch_x = move_to_device(batch_x, self.device)
@@ -155,15 +154,12 @@ class Client:
 
             avg_loss = total_loss / len(self.data.train_loader)
             state.train_losses.append(avg_loss)
-            print(f"Time per epoch: {time.time() - start_time:.2f} seconds.")    
             return avg_loss
             
         finally:
-            start_time = time.time()
             del batch_x, batch_y, outputs, loss
             #model.to('cpu')
             #cleanup_gpu()
-            print(f"Time per cleanup: {time.time() - start_time:.2f} seconds.")
 
     def train(self, personal):
         """Train for multiple epochs."""
@@ -175,7 +171,7 @@ class Client:
         """Evaluate model performance."""
         try:
             state = self.get_client_state(personal)
-            model = (state.model if validate else state.best_model).to(self.device)
+            model = (state.model if validate else state.best_model)#.to(self.device)
             model.eval()
             
             total_loss = 0.0
@@ -204,8 +200,8 @@ class Client:
             
         finally:
             del batch_x, batch_y, outputs, loss
-            model.to('cpu')
-            cleanup_gpu()
+            #model.to('cpu')
+            #cleanup_gpu()
 
     def validate(self, personal):
         """Validate current model."""
@@ -247,7 +243,7 @@ class FedProxClient(Client):
     def train_epoch(self, personal=False):        
         try:
             state = self.get_client_state(personal)
-            model = state.model.train().to(self.device)
+            model = state.model.train()#.to(self.device)
             total_loss = 0.0
             for batch_x, batch_y in self.data.train_loader:
                 batch_x = move_to_device(batch_x, self.device)
@@ -275,8 +271,8 @@ class FedProxClient(Client):
             
         finally:
             del batch_x, batch_y, outputs, loss
-            model.to('cpu')
-            cleanup_gpu()
+            #model.to('cpu')
+            #cleanup_gpu()
 
     def compute_proximal_term(self, model_params, reference_params):
         """Calculate proximal term between two sets of model parameters."""
@@ -296,8 +292,8 @@ class PFedMeClient(Client):
         """Train for one epoch with proximal term regularization."""
         try:
             state = self.get_client_state(personal)
-            model = state.model.train().to(self.device)
-            global_model = self.global_state.model.train().to(self.device)
+            model = state.model.train()#.to(self.device)
+            global_model = self.global_state.model.train()#.to(self.device)
             total_loss = 0.0
             for batch_x, batch_y in self.data.train_loader:
                 batch_x = move_to_device(batch_x, self.device)
@@ -324,9 +320,9 @@ class PFedMeClient(Client):
             
         finally:
             del batch_x, batch_y, outputs, loss
-            model.to('cpu')
-            global_model.to('cpu')
-            cleanup_gpu()
+            #model.to('cpu')
+            #global_model.to('cpu')
+            #cleanup_gpu()
 
     def train(self, personal=True):
         """Main training loop defaulting to personal model."""
@@ -353,8 +349,8 @@ class DittoClient(Client):
         else:
             try:
                 state = self.get_client_state(personal)
-                model = state.model.train().to(self.device)
-                global_model = self.global_state.model.train().to(self.device)
+                model = state.model.train()#.to(self.device)
+                global_model = self.global_state.model.train()#.to(self.device)
                 total_loss = 0.0
                 for batch_x, batch_y in self.data.train_loader:
                     batch_x = move_to_device(batch_x, self.device)
@@ -379,9 +375,9 @@ class DittoClient(Client):
                 
             finally:
                 del batch_x, batch_y, outputs, loss
-                model.to('cpu')
-                global_model.to('cpu')
-                cleanup_gpu()
+                #model.to('cpu')
+                #global_model.to('cpu')
+                #cleanup_gpu()
         
     def add_gradient_regularization(self, model_params, reference_params):
         """Add regularization directly to gradients."""

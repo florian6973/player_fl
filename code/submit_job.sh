@@ -2,7 +2,7 @@
 
 # List of datasets to process
 datasets=("Heart" "FMNIST"  "EMNIST" "CIFAR" "Sentiment" "ISIC" "mimic")
-datasets=("FMNIST")
+#datasets=("FMNIST")
 
 # Options for experiment type
 experiment_types=("learning_rate" "evaluation")

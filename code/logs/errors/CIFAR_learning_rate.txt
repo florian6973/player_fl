@@ -65,3 +65,7 @@
 2025-01-16 14:13:44,811 - CIFAR_learning_rate - INFO - Starting tuning for: 0.001
 2025-01-16 14:13:45,609 - CIFAR_learning_rate - INFO - Starting server type: local
 2025-01-16 14:34:43,033 - CIFAR_learning_rate - INFO - Starting server type: fedavg
+2025-01-16 14:55:38,866 - CIFAR_learning_rate - INFO - Starting server type: fedprox
+2025-01-16 15:16:14,154 - CIFAR_learning_rate - INFO - Starting server type: pfedme
+2025-01-16 15:37:17,886 - CIFAR_learning_rate - INFO - Starting server type: ditto
+slurmstepd: error: *** JOB 315667 ON ne1dg6-001 CANCELLED AT 2025-01-16T15:37:29 ***

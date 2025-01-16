@@ -1,5 +1,0 @@
-2025-01-16 13:43:22,805 - FMNIST_learning_rate - INFO - Starting hyperparameter tuning experiment
-2025-01-16 13:43:22,805 - FMNIST_learning_rate - INFO - Testing learning rates: [0.001, 0.0005, 0.0001, 8e-05]
-2025-01-16 13:43:22,809 - FMNIST_learning_rate - INFO - Starting Run 1/5
-2025-01-16 13:43:22,809 - FMNIST_learning_rate - INFO - Starting tuning for: 0.001
-2025-01-16 13:43:22,893 - FMNIST_learning_rate - INFO - Starting server type: local

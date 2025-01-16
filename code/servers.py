@@ -12,6 +12,8 @@ class Server:
         self.personal =config.requires_personal_model
         self.clients = {}
         self.serverstate = globalmodelstate
+        self.serverstate.model = self.serverstate.model.to(self.device)
+        self.serverstate.best_model = self.serverstate.best_model.to(self.device)
         
  
     def set_server_type(self, name, tuning):
@@ -23,7 +25,7 @@ class Server:
         return Client(
             config=self.config,  
             data=clientdata, 
-            modelstate=modelstate.copy(),  
+            modelstate=modelstate.copy(),
             metrics_calculator=MetricsCalculator(self.config.dataset_name),
             personal_model=personal_model
         )
@@ -60,7 +62,6 @@ class Server:
         train_loss = 0
         val_loss = 0
         val_score = {}
-        start_time = time.time()
         for client in self.clients.values():
             # Train and validate
             client_train_loss = client.train(self.personal)
@@ -70,8 +71,6 @@ class Server:
             train_loss += client_train_loss * client.data.weight
             val_loss += client_val_loss * client.data.weight
             val_score = self._aggregate_scores(val_score, client_val_score, client.data.weight)
-        mid_time = time.time()
-        print(f"Time per train epoch: {mid_time - start_time:.2f} seconds.")
         # Track metrics
         self.serverstate.train_losses.append(train_loss)
         self.serverstate.val_losses.append(val_loss)
@@ -84,8 +83,6 @@ class Server:
         if val_loss < self.serverstate.best_loss:
             self.serverstate.best_loss = val_loss
             self.serverstate.best_model = copy.deepcopy(self.serverstate.model)
-        end_time = time.time()
-        print(f"Time per round: {end_time - start_time:.2f} seconds.")
         return train_loss, val_loss, val_score
 
     def test_global(self):
@@ -570,7 +567,7 @@ class pFedLAServer(FLServer):
         for name in self.layer_names:
             if name in self.trainable_names:
                 base_name = name.split('.')[0]
-                weights = alpha[base_name].to('cpu')
+                weights = alpha[base_name]#.to('cpu')
             else:
                 weights = torch.zeros(len(self.clients))
                 weights[client_id] = 1.0

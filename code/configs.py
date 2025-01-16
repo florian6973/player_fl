@@ -51,10 +51,6 @@ ALGORITHMS = [
     'layerpfl'
 ]
 
-ALGORITHMS = [
-    'local', 
-]
-
 
 DATASETS = [
     'FMNIST',
@@ -91,9 +87,9 @@ DEFAULT_PARAMS = {
         'classes': 10,
         'batch_size': 512,
         'epochs_per_round': 1,
-        'rounds': 50,
+        'rounds': 75,
         'runs': 20,
-        'runs_lr': 5
+        'runs_lr': 3
     },
     'FMNIST': {
         'learning_rates_try': [1e-3, 5e-4, 1e-4, 8e-5],
