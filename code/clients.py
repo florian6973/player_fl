@@ -137,6 +137,7 @@ class Client:
     def train_epoch(self, personal):
         """Train for one epoch."""
         try:
+            start_time = time.time()
             state = self.get_client_state(personal)
             model = state.model.train().to(self.device)
             total_loss = 0.0
@@ -154,13 +155,15 @@ class Client:
 
             avg_loss = total_loss / len(self.data.train_loader)
             state.train_losses.append(avg_loss)
-                
+            print(f"Time per epoch: {time.time() - start_time:.2f} seconds.")    
             return avg_loss
             
         finally:
+            start_time = time.time()
             del batch_x, batch_y, outputs, loss
-            model.to('cpu')
-            cleanup_gpu()
+            #model.to('cpu')
+            #cleanup_gpu()
+            print(f"Time per cleanup: {time.time() - start_time:.2f} seconds.")
 
     def train(self, personal):
         """Train for multiple epochs."""

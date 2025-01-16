@@ -60,7 +60,7 @@ class Server:
         train_loss = 0
         val_loss = 0
         val_score = {}
-
+        start_time = time.time()
         for client in self.clients.values():
             # Train and validate
             client_train_loss = client.train(self.personal)
@@ -70,6 +70,8 @@ class Server:
             train_loss += client_train_loss * client.data.weight
             val_loss += client_val_loss * client.data.weight
             val_score = self._aggregate_scores(val_score, client_val_score, client.data.weight)
+        mid_time = time.time()
+        print(f"Time per train epoch: {mid_time - start_time:.2f} seconds.")
         # Track metrics
         self.serverstate.train_losses.append(train_loss)
         self.serverstate.val_losses.append(val_loss)
@@ -82,7 +84,8 @@ class Server:
         if val_loss < self.serverstate.best_loss:
             self.serverstate.best_loss = val_loss
             self.serverstate.best_model = copy.deepcopy(self.serverstate.model)
-
+        end_time = time.time()
+        print(f"Time per round: {end_time - start_time:.2f} seconds.")
         return train_loss, val_loss, val_score
 
     def test_global(self):
@@ -629,7 +632,7 @@ class pFedLAServer(FLServer):
         train_loss = 0
         val_loss = 0
         val_score = {}
-        
+        start_time = time.time()
         for client_id in self.clients:
             client = self.clients[client_id]
             
@@ -652,7 +655,8 @@ class pFedLAServer(FLServer):
             train_loss += client_train_loss * client.data.weight
             val_loss += client_val_loss * client.data.weight
             val_score = self._aggregate_scores(val_score, client_val_score, client.data.weight)
-
+        mid_time = time.time()
+        print(f"Time per train epoch: {mid_time - start_time:.2f} seconds.")
         # Track metrics
         self.serverstate.train_losses.append(train_loss)
         self.serverstate.val_losses.append(val_loss)

@@ -51,6 +51,10 @@ ALGORITHMS = [
     'layerpfl'
 ]
 
+ALGORITHMS = [
+    'local', 
+]
+
 
 DATASETS = [
     'FMNIST',
