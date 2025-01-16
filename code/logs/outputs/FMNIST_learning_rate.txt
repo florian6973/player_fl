@@ -1,2 +1,0 @@
-[2025-01-16 12:49:19.370007] Active jobs: 4, Completed: 1
-Error running experiments: local variable 'batch_x' referenced before assignment
