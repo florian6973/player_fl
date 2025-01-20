@@ -2,42 +2,79 @@
         - Layer importances
         - Layer activations
         - Model similarities """
-ROOT_DIR = '/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl'
+
+# Standard library imports
 import copy
+import gc
+import os
+import pickle
+import random
+import sys
+import warnings
+from itertools import itertools
+
+# Third-party imports
+import numpy as np
+import pandas as pd
+import scipy.stats
 import torch
 import torch.nn as nn
-import sys
-sys.path.append(f'{ROOT_DIR}/code')
 import torch.nn.functional as F
-import pandas as pd
-import dataset_processing as dp
-import configs as cs
-import trainers as tr
-import gc
-import pickle
-import numpy as np
-import scipy.stats
-import warnings
 from netrep.metrics import LinearMetric
 from netrep.conv_layers import convolve_metric
-import itertools
-import os
+from sklearn.metrics import (
+    balanced_accuracy_score,
+    f1_score,
+    matthews_corrcoef
+)
+from torch.nn.utils import clip_grad_norm_
+from torch.optim.lr_scheduler import ExponentialLR
+from torch.utils.data import (
+    ConcatDataset,
+    DataLoader,
+    RandomSampler,
+    random_split
+)
 import argparse
-from torch.utils.data import DataLoader, RandomSampler
-import random
 
+# Local imports
+ROOT_DIR = '/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl'
+sys.path.append(f'{ROOT_DIR}/code')
+sys.path.append(f'{ROOT_DIR}/code/helper')
+
+import configs as cs
+import dataset_processing as dp
+
+# Configuration
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-cpus =int(os.getenv('SLURM_CPUS_PER_TASK', 6))
+cpus = int(os.getenv('SLURM_CPUS_PER_TASK', 6))
+
+# Warning suppressions
 warnings.simplefilter(action='ignore', category=FutureWarning)
 warnings.simplefilter(action='ignore', category=UserWarning)
-cs.set_seeds()
 
+# Set random seeds
+cs.set_seeds()
 def clear_data():
     gc.collect()
     torch.cuda.empty_cache()
-        
+
 ATTENTION_MODELS = cs.ATTENTION_MODELS
 CLIP_GRAD = cs.CLIP_GRAD
+
+class ModelDeviceManager:
+    def __init__(self, model, device):
+        self.model = model
+        self.device = device
+
+    def __enter__(self):
+        self.model.to(self.device)
+        return self.model
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.model.to('cpu')
+
+
 
 # Runs per dataset and lr
 RUNS =  {'EMNIST':3,
@@ -48,7 +85,251 @@ RUNS =  {'EMNIST':3,
         "Heart": 10,
         "mimic":3}
 
-class SingleTrainer(tr.BaseTrainer):
+class BaseTrainer:
+    """ Base trainer """
+    def __init__(self, device, dataset, num_sites, num_classes, layers_to_include = None, epochs = 50, batch_size = 256, cross_device = False):
+        self.device = device
+        self.dataset = dataset
+        self.num_sites = num_sites
+        self.TRAIN_SIZE = 0.7
+        self.VAL_SIZE = 0.2
+        self.BATCH_SIZE = batch_size
+        self.EPOCHS = epochs
+        self.num_classes = num_classes
+        self.cross_device = cross_device
+
+    def create_loaders(self, full_dataset):
+        """ Splite data and create loaders """   
+        train_num = int(self.TRAIN_SIZE * len(full_dataset.labels))
+        val_num = int(self.VAL_SIZE * len(full_dataset.labels))
+        test_num = len(full_dataset) - train_num - val_num
+        train_dataset, val_dataset, test_dataset = random_split(full_dataset, [train_num, val_num, test_num])
+        train_loader = DataLoader(train_dataset, batch_size=self.BATCH_SIZE, shuffle=True, num_workers=2, pin_memory=True)
+        val_loader = DataLoader(val_dataset, batch_size=self.BATCH_SIZE, shuffle=False, num_workers=2, pin_memory=True)
+        test_loader = DataLoader(test_dataset, batch_size=self.BATCH_SIZE, shuffle=False, num_workers=2, pin_memory=True)
+        return train_loader, val_loader, test_loader
+
+    def create_site_objects(self, data, model, loss_fct, LRs):    
+        """ Create objects for each site """    
+        fed_weights = np.array([len(data[site].labels) for site in data])
+        fed_weights = fed_weights / np.sum(fed_weights)
+        site_objects = {}
+        gamma = 0.99 if self.dataset == 'CIFAR' else 0.9
+        if isinstance(LRs, tuple):
+            LR_federated, _ = LRs
+        elif isinstance(LRs, float):
+            LR_federated = LRs
+        for site, data_site in data.items():
+            #Dataloaders
+            site_objects[site] = {}
+            site_objects[site]['train_loader'], site_objects[site]['val_loader'], site_objects[site]['test_loader']= self.create_loaders(data_site)
+            #model
+            site_objects[site]['model'] = copy.deepcopy(model)
+            site_objects[site]['best_model'] = copy.deepcopy(model)
+            site_objects[site]['best_loss'] = np.inf
+            #Trainers
+            site_objects[site]['criterion'] = loss_fct
+            site_objects[site]['optimizer'] = torch.optim.AdamW(site_objects[site]['model'].parameters(), lr = LR_federated, amsgrad=True, betas=(0.9, 0.999))
+            site_objects[site]['lr_scheduler'] = ExponentialLR(site_objects[site]['optimizer'], gamma=gamma)
+            site_objects[site]['fed_weight'] = fed_weights[site]
+        #global objects
+        self.site_objects = site_objects
+        self.best_loss = np.inf
+        self.global_model = copy.deepcopy(model)
+        self.patience = 3 if self.dataset in ['ISIC', 'mimic'] else 10
+        self.counter = 0
+
+    def load_site_training_objects(self, site):
+        """ Load training objects """        
+        model = self.site_objects[site]['model']
+        dataloader = self.site_objects[site]['train_loader']
+        criterion = self.site_objects[site]['criterion']
+        optimizer = self.site_objects[site]['optimizer']
+        lr_scheduler = self.site_objects[site]['lr_scheduler']
+        return model, dataloader, criterion, optimizer, lr_scheduler
+    
+    def process_dataloader_items(self, features, labels, device = None):
+        """ Put models onto correct devices """
+        if device is None:
+            device = self.device
+        if self.dataset in ATTENTION_MODELS:
+            embedding, mask = features
+            mask = mask.to(device)
+            embedding = embedding.to(device)
+            features = (embedding, mask)
+        else:
+            features = features.to(device)
+        labels = labels.to(device)
+        return features, labels
+    
+    def train(self, site):
+        """ Train each site separately """
+        with ModelDeviceManager(self.site_objects[site]['model'], self.device) as model_on_device:
+            model_on_device.train()
+            total_loss = 0.0
+            for features, labels in self.site_objects[site]['train_loader']:
+                features, labels = self.process_dataloader_items(features, labels)
+                outputs = model_on_device(features)
+                loss = self.site_objects[site]['criterion'](outputs, labels)
+                loss.backward()
+                if self.dataset in CLIP_GRAD:
+                    clip_grad_norm_(model_on_device.parameters(), 5)
+                self.site_objects[site]['optimizer'].step()
+                self.site_objects[site]['optimizer'].zero_grad(set_to_none=True)
+                total_loss += loss.item()
+            self.site_objects[site]['lr_scheduler'].step()
+        features, labels = self.process_dataloader_items(features, labels, 'cpu')
+        torch.cuda.empty_cache()
+        return total_loss / len( self.site_objects[site]['train_loader'])
+
+    def concat_datasets(self, site):
+        """ Combine the datasets for other sites to measure the generalizability of the model """
+        datasets = [self.site_objects[other_site]['test_loader'].dataset for other_site in self.site_objects if site != other_site]
+        combined_dataset = ConcatDataset(datasets)
+        dataloader = DataLoader(combined_dataset, batch_size=self.site_objects[site]['test_loader'].batch_size, shuffle=False)
+        return dataloader
+
+
+    def evaluate(self, site, test=False):
+        """ Evaluate each site """
+        if not test:
+            model, dataloader, criterion = self.site_objects[site]['model'], self.site_objects[site]['val_loader'], self.site_objects[site]['criterion']
+            return self.evaluate_logic(model, dataloader, criterion)
+        else:
+            model, dataloader, criterion = self.site_objects[site]['best_model'], self.site_objects[site]['test_loader'], self.site_objects[site]['criterion']
+            site_loss, site_eval_metrics = self.evaluate_logic(model, dataloader, criterion)
+            return [site_loss] + list(site_eval_metrics)
+            """ dataloader = self.concat_datasets(site)
+            other_loss, other_eval_metrics = self.evaluate_logic(model, dataloader, criterion)
+            return [site_loss] + list(site_eval_metrics), [other_loss] + list(other_eval_metrics) """
+        
+
+    def evaluate_logic(self, model, dataloader, criterion):
+        """ Logic to run evaluation """
+        total_loss = 0.0
+        all_predicted = []
+        true_labels = []
+        model.eval()
+        with ModelDeviceManager(model, self.device) as model_on_device:
+            with torch.no_grad():
+                for features, labels in dataloader:
+                    features, labels = self.process_dataloader_items(features, labels)
+                    outputs = model_on_device(features)
+                    loss = criterion(outputs, labels)
+                    total_loss += loss.item()
+                    _, predicted = torch.max(outputs.data, 1)
+                    all_predicted.append(predicted)
+                    true_labels.append(labels)
+        features, labels = self.process_dataloader_items(features, labels, 'cpu')
+        eval_metrics = self.evaluation_metrics(all_predicted, true_labels)
+        torch.cuda.empty_cache()
+        return total_loss / len(dataloader), eval_metrics
+    
+
+    def evaluation_metrics(self, predicted_labels_list, true_labels_list):
+        """Compute accuracy, balanced accuracy, F1 score, MCC Score. """
+        predicted_labels = torch.cat(predicted_labels_list)
+        true_labels = torch.cat(true_labels_list)
+        # Accuracy
+        correct_predictions = (predicted_labels == true_labels).sum().item()
+        accuracy = correct_predictions / len(true_labels)
+        
+        # Balanced Accuracy
+        balanced_accuracy = balanced_accuracy_score(true_labels.cpu().numpy(), predicted_labels.cpu().numpy())
+        
+        # F1 Score
+        f1 = f1_score(true_labels.cpu().numpy(), predicted_labels.cpu().numpy(), average='macro')
+        weighted_f1 = f1_score(true_labels.cpu().numpy(), predicted_labels.cpu().numpy(), average='weighted')
+        # MCC
+        mcc = matthews_corrcoef(true_labels.cpu().numpy(), predicted_labels.cpu().numpy())
+        return (accuracy, balanced_accuracy, f1, weighted_f1, mcc)
+    
+    def initialize_pipeline(self, data, model, loss_fct, LR):
+        """ Set up pipeline objects """
+        self.create_site_objects(data, model, loss_fct, LR)
+        return
+    
+    def training_loop(self):
+        """ Training loop for an epoch """
+        train_losses = 0
+        for site in self.site_objects:
+            train_loss = self.train(site)
+            train_losses += train_loss * self.site_objects[site]['fed_weight']
+        return train_losses
+
+    def validation_loop(self):
+        """ Validation loop for an epoch """
+        val_losses = 0
+        eval_metrics_list = []
+        for site in self.site_objects:
+            val_loss, eval_metrics = self.evaluate(site)
+            val_losses += val_loss * self.site_objects[site]['fed_weight']
+            eval_metrics_list.append(eval_metrics)
+            #Save best model for each site
+            if val_loss < self.site_objects[site]['best_loss']:
+                self.site_objects[site]['best_model'] = copy.deepcopy(self.site_objects[site]['model'])
+                self.site_objects[site]['best_loss'] = val_loss
+        return val_losses, eval_metrics_list
+
+    def check_early_stopping(self, val_losses):
+        """ Early stopping logic """
+        if val_losses < self.best_loss:
+            self.best_loss = val_losses
+            self.best_model = copy.deepcopy(self.global_model)
+            self.counter = 0
+        else:
+            self.counter += 1
+            if self.counter > self.patience:
+                return True
+        return False
+    
+    def testing_loop(self, eval_metrics_list):
+        """ Get performance in test set """
+        site_metrics_all = [0 for i in range(len(eval_metrics_list[0]))] + [0] #for test loss
+        #other_metrics_all = [0 for i in range(len(eval_metrics_list[0]))] + [0] #for test loss
+        site_separate_results = {}
+        for site in self.site_objects:
+            site_metrics = self.evaluate(site, test=True)
+            site_separate_results[site] = site_metrics
+            site_metrics_all = [site_metrics_all[i] + site_metrics[i] * self.site_objects[site]['fed_weight'] for i in range(len(site_metrics))]
+            #other_metrics_all = [other_metrics_all[i] + other_metrics[i] * self.site_objects[site]['fed_weight'] for i in range(len(other_metrics))]
+        #Return the site test loss for printing    
+        return site_metrics_all[0], site_metrics_all, site_separate_results
+
+    def clear_pipeline_data(self):
+        """ Clear pipeline objects """
+        del self.site_objects
+        del self.global_model
+        clear_data()
+
+    def run_pipeline(self, data, model, loss_fct, LR, clear = True):
+        """ Full pipeline """
+        self.initialize_pipeline(data, model, loss_fct, LR)
+        train_losses_list, val_losses_list = [], []
+        #train and validate
+        for epoch in range(self.EPOCHS):
+            train_losses = self.training_loop()
+            val_losses, eval_metrics_list = self.validation_loop()
+            train_losses_list.append(train_losses)
+            val_losses_list.append(val_losses)
+            if epoch % 10 == 0:
+                print(f"Epoch {epoch+1}/{self.EPOCHS}, Train Loss: {train_losses:.4f}, Validation Loss: {val_losses:.4f}")
+            stop = self.check_early_stopping(val_losses)
+            if stop:
+                print(f'Early stopping at {epoch}')
+                break
+        
+        test_losses, eval_metrics_all, site_separate_results = self.testing_loop(eval_metrics_list)
+        clear_data()
+        print(f"Test Loss: {test_losses:.4f}")
+        print('\n')
+        if clear:
+            self.clear_pipeline_data()
+        return eval_metrics_all, site_separate_results, [train_losses_list, val_losses_list]
+
+
+
+class SingleTrainer(BaseTrainer):
     """ Base single trainer """
     def __init__(self, device, dataset, num_sites, num_classes, layers_to_include = None, epochs = 50, batch_size = 64):
         super().__init__(device, dataset, num_sites, num_classes, layers_to_include,  epochs, batch_size)
@@ -192,7 +473,7 @@ class SingleTrainer(tr.BaseTrainer):
             data, labels = self.process_dataloader_items(data, labels)
             act_model.eval()
             with torch.no_grad():
-                with tr.ModelDeviceManager(act_model, self.device) as model_on_device:
+                with ModelDeviceManager(act_model, self.device) as model_on_device:
                     _ = model_on_device(data)
                 torch.cuda.empty_cache()
             data, labels = self.process_dataloader_items(data, labels, 'cpu')
@@ -329,7 +610,7 @@ class FederatedTrainer(SingleTrainer):
             param.data *= 0
         
         for i, (site,model) in enumerate(models):
-            with tr.ModelDeviceManager(model, self.device) as model_on_device , tr.ModelDeviceManager(self.global_model, self.device) as global_model:
+            with ModelDeviceManager(model, self.device) as model_on_device , ModelDeviceManager(self.global_model, self.device) as global_model:
                 fed_weight = fed_weights[i] / sum(fed_weights)
                 for m1, m2 in zip(global_model.named_parameters(), model_on_device.named_parameters()):
                     _, avg_param = m1
@@ -337,7 +618,7 @@ class FederatedTrainer(SingleTrainer):
                     avg_param.data += fed_weight * model_param.data
                 
         for site in self.site_objects:
-            with tr.ModelDeviceManager(self.site_objects[site]['model'], self.device) as model_on_device , tr.ModelDeviceManager(self.global_model, self.device) as global_model:
+            with ModelDeviceManager(self.site_objects[site]['model'], self.device) as model_on_device , ModelDeviceManager(self.global_model, self.device) as global_model:
                 model_on_device.load_state_dict(global_model.state_dict())
         return
     
@@ -616,8 +897,10 @@ def main(datasets, federated):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("-ds", "--datasets")
-    parser.add_argument("-fd", "--federated", action="store_true", default = False)
+    parser.add_argument("-fd", "--federated", type=lambda x: x.lower() == 'true', 
+                       default=False, help="Set to 'true' or 'false'")
     args = parser.parse_args()
+    
     datasets = args.datasets
     federated = args.federated
     datasets = datasets.split(',')
