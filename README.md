@@ -2,8 +2,63 @@
 
 This repository contains code for running layer-wise analysis and model evaluations for federated learning systems.
 
-## Getting Started
+## Dataset Setup
 
+The project requires several datasets that need to be downloaded and placed in a `data` folder. Below are the required datasets and their sources:
+
+### Standard ML Datasets (via PyTorch)
+- **Fashion-MNIST (FMNIST)**
+  - Available through `torchvision.datasets`
+  - Will be downloaded automatically during first run
+
+- **EMNIST**
+  - Available through `torchvision.datasets`
+  - Will be downloaded automatically during first run
+
+- **CIFAR-10**
+  - Available through `torchvision.datasets`
+  - Will be downloaded automatically during first run
+
+### Federated Learning Datasets (via FLamby)
+- **FED-HEART**
+  - Source: [FLamby Heart Disease Dataset](https://github.com/owkin/FLamby/tree/main/flamby/datasets/fed_heart_disease)
+  - Installation: Follow FLamby installation instructions
+
+- **FED-ISIC-2019**
+  - Source: [FLamby ISIC 2019 Dataset](https://github.com/owkin/FLamby/tree/main/flamby/datasets/fed_isic2019)
+  - Installation: Follow FLamby installation instructions
+
+### Healthcare Datasets
+- **MIMIC-III**
+  - Source: [PhysioNet MIMIC-III Clinical Database](https://physionet.org/content/mimiciii/1.4/)
+  - Requires credentialed access
+
+### NLP Datasets
+- **Sentiment140 (Sent-140)**
+  - Source: [Kaggle Sentiment140 Dataset](https://www.kaggle.com/datasets/kazanova/sentiment140)
+  - Download and extract to `data/sentiment140/`
+
+### Directory Structure
+```
+data/
+├── FMNIST/       # Automatically populated
+├── EMNIST/       # Automatically populated
+├── CIFAR10/       # Automatically populated
+├── Heart/         # FLamby heart disease data
+├── ISIC/      # FLamby ISIC data
+├── mimic_iii/         # MIMIC-III data
+└── Sentiment/      # Sentiment140 data
+```
+
+### Access Requirements
+- MIMIC-III requires PhysioNet credentialed access
+- Other datasets are publicly available
+
+### Data Processing
+For detailed dataset descriptions and preprocessing steps, refer to our paper's methodology section.
+
+
+## Processes
 There are two main processes available:
 
 ### 1. Layer Metrics
