@@ -34,7 +34,6 @@ from concurrent.futures import ProcessPoolExecutor, as_completed, wait
 import torch.multiprocessing as mp
 
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
-
 N_WORKERS = 4
 
 ALGORITHMS = [
@@ -48,10 +47,10 @@ ALGORITHMS = [
     'fedlp', 
     'fedlama', 
     'pfedla', 
-    'layerpfl'
+    'layerpfl',
+    'layerpfl_minus_1',
+    'layerpfl_plus_1'
 ]
-
-
 DATASETS = [
     'FMNIST',
     'EMNIST',
@@ -69,47 +68,47 @@ DATASET_ALPHA = {
 }
 
 DEFAULT_PARAMS = {
-    'EMNIST': {
-        'learning_rates_try': [5e-3, 1e-3, 5e-4, 1e-4, 8e-5],
-        'num_clients': 5,
-        'sizes_per_client': 3000,
-        'classes': 62,
-        'batch_size': 256,
-        'epochs_per_round': 1,
-        'rounds': 75,
-        'runs': 50,
-        'runs_lr': 5
-    },
-    'CIFAR': {
-        'learning_rates_try': [5e-3, 1e-3, 5e-4, 1e-4],
-        'num_clients': 5,
-        'sizes_per_client': 10000,
-        'classes': 10,
-        'batch_size': 512,
-        'epochs_per_round': 1,
-        'rounds': 75,
-        'runs': 20,
-        'runs_lr': 3
-    },
     'FMNIST': {
-        'learning_rates_try': [1e-3, 5e-4, 1e-4, 8e-5],
+        'learning_rates_try': [5e-3, 1e-3, 5e-4, 1e-4],
         'num_clients': 5,
         'sizes_per_client': 2000,
         'classes': 10,
         'batch_size': 128,
         'epochs_per_round': 1,
+        'rounds': 100,
+        'runs': 20,
+        'runs_lr': 3
+    },
+    'EMNIST': {
+        'learning_rates_try': [5e-3, 1e-3, 5e-4, 1e-4],
+        'num_clients': 5,
+        'sizes_per_client': 3000,
+        'classes': 62,
+        'batch_size': 128,
+        'epochs_per_round': 1,
         'rounds': 75,
-        'runs': 50,
-        'runs_lr': 5
+        'runs': 10,
+        'runs_lr': 3
+    },
+    'CIFAR': {
+        'learning_rates_try': [5e-3, 1e-3, 5e-4],
+        'num_clients': 5,
+        'sizes_per_client': 10000,
+        'classes': 10,
+        'batch_size': 128,
+        'epochs_per_round': 1,
+        'rounds': 100,
+        'runs': 10,
+        'runs_lr': 3
     },
     'ISIC': {
-        'learning_rates_try': [1e-3, 5e-3, 1e-4],
+        'learning_rates_try': [5e-3, 1e-3, 5e-4, 1e-4],
         'num_clients': 4,
         'sizes_per_client': None,
         'classes': 4,
         'batch_size': 128,
         'epochs_per_round': 1,
-        'rounds': 50,
+        'rounds': 60,
         'runs': 3,
         'runs_lr': 1
     },
@@ -118,31 +117,31 @@ DEFAULT_PARAMS = {
         'num_clients': 15,
         'sizes_per_client': None,
         'classes': 2,
-        'batch_size': 128,
+        'batch_size': 64,
         'epochs_per_round': 1,
         'rounds': 50,
         'runs': 10,
         'runs_lr': 3
     },
     'Heart': {
-        'learning_rates_try': [1, 5e-1, 1e-1, 5e-2, 1e-2],
+        'learning_rates_try': [5e-1, 1e-1, 5e-2, 1e-2],
         'num_clients': 4,
         'sizes_per_client': None,
         'classes': 5,
-        'batch_size': 128,
+        'batch_size': 32,
         'epochs_per_round': 1,
-        'rounds': 50,
+        'rounds': 20,
         'runs': 50,
         'runs_lr': 5
     },
     'mimic': {
-        'learning_rates_try': [5e-4, 1e-4, 3e-4, 8e-5],
+        'learning_rates_try': [1e-3, 5e-4, 1e-4, 8e-5],
         'num_clients': 4,
         'sizes_per_client': None,
         'classes': 2,
-        'batch_size': 128,
+        'batch_size': 64,
         'epochs_per_round': 1,
-        'rounds': 10,
+        'rounds': 25,
         'runs': 10,
         'runs_lr': 3
     }

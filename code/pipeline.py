@@ -90,17 +90,30 @@ class ResultsManager:
         return self._select_best_hyperparameter(server_metrics)
 
     def _select_best_hyperparameter(self, lr_results):
-        """Select best hyperparameter based on minimum median of final losses."""
+        """
+        Select best hyperparameter based on minimum median loss across all rounds.
+        """
         best_loss = float('inf')
         best_param = None
         
         for lr, metrics in lr_results.items():
-            # Extract final loss from each run
-            final_losses = [run[-1] for run in metrics['global']['losses']]
-            median_loss = np.median(final_losses)
+            # For each round, calculate mean loss across all runs
+            num_rounds = len(metrics['global']['losses'][0])  # Assuming all runs have same number of rounds
             
-            if median_loss < best_loss:
-                best_loss = median_loss
+            # Calculate median loss for each round
+            round_mean_losses = []
+            for round_idx in range(num_rounds):
+                # Get losses for this round across all runs
+                round_losses = [run[round_idx] for run in metrics['global']['losses']]
+                median_loss = np.mean(round_losses)
+                round_mean_losses.append(median_loss)
+            
+            # Find the best (lowest) mean loss across all rounds
+            best_round_mean_loss = min(round_mean_losses)
+            
+            # Update best parameter if this learning rate achieved a better loss
+            if best_round_mean_loss < best_loss:
+                best_loss = best_round_mean_loss
                 best_param = lr
         
         return best_param
@@ -282,7 +295,7 @@ class Experiment:
             "FMNIST": nn.CrossEntropyLoss(),
             "ISIC": MulticlassFocalLoss(num_classes=classes, alpha = [0.87868852, 0.88131148, 0.82793443, 0.41206557], gamma = 1),
             "Sentiment": nn.CrossEntropyLoss(),
-            "Heart": MulticlassFocalLoss(num_classes=classes, alpha = [0.12939189, 0.18108108, 0.22331081, 0.22364865, 0.24256757], gamma = 1),
+            "Heart": MulticlassFocalLoss(num_classes=classes, alpha = [0.12939189, 0.18108108, 0.22331081, 0.22364865, 0.24256757], gamma = 3),
             "mimic":MulticlassFocalLoss(num_classes=classes, alpha = [0.15,0.85], gamma = 1),
         }.get(self.config.dataset, None)
 
@@ -321,7 +334,9 @@ class Experiment:
             'fedlp':FedLPServer,
             'fedlama':FedLAMAServer,
             'pfedla':pFedLAServer,
-            'layerpfl':LayerServer
+            'layerpfl':LayerPFLServer,
+            'layerpfl_minus_1':LayerPFLServer,
+            'layerpfl_plus_1':LayerPFLServer,
         }
 
         server_class = server_mapping[server_type]

@@ -1,12 +1,12 @@
 #!/bin/bash
 
 # List of datasets to process
-datasets=("Heart" "FMNIST"  "EMNIST" "CIFAR" "Sentiment" "ISIC" "mimic")
-#datasets=("FMNIST")
+#datasets=("Heart" "FMNIST"  "EMNIST" "CIFAR" "Sentiment" "ISIC" "mimic")
+datasets=("CIFAR")
 
 # Options for experiment type
 experiment_types=("learning_rate" "evaluation")
-experiment_types=("learning_rate")
+experiment_types=("evaluation")
 
 # Root directory and environment setup
 DIR='/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl'

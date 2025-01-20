@@ -6,4 +6,5 @@ results/
 code/slurm*
 code/archive
 *.ipynb
-workbooks/*
+workbooks/
+code/logs/

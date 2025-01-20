@@ -524,11 +524,11 @@ class pFedLAServer(FLServer):
             client_num=len(self.clients),
             hidden_dim=self.hidden_dim,
             backbone=self.serverstate.model,
-        )
+        ).to(self.device)
         
-        # Initialize per-client models
+        # Initialize per-client models - explicitly move to same device as hypernetwork
         self.client_models = [
-            [param.clone().detach() for param in self.serverstate.model.parameters()]
+            [param.clone().detach().to(self.device) for param in self.serverstate.model.parameters()]
             for _ in range(len(self.clients))
         ]
         
@@ -538,7 +538,7 @@ class pFedLAServer(FLServer):
             name for name, param in self.serverstate.model.named_parameters()
             if param.requires_grad
         ]
-
+    
     def _create_client(self, clientdata, modelstate, personal_model = False):
         """Create a client instance."""
         return pFedLAClient(
@@ -554,31 +554,33 @@ class pFedLAServer(FLServer):
         super().add_client(clientdata)
         if len(self.clients) == self.config.num_clients:
             self._initialize_hypernetwork()
-    
+
     def generate_client_model(self, client_id):
         """Generate personalized model for client using hypernetwork."""
         alpha = self.hypernetwork(client_id)
         # Stack client parameters for efficient computation
         layer_params = {}
         for name, params in zip(self.layer_names, zip(*self.client_models)):
+            # Ensure all params are on the same device before stacking
+            params = [p.to(self.device) for p in params]
             layer_params[name] = torch.stack(params, dim=0)
         
         personalized_params = OrderedDict()
         for name in self.layer_names:
             if name in self.trainable_names:
                 base_name = name.split('.')[0]
-                weights = alpha[base_name]#.to('cpu')
+                weights = alpha[base_name].to(self.device)  # Ensure weights are on correct device
             else:
-                weights = torch.zeros(len(self.clients))
+                weights = torch.zeros(len(self.clients), device=self.device)
                 weights[client_id] = 1.0
                 
             weights = weights / weights.sum() if weights.sum() != 0 else torch.ones_like(weights) / len(weights)
             
             # Handle different parameter shapes
             param_shape = layer_params[name].shape
-            if len(param_shape) == 5:  # Conv2d weights [num_clients, out_channels, in_channels, kernel_h, kernel_w]
+            if len(param_shape) == 5:  # Conv2d weights
                 weights_expanded = weights.view(-1, 1, 1, 1, 1).expand(-1, *param_shape[1:])
-            elif len(param_shape) == 3:  # Linear weights [num_clients, out_features, in_features]
+            elif len(param_shape) == 3:  # Linear weights
                 weights_expanded = weights.view(-1, 1, 1).expand(-1, *param_shape[1:])
             elif len(param_shape) == 2:  # Linear weights without batch dim
                 weights_expanded = weights.view(-1, 1).expand(-1, param_shape[1])
@@ -592,8 +594,12 @@ class pFedLAServer(FLServer):
     
     def update_hypernetwork(self, client_id, delta, retained_layers=None):
         """Update hypernetwork parameters using client updates."""
-        client_idx =  int(str.split(client_id, 'client_')[-1]) -1
+        client_idx = int(str.split(client_id, 'client_')[-1]) - 1
         retained_layers = retained_layers or []
+        
+        # Ensure delta is on the correct device
+        delta = {name: param.to(self.device) for name, param in delta.items()}
+        
         update_params = [
             param for name, param in delta.items()
             if name in self.trainable_names and name.split('.')[0] not in retained_layers
@@ -619,9 +625,13 @@ class pFedLAServer(FLServer):
     def update_client_model(self, client_id, delta):
         """Update stored client model parameters."""
         updated_params = []
-        client_idx =  int(str.split(client_id, 'client_')[-1]) -1 
+        client_idx = int(str.split(client_id, 'client_')[-1]) - 1
+        
+        # Ensure delta is on the correct device
+        delta = {name: param.to(self.device) for name, param in delta.items()}
+        
         for param, diff in zip(self.client_models[client_idx], delta.values()):
-            updated_params.append((param + diff).detach().cpu())
+            updated_params.append((param + diff).detach())  # Keep on current device
         self.client_models[client_idx] = updated_params
 
     def train_round(self):
