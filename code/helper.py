@@ -1,6 +1,5 @@
-ROOT_DIR = '/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl'
-DATA_DIR = f'{ROOT_DIR}/data'
 from configs import *
+
 def set_seeds(seed_value=1):
     """Set seeds for reproducibility."""
     torch.manual_seed(seed_value)

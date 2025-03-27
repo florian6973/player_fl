@@ -48,6 +48,7 @@ class ResultsManager:
 
     def save_results(self, results, experiment_type):
         path = self._get_results_path(experiment_type)
+        os.makedirs(os.path.dirname(path), exist_ok=True)
         with open(path, 'wb') as f:
             pickle.dump(results, f)
 

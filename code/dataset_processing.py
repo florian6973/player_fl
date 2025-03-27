@@ -57,7 +57,7 @@ class UnifiedDataLoader:
         all_data = []
         
         for site in range(6):
-            file_path = f'{self.data_dir}/{self.dataset_name}/site_{site}_metadata.csv'
+            file_path = f'{self.data_dir}/ISIC/site_{site}_metadata.csv'
             files = pd.read_csv(file_path)
             # Store full image paths
             image_files = [f'{self.data_dir}/ISIC/ISIC_2019_Training_Input_preprocessed/{file}.jpg' 
@@ -119,7 +119,7 @@ class UnifiedDataLoader:
         sites = ['cleveland', 'hungarian', 'switzerland', 'va']
         
         for i, site in enumerate(sites):
-            file_path = f'{self.data_dir}/{self.dataset_name}/processed.{site}.data'
+            file_path = f'{self.data_dir}/Heart/processed.{site}.data'
             site_data = pd.read_csv(
                 file_path,
                 names=columns,

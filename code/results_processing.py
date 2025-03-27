@@ -1,5 +1,5 @@
 
-ROOT_DIR = '/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl'
+from configs import ROOT_DIR
 import sys
 sys.path.append(f'{ROOT_DIR}/code')
 import pickle
