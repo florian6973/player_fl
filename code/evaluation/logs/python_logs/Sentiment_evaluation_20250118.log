@@ -1,0 +1,281 @@
+2025-01-18 14:20:50,836 - Sentiment_evaluation - INFO - Starting final evaluation phase
+2025-01-18 14:20:50,837 - Sentiment_evaluation - INFO - Starting run 1/10
+2025-01-18 14:20:51,080 - Sentiment_evaluation - INFO - Evaluating local model with best hyperparameters
+2025-01-18 14:23:03,993 - Sentiment_evaluation - INFO - Completed local evaluation
+2025-01-18 14:23:04,226 - Sentiment_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2025-01-18 14:25:17,496 - Sentiment_evaluation - INFO - Completed fedavg evaluation
+2025-01-18 14:25:17,727 - Sentiment_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2025-01-18 14:27:40,262 - Sentiment_evaluation - INFO - Completed fedprox evaluation
+2025-01-18 14:27:40,500 - Sentiment_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2025-01-18 14:30:04,362 - Sentiment_evaluation - INFO - Completed pfedme evaluation
+2025-01-18 14:30:04,660 - Sentiment_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2025-01-18 14:34:48,284 - Sentiment_evaluation - INFO - Completed ditto evaluation
+2025-01-18 14:34:48,462 - Sentiment_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2025-01-18 14:37:16,901 - Sentiment_evaluation - INFO - Completed localadaptation evaluation
+2025-01-18 14:37:17,035 - Sentiment_evaluation - INFO - Evaluating babu model with best hyperparameters
+2025-01-18 14:39:46,594 - Sentiment_evaluation - INFO - Completed babu evaluation
+2025-01-18 14:39:46,720 - Sentiment_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2025-01-18 14:42:11,981 - Sentiment_evaluation - INFO - Completed fedlp evaluation
+2025-01-18 14:42:12,116 - Sentiment_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2025-01-18 14:44:37,266 - Sentiment_evaluation - INFO - Completed fedlama evaluation
+2025-01-18 14:44:37,402 - Sentiment_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2025-01-18 14:47:09,702 - Sentiment_evaluation - INFO - Completed pfedla evaluation
+2025-01-18 14:47:09,843 - Sentiment_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2025-01-18 14:49:39,811 - Sentiment_evaluation - INFO - Completed layerpfl evaluation
+2025-01-18 14:49:39,946 - Sentiment_evaluation - INFO - Evaluating layerpfl_minus_1 model with best hyperparameters
+2025-01-18 14:52:09,598 - Sentiment_evaluation - INFO - Completed layerpfl_minus_1 evaluation
+2025-01-18 14:52:09,733 - Sentiment_evaluation - INFO - Evaluating layerpfl_plus_1 model with best hyperparameters
+2025-01-18 14:54:39,298 - Sentiment_evaluation - INFO - Completed layerpfl_plus_1 evaluation
+2025-01-18 14:54:39,456 - Sentiment_evaluation - INFO - Successfully completed run 1
+2025-01-18 14:54:39,456 - Sentiment_evaluation - INFO - Starting run 2/10
+2025-01-18 14:54:39,477 - Sentiment_evaluation - INFO - Evaluating local model with best hyperparameters
+2025-01-18 14:57:08,717 - Sentiment_evaluation - INFO - Completed local evaluation
+2025-01-18 14:57:08,852 - Sentiment_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2025-01-18 14:59:38,716 - Sentiment_evaluation - INFO - Completed fedavg evaluation
+2025-01-18 14:59:38,852 - Sentiment_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2025-01-18 15:02:10,528 - Sentiment_evaluation - INFO - Completed fedprox evaluation
+2025-01-18 15:02:10,665 - Sentiment_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2025-01-18 15:04:38,525 - Sentiment_evaluation - INFO - Completed pfedme evaluation
+2025-01-18 15:04:38,711 - Sentiment_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2025-01-18 15:09:30,173 - Sentiment_evaluation - INFO - Completed ditto evaluation
+2025-01-18 15:09:30,325 - Sentiment_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2025-01-18 15:12:05,891 - Sentiment_evaluation - INFO - Completed localadaptation evaluation
+2025-01-18 15:12:06,016 - Sentiment_evaluation - INFO - Evaluating babu model with best hyperparameters
+2025-01-18 15:14:40,439 - Sentiment_evaluation - INFO - Completed babu evaluation
+2025-01-18 15:14:40,554 - Sentiment_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2025-01-18 15:17:11,317 - Sentiment_evaluation - INFO - Completed fedlp evaluation
+2025-01-18 15:17:11,438 - Sentiment_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2025-01-18 15:19:42,078 - Sentiment_evaluation - INFO - Completed fedlama evaluation
+2025-01-18 15:19:42,199 - Sentiment_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2025-01-18 15:22:15,664 - Sentiment_evaluation - INFO - Completed pfedla evaluation
+2025-01-18 15:22:15,803 - Sentiment_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2025-01-18 15:24:42,483 - Sentiment_evaluation - INFO - Completed layerpfl evaluation
+2025-01-18 15:24:42,604 - Sentiment_evaluation - INFO - Evaluating layerpfl_minus_1 model with best hyperparameters
+2025-01-18 15:27:12,621 - Sentiment_evaluation - INFO - Completed layerpfl_minus_1 evaluation
+2025-01-18 15:27:12,741 - Sentiment_evaluation - INFO - Evaluating layerpfl_plus_1 model with best hyperparameters
+2025-01-18 15:29:44,394 - Sentiment_evaluation - INFO - Completed layerpfl_plus_1 evaluation
+2025-01-18 15:29:44,533 - Sentiment_evaluation - INFO - Successfully completed run 2
+2025-01-18 15:29:44,533 - Sentiment_evaluation - INFO - Starting run 3/10
+2025-01-18 15:29:44,555 - Sentiment_evaluation - INFO - Evaluating local model with best hyperparameters
+2025-01-18 15:32:15,507 - Sentiment_evaluation - INFO - Completed local evaluation
+2025-01-18 15:32:15,629 - Sentiment_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2025-01-18 15:34:47,027 - Sentiment_evaluation - INFO - Completed fedavg evaluation
+2025-01-18 15:34:47,146 - Sentiment_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2025-01-18 15:37:20,728 - Sentiment_evaluation - INFO - Completed fedprox evaluation
+2025-01-18 15:37:20,853 - Sentiment_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2025-01-18 15:39:49,922 - Sentiment_evaluation - INFO - Completed pfedme evaluation
+2025-01-18 15:39:50,089 - Sentiment_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2025-01-18 15:44:43,863 - Sentiment_evaluation - INFO - Completed ditto evaluation
+2025-01-18 15:44:44,010 - Sentiment_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2025-01-18 15:47:20,595 - Sentiment_evaluation - INFO - Completed localadaptation evaluation
+2025-01-18 15:47:20,713 - Sentiment_evaluation - INFO - Evaluating babu model with best hyperparameters
+2025-01-18 15:49:56,453 - Sentiment_evaluation - INFO - Completed babu evaluation
+2025-01-18 15:49:56,569 - Sentiment_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2025-01-18 15:52:27,415 - Sentiment_evaluation - INFO - Completed fedlp evaluation
+2025-01-18 15:52:27,534 - Sentiment_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2025-01-18 15:54:55,996 - Sentiment_evaluation - INFO - Completed fedlama evaluation
+2025-01-18 15:54:56,115 - Sentiment_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2025-01-18 15:57:27,075 - Sentiment_evaluation - INFO - Completed pfedla evaluation
+2025-01-18 15:57:27,211 - Sentiment_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2025-01-18 15:59:55,464 - Sentiment_evaluation - INFO - Completed layerpfl evaluation
+2025-01-18 15:59:55,582 - Sentiment_evaluation - INFO - Evaluating layerpfl_minus_1 model with best hyperparameters
+2025-01-18 16:02:22,502 - Sentiment_evaluation - INFO - Completed layerpfl_minus_1 evaluation
+2025-01-18 16:02:22,621 - Sentiment_evaluation - INFO - Evaluating layerpfl_plus_1 model with best hyperparameters
+2025-01-18 16:04:50,315 - Sentiment_evaluation - INFO - Completed layerpfl_plus_1 evaluation
+2025-01-18 16:04:50,453 - Sentiment_evaluation - INFO - Successfully completed run 3
+2025-01-18 16:04:50,453 - Sentiment_evaluation - INFO - Starting run 4/10
+2025-01-18 16:04:50,475 - Sentiment_evaluation - INFO - Evaluating local model with best hyperparameters
+2025-01-18 16:07:17,217 - Sentiment_evaluation - INFO - Completed local evaluation
+2025-01-18 16:07:17,334 - Sentiment_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2025-01-18 16:09:44,266 - Sentiment_evaluation - INFO - Completed fedavg evaluation
+2025-01-18 16:09:44,384 - Sentiment_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2025-01-18 16:12:12,914 - Sentiment_evaluation - INFO - Completed fedprox evaluation
+2025-01-18 16:12:13,037 - Sentiment_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2025-01-18 16:14:37,918 - Sentiment_evaluation - INFO - Completed pfedme evaluation
+2025-01-18 16:14:38,081 - Sentiment_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2025-01-18 16:19:23,900 - Sentiment_evaluation - INFO - Completed ditto evaluation
+2025-01-18 16:19:24,045 - Sentiment_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2025-01-18 16:21:54,272 - Sentiment_evaluation - INFO - Completed localadaptation evaluation
+2025-01-18 16:21:54,389 - Sentiment_evaluation - INFO - Evaluating babu model with best hyperparameters
+2025-01-18 16:24:26,274 - Sentiment_evaluation - INFO - Completed babu evaluation
+2025-01-18 16:24:26,389 - Sentiment_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2025-01-18 16:26:53,544 - Sentiment_evaluation - INFO - Completed fedlp evaluation
+2025-01-18 16:26:53,660 - Sentiment_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2025-01-18 16:29:20,891 - Sentiment_evaluation - INFO - Completed fedlama evaluation
+2025-01-18 16:29:21,008 - Sentiment_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2025-01-18 16:31:51,691 - Sentiment_evaluation - INFO - Completed pfedla evaluation
+2025-01-18 16:31:51,827 - Sentiment_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2025-01-18 16:34:19,334 - Sentiment_evaluation - INFO - Completed layerpfl evaluation
+2025-01-18 16:34:19,450 - Sentiment_evaluation - INFO - Evaluating layerpfl_minus_1 model with best hyperparameters
+2025-01-18 16:36:47,290 - Sentiment_evaluation - INFO - Completed layerpfl_minus_1 evaluation
+2025-01-18 16:36:47,407 - Sentiment_evaluation - INFO - Evaluating layerpfl_plus_1 model with best hyperparameters
+2025-01-18 16:39:15,803 - Sentiment_evaluation - INFO - Completed layerpfl_plus_1 evaluation
+2025-01-18 16:39:15,943 - Sentiment_evaluation - INFO - Successfully completed run 4
+2025-01-18 16:39:15,943 - Sentiment_evaluation - INFO - Starting run 5/10
+2025-01-18 16:39:15,965 - Sentiment_evaluation - INFO - Evaluating local model with best hyperparameters
+2025-01-18 16:41:39,339 - Sentiment_evaluation - INFO - Completed local evaluation
+2025-01-18 16:41:39,454 - Sentiment_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2025-01-18 16:44:07,823 - Sentiment_evaluation - INFO - Completed fedavg evaluation
+2025-01-18 16:44:07,941 - Sentiment_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2025-01-18 16:46:37,855 - Sentiment_evaluation - INFO - Completed fedprox evaluation
+2025-01-18 16:46:37,976 - Sentiment_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2025-01-18 16:49:04,266 - Sentiment_evaluation - INFO - Completed pfedme evaluation
+2025-01-18 16:49:04,430 - Sentiment_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2025-01-18 16:53:52,943 - Sentiment_evaluation - INFO - Completed ditto evaluation
+2025-01-18 16:53:53,086 - Sentiment_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2025-01-18 16:56:26,920 - Sentiment_evaluation - INFO - Completed localadaptation evaluation
+2025-01-18 16:56:27,037 - Sentiment_evaluation - INFO - Evaluating babu model with best hyperparameters
+2025-01-18 16:58:59,687 - Sentiment_evaluation - INFO - Completed babu evaluation
+2025-01-18 16:58:59,801 - Sentiment_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2025-01-18 17:01:27,672 - Sentiment_evaluation - INFO - Completed fedlp evaluation
+2025-01-18 17:01:27,790 - Sentiment_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2025-01-18 17:03:55,922 - Sentiment_evaluation - INFO - Completed fedlama evaluation
+2025-01-18 17:03:56,038 - Sentiment_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2025-01-18 17:06:27,563 - Sentiment_evaluation - INFO - Completed pfedla evaluation
+2025-01-18 17:06:27,702 - Sentiment_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2025-01-18 17:08:52,631 - Sentiment_evaluation - INFO - Completed layerpfl evaluation
+2025-01-18 17:08:52,748 - Sentiment_evaluation - INFO - Evaluating layerpfl_minus_1 model with best hyperparameters
+2025-01-18 17:11:22,032 - Sentiment_evaluation - INFO - Completed layerpfl_minus_1 evaluation
+2025-01-18 17:11:22,150 - Sentiment_evaluation - INFO - Evaluating layerpfl_plus_1 model with best hyperparameters
+2025-01-18 17:13:51,699 - Sentiment_evaluation - INFO - Completed layerpfl_plus_1 evaluation
+2025-01-18 17:13:51,838 - Sentiment_evaluation - INFO - Successfully completed run 5
+2025-01-18 17:13:51,838 - Sentiment_evaluation - INFO - Starting run 6/10
+2025-01-18 17:13:51,860 - Sentiment_evaluation - INFO - Evaluating local model with best hyperparameters
+2025-01-18 17:16:20,477 - Sentiment_evaluation - INFO - Completed local evaluation
+2025-01-18 17:16:20,596 - Sentiment_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2025-01-18 17:18:49,941 - Sentiment_evaluation - INFO - Completed fedavg evaluation
+2025-01-18 17:18:50,058 - Sentiment_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2025-01-18 17:21:20,810 - Sentiment_evaluation - INFO - Completed fedprox evaluation
+2025-01-18 17:21:20,929 - Sentiment_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2025-01-18 17:23:47,353 - Sentiment_evaluation - INFO - Completed pfedme evaluation
+2025-01-18 17:23:47,516 - Sentiment_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2025-01-18 17:28:36,604 - Sentiment_evaluation - INFO - Completed ditto evaluation
+2025-01-18 17:28:36,746 - Sentiment_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2025-01-18 17:31:09,464 - Sentiment_evaluation - INFO - Completed localadaptation evaluation
+2025-01-18 17:31:09,581 - Sentiment_evaluation - INFO - Evaluating babu model with best hyperparameters
+2025-01-18 17:33:40,495 - Sentiment_evaluation - INFO - Completed babu evaluation
+2025-01-18 17:33:40,611 - Sentiment_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2025-01-18 17:36:08,393 - Sentiment_evaluation - INFO - Completed fedlp evaluation
+2025-01-18 17:36:08,511 - Sentiment_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2025-01-18 17:38:38,884 - Sentiment_evaluation - INFO - Completed fedlama evaluation
+2025-01-18 17:38:39,001 - Sentiment_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2025-01-18 17:41:10,508 - Sentiment_evaluation - INFO - Completed pfedla evaluation
+2025-01-18 17:41:10,645 - Sentiment_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2025-01-18 17:43:39,646 - Sentiment_evaluation - INFO - Completed layerpfl evaluation
+2025-01-18 17:43:39,770 - Sentiment_evaluation - INFO - Evaluating layerpfl_minus_1 model with best hyperparameters
+2025-01-18 17:46:10,029 - Sentiment_evaluation - INFO - Completed layerpfl_minus_1 evaluation
+2025-01-18 17:46:10,146 - Sentiment_evaluation - INFO - Evaluating layerpfl_plus_1 model with best hyperparameters
+2025-01-18 17:48:39,733 - Sentiment_evaluation - INFO - Completed layerpfl_plus_1 evaluation
+2025-01-18 17:48:39,873 - Sentiment_evaluation - INFO - Successfully completed run 6
+2025-01-18 17:48:39,873 - Sentiment_evaluation - INFO - Starting run 7/10
+2025-01-18 17:48:39,894 - Sentiment_evaluation - INFO - Evaluating local model with best hyperparameters
+2025-01-18 17:51:09,469 - Sentiment_evaluation - INFO - Completed local evaluation
+2025-01-18 17:51:09,586 - Sentiment_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2025-01-18 17:53:40,722 - Sentiment_evaluation - INFO - Completed fedavg evaluation
+2025-01-18 17:53:40,839 - Sentiment_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2025-01-18 17:56:10,426 - Sentiment_evaluation - INFO - Completed fedprox evaluation
+2025-01-18 17:56:10,543 - Sentiment_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2025-01-18 17:58:38,217 - Sentiment_evaluation - INFO - Completed pfedme evaluation
+2025-01-18 17:58:38,380 - Sentiment_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2025-01-18 18:03:30,851 - Sentiment_evaluation - INFO - Completed ditto evaluation
+2025-01-18 18:03:30,997 - Sentiment_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2025-01-18 18:06:03,854 - Sentiment_evaluation - INFO - Completed localadaptation evaluation
+2025-01-18 18:06:03,973 - Sentiment_evaluation - INFO - Evaluating babu model with best hyperparameters
+2025-01-18 18:08:38,469 - Sentiment_evaluation - INFO - Completed babu evaluation
+2025-01-18 18:08:38,587 - Sentiment_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2025-01-18 18:11:08,583 - Sentiment_evaluation - INFO - Completed fedlp evaluation
+2025-01-18 18:11:08,699 - Sentiment_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2025-01-18 18:13:38,697 - Sentiment_evaluation - INFO - Completed fedlama evaluation
+2025-01-18 18:13:38,815 - Sentiment_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2025-01-18 18:16:12,863 - Sentiment_evaluation - INFO - Completed pfedla evaluation
+2025-01-18 18:16:13,002 - Sentiment_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2025-01-18 18:18:40,363 - Sentiment_evaluation - INFO - Completed layerpfl evaluation
+2025-01-18 18:18:40,482 - Sentiment_evaluation - INFO - Evaluating layerpfl_minus_1 model with best hyperparameters
+2025-01-18 18:21:08,274 - Sentiment_evaluation - INFO - Completed layerpfl_minus_1 evaluation
+2025-01-18 18:21:08,392 - Sentiment_evaluation - INFO - Evaluating layerpfl_plus_1 model with best hyperparameters
+2025-01-18 18:23:38,521 - Sentiment_evaluation - INFO - Completed layerpfl_plus_1 evaluation
+2025-01-18 18:23:38,659 - Sentiment_evaluation - INFO - Successfully completed run 7
+2025-01-18 18:23:38,659 - Sentiment_evaluation - INFO - Starting run 8/10
+2025-01-18 18:23:38,681 - Sentiment_evaluation - INFO - Evaluating local model with best hyperparameters
+2025-01-18 18:26:08,049 - Sentiment_evaluation - INFO - Completed local evaluation
+2025-01-18 18:26:08,168 - Sentiment_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2025-01-18 18:28:38,257 - Sentiment_evaluation - INFO - Completed fedavg evaluation
+2025-01-18 18:28:38,375 - Sentiment_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2025-01-18 18:31:10,741 - Sentiment_evaluation - INFO - Completed fedprox evaluation
+2025-01-18 18:31:10,858 - Sentiment_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2025-01-18 18:33:39,918 - Sentiment_evaluation - INFO - Completed pfedme evaluation
+2025-01-18 18:33:40,082 - Sentiment_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2025-01-18 18:38:33,639 - Sentiment_evaluation - INFO - Completed ditto evaluation
+2025-01-18 18:38:33,782 - Sentiment_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2025-01-18 18:41:10,171 - Sentiment_evaluation - INFO - Completed localadaptation evaluation
+2025-01-18 18:41:10,289 - Sentiment_evaluation - INFO - Evaluating babu model with best hyperparameters
+2025-01-18 18:43:45,525 - Sentiment_evaluation - INFO - Completed babu evaluation
+2025-01-18 18:43:45,642 - Sentiment_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2025-01-18 18:46:16,259 - Sentiment_evaluation - INFO - Completed fedlp evaluation
+2025-01-18 18:46:16,377 - Sentiment_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2025-01-18 18:48:47,010 - Sentiment_evaluation - INFO - Completed fedlama evaluation
+2025-01-18 18:48:47,130 - Sentiment_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2025-01-18 18:51:21,709 - Sentiment_evaluation - INFO - Completed pfedla evaluation
+2025-01-18 18:51:21,847 - Sentiment_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2025-01-18 18:53:52,386 - Sentiment_evaluation - INFO - Completed layerpfl evaluation
+2025-01-18 18:53:52,504 - Sentiment_evaluation - INFO - Evaluating layerpfl_minus_1 model with best hyperparameters
+2025-01-18 18:56:22,869 - Sentiment_evaluation - INFO - Completed layerpfl_minus_1 evaluation
+2025-01-18 18:56:22,987 - Sentiment_evaluation - INFO - Evaluating layerpfl_plus_1 model with best hyperparameters
+2025-01-18 18:58:53,717 - Sentiment_evaluation - INFO - Completed layerpfl_plus_1 evaluation
+2025-01-18 18:58:53,859 - Sentiment_evaluation - INFO - Successfully completed run 8
+2025-01-18 18:58:53,859 - Sentiment_evaluation - INFO - Starting run 9/10
+2025-01-18 18:58:53,880 - Sentiment_evaluation - INFO - Evaluating local model with best hyperparameters
+2025-01-18 19:01:24,741 - Sentiment_evaluation - INFO - Completed local evaluation
+2025-01-18 19:01:24,859 - Sentiment_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2025-01-18 19:03:56,965 - Sentiment_evaluation - INFO - Completed fedavg evaluation
+2025-01-18 19:03:57,082 - Sentiment_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2025-01-18 19:06:30,205 - Sentiment_evaluation - INFO - Completed fedprox evaluation
+2025-01-18 19:06:30,327 - Sentiment_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2025-01-18 19:08:59,682 - Sentiment_evaluation - INFO - Completed pfedme evaluation
+2025-01-18 19:08:59,847 - Sentiment_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2025-01-18 19:13:54,029 - Sentiment_evaluation - INFO - Completed ditto evaluation
+2025-01-18 19:13:54,177 - Sentiment_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2025-01-18 19:16:31,025 - Sentiment_evaluation - INFO - Completed localadaptation evaluation
+2025-01-18 19:16:31,144 - Sentiment_evaluation - INFO - Evaluating babu model with best hyperparameters
+2025-01-18 19:19:06,879 - Sentiment_evaluation - INFO - Completed babu evaluation
+2025-01-18 19:19:06,996 - Sentiment_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2025-01-18 19:21:38,239 - Sentiment_evaluation - INFO - Completed fedlp evaluation
+2025-01-18 19:21:38,359 - Sentiment_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2025-01-18 19:24:09,678 - Sentiment_evaluation - INFO - Completed fedlama evaluation
+2025-01-18 19:24:09,798 - Sentiment_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2025-01-18 19:26:44,622 - Sentiment_evaluation - INFO - Completed pfedla evaluation
+2025-01-18 19:26:44,761 - Sentiment_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2025-01-18 19:29:16,203 - Sentiment_evaluation - INFO - Completed layerpfl evaluation
+2025-01-18 19:29:16,323 - Sentiment_evaluation - INFO - Evaluating layerpfl_minus_1 model with best hyperparameters
+2025-01-18 19:31:48,021 - Sentiment_evaluation - INFO - Completed layerpfl_minus_1 evaluation
+2025-01-18 19:31:48,140 - Sentiment_evaluation - INFO - Evaluating layerpfl_plus_1 model with best hyperparameters
+2025-01-18 19:34:20,308 - Sentiment_evaluation - INFO - Completed layerpfl_plus_1 evaluation
+2025-01-18 19:34:20,455 - Sentiment_evaluation - INFO - Successfully completed run 9
+2025-01-18 19:34:20,455 - Sentiment_evaluation - INFO - Starting run 10/10
+2025-01-18 19:34:20,476 - Sentiment_evaluation - INFO - Evaluating local model with best hyperparameters
+2025-01-18 19:36:48,032 - Sentiment_evaluation - INFO - Completed local evaluation
+2025-01-18 19:36:48,151 - Sentiment_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2025-01-18 19:39:20,497 - Sentiment_evaluation - INFO - Completed fedavg evaluation
+2025-01-18 19:39:20,618 - Sentiment_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2025-01-18 19:41:54,431 - Sentiment_evaluation - INFO - Completed fedprox evaluation
+2025-01-18 19:41:54,557 - Sentiment_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2025-01-18 19:44:24,386 - Sentiment_evaluation - INFO - Completed pfedme evaluation
+2025-01-18 19:44:24,553 - Sentiment_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2025-01-18 19:49:20,243 - Sentiment_evaluation - INFO - Completed ditto evaluation
+2025-01-18 19:49:20,393 - Sentiment_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2025-01-18 19:51:58,080 - Sentiment_evaluation - INFO - Completed localadaptation evaluation
+2025-01-18 19:51:58,200 - Sentiment_evaluation - INFO - Evaluating babu model with best hyperparameters
+2025-01-18 19:54:34,843 - Sentiment_evaluation - INFO - Completed babu evaluation
+2025-01-18 19:54:34,960 - Sentiment_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2025-01-18 19:57:06,439 - Sentiment_evaluation - INFO - Completed fedlp evaluation
+2025-01-18 19:57:06,559 - Sentiment_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2025-01-18 19:59:39,074 - Sentiment_evaluation - INFO - Completed fedlama evaluation
+2025-01-18 19:59:39,194 - Sentiment_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2025-01-18 20:02:16,690 - Sentiment_evaluation - INFO - Completed pfedla evaluation
+2025-01-18 20:02:16,833 - Sentiment_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2025-01-18 20:04:49,189 - Sentiment_evaluation - INFO - Completed layerpfl evaluation
+2025-01-18 20:04:49,311 - Sentiment_evaluation - INFO - Evaluating layerpfl_minus_1 model with best hyperparameters
+2025-01-18 20:07:22,283 - Sentiment_evaluation - INFO - Completed layerpfl_minus_1 evaluation
+2025-01-18 20:07:22,403 - Sentiment_evaluation - INFO - Evaluating layerpfl_plus_1 model with best hyperparameters
+2025-01-18 20:09:55,584 - Sentiment_evaluation - INFO - Completed layerpfl_plus_1 evaluation
+2025-01-18 20:09:55,732 - Sentiment_evaluation - INFO - Successfully completed run 10

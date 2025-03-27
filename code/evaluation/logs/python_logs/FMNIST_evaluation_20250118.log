@@ -1,0 +1,561 @@
+2025-01-18 11:46:14,245 - FMNIST_evaluation - INFO - Starting final evaluation phase
+2025-01-18 11:46:14,246 - FMNIST_evaluation - INFO - Starting run 1/20
+2025-01-18 11:46:14,385 - FMNIST_evaluation - INFO - Evaluating local model with best hyperparameters
+2025-01-18 11:49:28,272 - FMNIST_evaluation - INFO - Completed local evaluation
+2025-01-18 11:49:28,389 - FMNIST_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2025-01-18 11:52:39,408 - FMNIST_evaluation - INFO - Completed fedavg evaluation
+2025-01-18 11:52:39,526 - FMNIST_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2025-01-18 11:56:02,210 - FMNIST_evaluation - INFO - Completed fedprox evaluation
+2025-01-18 11:56:02,327 - FMNIST_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2025-01-18 11:59:26,281 - FMNIST_evaluation - INFO - Completed pfedme evaluation
+2025-01-18 11:59:26,401 - FMNIST_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2025-01-18 12:06:09,028 - FMNIST_evaluation - INFO - Completed ditto evaluation
+2025-01-18 12:06:09,143 - FMNIST_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2025-01-18 12:09:36,428 - FMNIST_evaluation - INFO - Completed localadaptation evaluation
+2025-01-18 12:09:36,544 - FMNIST_evaluation - INFO - Evaluating babu model with best hyperparameters
+2025-01-18 12:13:03,418 - FMNIST_evaluation - INFO - Completed babu evaluation
+2025-01-18 12:13:03,535 - FMNIST_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2025-01-18 12:16:26,285 - FMNIST_evaluation - INFO - Completed fedlp evaluation
+2025-01-18 12:16:26,401 - FMNIST_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2025-01-18 12:19:49,590 - FMNIST_evaluation - INFO - Completed fedlama evaluation
+2025-01-18 12:19:49,705 - FMNIST_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2025-01-18 12:23:15,285 - FMNIST_evaluation - INFO - Completed pfedla evaluation
+2025-01-18 12:23:15,401 - FMNIST_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2025-01-18 12:26:39,294 - FMNIST_evaluation - INFO - Completed layerpfl evaluation
+2025-01-18 12:26:39,410 - FMNIST_evaluation - INFO - Evaluating layerpfl_minus_1 model with best hyperparameters
+2025-01-18 12:30:03,529 - FMNIST_evaluation - INFO - Completed layerpfl_minus_1 evaluation
+2025-01-18 12:30:03,644 - FMNIST_evaluation - INFO - Evaluating layerpfl_plus_1 model with best hyperparameters
+2025-01-18 12:33:27,364 - FMNIST_evaluation - INFO - Completed layerpfl_plus_1 evaluation
+2025-01-18 12:33:27,493 - FMNIST_evaluation - INFO - Successfully completed run 1
+2025-01-18 12:33:27,493 - FMNIST_evaluation - INFO - Starting run 2/20
+2025-01-18 12:33:27,556 - FMNIST_evaluation - INFO - Evaluating local model with best hyperparameters
+2025-01-18 12:36:52,435 - FMNIST_evaluation - INFO - Completed local evaluation
+2025-01-18 12:36:52,550 - FMNIST_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2025-01-18 12:40:17,638 - FMNIST_evaluation - INFO - Completed fedavg evaluation
+2025-01-18 12:40:17,753 - FMNIST_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2025-01-18 12:43:44,215 - FMNIST_evaluation - INFO - Completed fedprox evaluation
+2025-01-18 12:43:44,331 - FMNIST_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2025-01-18 12:47:10,251 - FMNIST_evaluation - INFO - Completed pfedme evaluation
+2025-01-18 12:47:10,369 - FMNIST_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2025-01-18 12:53:59,921 - FMNIST_evaluation - INFO - Completed ditto evaluation
+2025-01-18 12:54:00,037 - FMNIST_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2025-01-18 12:57:29,637 - FMNIST_evaluation - INFO - Completed localadaptation evaluation
+2025-01-18 12:57:29,753 - FMNIST_evaluation - INFO - Evaluating babu model with best hyperparameters
+2025-01-18 13:00:59,833 - FMNIST_evaluation - INFO - Completed babu evaluation
+2025-01-18 13:00:59,946 - FMNIST_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2025-01-18 13:04:25,319 - FMNIST_evaluation - INFO - Completed fedlp evaluation
+2025-01-18 13:04:25,434 - FMNIST_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2025-01-18 13:07:51,243 - FMNIST_evaluation - INFO - Completed fedlama evaluation
+2025-01-18 13:07:51,356 - FMNIST_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2025-01-18 13:11:20,906 - FMNIST_evaluation - INFO - Completed pfedla evaluation
+2025-01-18 13:11:21,022 - FMNIST_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2025-01-18 13:14:46,488 - FMNIST_evaluation - INFO - Completed layerpfl evaluation
+2025-01-18 13:14:46,604 - FMNIST_evaluation - INFO - Evaluating layerpfl_minus_1 model with best hyperparameters
+2025-01-18 13:18:11,375 - FMNIST_evaluation - INFO - Completed layerpfl_minus_1 evaluation
+2025-01-18 13:18:11,490 - FMNIST_evaluation - INFO - Evaluating layerpfl_plus_1 model with best hyperparameters
+2025-01-18 13:21:37,091 - FMNIST_evaluation - INFO - Completed layerpfl_plus_1 evaluation
+2025-01-18 13:21:37,218 - FMNIST_evaluation - INFO - Successfully completed run 2
+2025-01-18 13:21:37,218 - FMNIST_evaluation - INFO - Starting run 3/20
+2025-01-18 13:21:37,284 - FMNIST_evaluation - INFO - Evaluating local model with best hyperparameters
+2025-01-18 13:25:02,375 - FMNIST_evaluation - INFO - Completed local evaluation
+2025-01-18 13:25:02,491 - FMNIST_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2025-01-18 13:28:27,976 - FMNIST_evaluation - INFO - Completed fedavg evaluation
+2025-01-18 13:28:28,093 - FMNIST_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2025-01-18 13:31:54,728 - FMNIST_evaluation - INFO - Completed fedprox evaluation
+2025-01-18 13:31:54,842 - FMNIST_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2025-01-18 13:35:21,800 - FMNIST_evaluation - INFO - Completed pfedme evaluation
+2025-01-18 13:35:21,918 - FMNIST_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2025-01-18 13:42:12,490 - FMNIST_evaluation - INFO - Completed ditto evaluation
+2025-01-18 13:42:12,605 - FMNIST_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2025-01-18 13:45:42,247 - FMNIST_evaluation - INFO - Completed localadaptation evaluation
+2025-01-18 13:45:42,363 - FMNIST_evaluation - INFO - Evaluating babu model with best hyperparameters
+2025-01-18 13:49:12,981 - FMNIST_evaluation - INFO - Completed babu evaluation
+2025-01-18 13:49:13,095 - FMNIST_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2025-01-18 13:52:38,962 - FMNIST_evaluation - INFO - Completed fedlp evaluation
+2025-01-18 13:52:39,077 - FMNIST_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2025-01-18 13:56:04,832 - FMNIST_evaluation - INFO - Completed fedlama evaluation
+2025-01-18 13:56:04,947 - FMNIST_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2025-01-18 13:59:35,117 - FMNIST_evaluation - INFO - Completed pfedla evaluation
+2025-01-18 13:59:35,234 - FMNIST_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2025-01-18 14:03:02,797 - FMNIST_evaluation - INFO - Completed layerpfl evaluation
+2025-01-18 14:03:02,912 - FMNIST_evaluation - INFO - Evaluating layerpfl_minus_1 model with best hyperparameters
+2025-01-18 14:06:30,631 - FMNIST_evaluation - INFO - Completed layerpfl_minus_1 evaluation
+2025-01-18 14:06:30,746 - FMNIST_evaluation - INFO - Evaluating layerpfl_plus_1 model with best hyperparameters
+2025-01-18 14:09:58,752 - FMNIST_evaluation - INFO - Completed layerpfl_plus_1 evaluation
+2025-01-18 14:09:58,877 - FMNIST_evaluation - INFO - Successfully completed run 3
+2025-01-18 14:09:58,877 - FMNIST_evaluation - INFO - Starting run 4/20
+2025-01-18 14:09:58,943 - FMNIST_evaluation - INFO - Evaluating local model with best hyperparameters
+2025-01-18 14:13:29,421 - FMNIST_evaluation - INFO - Completed local evaluation
+2025-01-18 14:13:29,536 - FMNIST_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2025-01-18 14:16:59,927 - FMNIST_evaluation - INFO - Completed fedavg evaluation
+2025-01-18 14:17:00,042 - FMNIST_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2025-01-18 14:20:30,045 - FMNIST_evaluation - INFO - Completed fedprox evaluation
+2025-01-18 14:20:30,161 - FMNIST_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2025-01-18 14:23:59,195 - FMNIST_evaluation - INFO - Completed pfedme evaluation
+2025-01-18 14:23:59,312 - FMNIST_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2025-01-18 14:30:53,792 - FMNIST_evaluation - INFO - Completed ditto evaluation
+2025-01-18 14:30:53,909 - FMNIST_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2025-01-18 14:34:26,177 - FMNIST_evaluation - INFO - Completed localadaptation evaluation
+2025-01-18 14:34:26,293 - FMNIST_evaluation - INFO - Evaluating babu model with best hyperparameters
+2025-01-18 14:37:59,103 - FMNIST_evaluation - INFO - Completed babu evaluation
+2025-01-18 14:37:59,218 - FMNIST_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2025-01-18 14:41:27,748 - FMNIST_evaluation - INFO - Completed fedlp evaluation
+2025-01-18 14:41:27,862 - FMNIST_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2025-01-18 14:44:56,408 - FMNIST_evaluation - INFO - Completed fedlama evaluation
+2025-01-18 14:44:56,522 - FMNIST_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2025-01-18 14:48:13,088 - FMNIST_evaluation - INFO - Completed pfedla evaluation
+2025-01-18 14:48:13,203 - FMNIST_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2025-01-18 14:51:26,864 - FMNIST_evaluation - INFO - Completed layerpfl evaluation
+2025-01-18 14:51:26,979 - FMNIST_evaluation - INFO - Evaluating layerpfl_minus_1 model with best hyperparameters
+2025-01-18 14:54:40,617 - FMNIST_evaluation - INFO - Completed layerpfl_minus_1 evaluation
+2025-01-18 14:54:40,731 - FMNIST_evaluation - INFO - Evaluating layerpfl_plus_1 model with best hyperparameters
+2025-01-18 14:57:54,477 - FMNIST_evaluation - INFO - Completed layerpfl_plus_1 evaluation
+2025-01-18 14:57:54,604 - FMNIST_evaluation - INFO - Successfully completed run 4
+2025-01-18 14:57:54,604 - FMNIST_evaluation - INFO - Starting run 5/20
+2025-01-18 14:57:54,671 - FMNIST_evaluation - INFO - Evaluating local model with best hyperparameters
+2025-01-18 15:01:09,185 - FMNIST_evaluation - INFO - Completed local evaluation
+2025-01-18 15:01:09,300 - FMNIST_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2025-01-18 15:04:24,274 - FMNIST_evaluation - INFO - Completed fedavg evaluation
+2025-01-18 15:04:24,388 - FMNIST_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2025-01-18 15:07:40,543 - FMNIST_evaluation - INFO - Completed fedprox evaluation
+2025-01-18 15:07:40,659 - FMNIST_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2025-01-18 15:10:56,948 - FMNIST_evaluation - INFO - Completed pfedme evaluation
+2025-01-18 15:10:57,065 - FMNIST_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2025-01-18 15:17:25,911 - FMNIST_evaluation - INFO - Completed ditto evaluation
+2025-01-18 15:17:26,026 - FMNIST_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2025-01-18 15:20:45,008 - FMNIST_evaluation - INFO - Completed localadaptation evaluation
+2025-01-18 15:20:45,120 - FMNIST_evaluation - INFO - Evaluating babu model with best hyperparameters
+2025-01-18 15:24:03,928 - FMNIST_evaluation - INFO - Completed babu evaluation
+2025-01-18 15:24:04,041 - FMNIST_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2025-01-18 15:27:18,948 - FMNIST_evaluation - INFO - Completed fedlp evaluation
+2025-01-18 15:27:19,063 - FMNIST_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2025-01-18 15:30:34,017 - FMNIST_evaluation - INFO - Completed fedlama evaluation
+2025-01-18 15:30:34,132 - FMNIST_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2025-01-18 15:33:51,985 - FMNIST_evaluation - INFO - Completed pfedla evaluation
+2025-01-18 15:33:52,099 - FMNIST_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2025-01-18 15:37:07,218 - FMNIST_evaluation - INFO - Completed layerpfl evaluation
+2025-01-18 15:37:07,332 - FMNIST_evaluation - INFO - Evaluating layerpfl_minus_1 model with best hyperparameters
+2025-01-18 15:40:22,244 - FMNIST_evaluation - INFO - Completed layerpfl_minus_1 evaluation
+2025-01-18 15:40:22,358 - FMNIST_evaluation - INFO - Evaluating layerpfl_plus_1 model with best hyperparameters
+2025-01-18 15:43:37,973 - FMNIST_evaluation - INFO - Completed layerpfl_plus_1 evaluation
+2025-01-18 15:43:38,103 - FMNIST_evaluation - INFO - Successfully completed run 5
+2025-01-18 15:43:38,103 - FMNIST_evaluation - INFO - Starting run 6/20
+2025-01-18 15:43:38,170 - FMNIST_evaluation - INFO - Evaluating local model with best hyperparameters
+2025-01-18 15:46:52,429 - FMNIST_evaluation - INFO - Completed local evaluation
+2025-01-18 15:46:52,542 - FMNIST_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2025-01-18 15:50:07,472 - FMNIST_evaluation - INFO - Completed fedavg evaluation
+2025-01-18 15:50:07,585 - FMNIST_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2025-01-18 15:53:23,802 - FMNIST_evaluation - INFO - Completed fedprox evaluation
+2025-01-18 15:53:23,916 - FMNIST_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2025-01-18 15:56:39,777 - FMNIST_evaluation - INFO - Completed pfedme evaluation
+2025-01-18 15:56:39,893 - FMNIST_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2025-01-18 16:03:08,699 - FMNIST_evaluation - INFO - Completed ditto evaluation
+2025-01-18 16:03:08,814 - FMNIST_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2025-01-18 16:06:26,215 - FMNIST_evaluation - INFO - Completed localadaptation evaluation
+2025-01-18 16:06:26,327 - FMNIST_evaluation - INFO - Evaluating babu model with best hyperparameters
+2025-01-18 16:09:43,859 - FMNIST_evaluation - INFO - Completed babu evaluation
+2025-01-18 16:09:43,972 - FMNIST_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2025-01-18 16:12:57,694 - FMNIST_evaluation - INFO - Completed fedlp evaluation
+2025-01-18 16:12:57,808 - FMNIST_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2025-01-18 16:16:12,089 - FMNIST_evaluation - INFO - Completed fedlama evaluation
+2025-01-18 16:16:12,204 - FMNIST_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2025-01-18 16:19:29,524 - FMNIST_evaluation - INFO - Completed pfedla evaluation
+2025-01-18 16:19:29,639 - FMNIST_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2025-01-18 16:22:44,186 - FMNIST_evaluation - INFO - Completed layerpfl evaluation
+2025-01-18 16:22:44,301 - FMNIST_evaluation - INFO - Evaluating layerpfl_minus_1 model with best hyperparameters
+2025-01-18 16:25:58,541 - FMNIST_evaluation - INFO - Completed layerpfl_minus_1 evaluation
+2025-01-18 16:25:58,654 - FMNIST_evaluation - INFO - Evaluating layerpfl_plus_1 model with best hyperparameters
+2025-01-18 16:29:12,778 - FMNIST_evaluation - INFO - Completed layerpfl_plus_1 evaluation
+2025-01-18 16:29:12,906 - FMNIST_evaluation - INFO - Successfully completed run 6
+2025-01-18 16:29:12,907 - FMNIST_evaluation - INFO - Starting run 7/20
+2025-01-18 16:29:12,973 - FMNIST_evaluation - INFO - Evaluating local model with best hyperparameters
+2025-01-18 16:32:26,438 - FMNIST_evaluation - INFO - Completed local evaluation
+2025-01-18 16:32:26,552 - FMNIST_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2025-01-18 16:35:40,702 - FMNIST_evaluation - INFO - Completed fedavg evaluation
+2025-01-18 16:35:40,814 - FMNIST_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2025-01-18 16:38:55,600 - FMNIST_evaluation - INFO - Completed fedprox evaluation
+2025-01-18 16:38:55,714 - FMNIST_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2025-01-18 16:42:10,816 - FMNIST_evaluation - INFO - Completed pfedme evaluation
+2025-01-18 16:42:10,932 - FMNIST_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2025-01-18 16:48:37,784 - FMNIST_evaluation - INFO - Completed ditto evaluation
+2025-01-18 16:48:37,900 - FMNIST_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2025-01-18 16:51:55,514 - FMNIST_evaluation - INFO - Completed localadaptation evaluation
+2025-01-18 16:51:55,626 - FMNIST_evaluation - INFO - Evaluating babu model with best hyperparameters
+2025-01-18 16:55:13,426 - FMNIST_evaluation - INFO - Completed babu evaluation
+2025-01-18 16:55:13,538 - FMNIST_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2025-01-18 16:58:28,142 - FMNIST_evaluation - INFO - Completed fedlp evaluation
+2025-01-18 16:58:28,256 - FMNIST_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2025-01-18 17:01:42,107 - FMNIST_evaluation - INFO - Completed fedlama evaluation
+2025-01-18 17:01:42,221 - FMNIST_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2025-01-18 17:04:59,964 - FMNIST_evaluation - INFO - Completed pfedla evaluation
+2025-01-18 17:05:00,080 - FMNIST_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2025-01-18 17:08:13,839 - FMNIST_evaluation - INFO - Completed layerpfl evaluation
+2025-01-18 17:08:13,950 - FMNIST_evaluation - INFO - Evaluating layerpfl_minus_1 model with best hyperparameters
+2025-01-18 17:11:28,219 - FMNIST_evaluation - INFO - Completed layerpfl_minus_1 evaluation
+2025-01-18 17:11:28,332 - FMNIST_evaluation - INFO - Evaluating layerpfl_plus_1 model with best hyperparameters
+2025-01-18 17:14:42,687 - FMNIST_evaluation - INFO - Completed layerpfl_plus_1 evaluation
+2025-01-18 17:14:42,817 - FMNIST_evaluation - INFO - Successfully completed run 7
+2025-01-18 17:14:42,817 - FMNIST_evaluation - INFO - Starting run 8/20
+2025-01-18 17:14:42,878 - FMNIST_evaluation - INFO - Evaluating local model with best hyperparameters
+2025-01-18 17:17:57,881 - FMNIST_evaluation - INFO - Completed local evaluation
+2025-01-18 17:17:57,993 - FMNIST_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2025-01-18 17:21:12,953 - FMNIST_evaluation - INFO - Completed fedavg evaluation
+2025-01-18 17:21:13,066 - FMNIST_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2025-01-18 17:24:28,741 - FMNIST_evaluation - INFO - Completed fedprox evaluation
+2025-01-18 17:24:28,854 - FMNIST_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2025-01-18 17:27:45,449 - FMNIST_evaluation - INFO - Completed pfedme evaluation
+2025-01-18 17:27:45,564 - FMNIST_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2025-01-18 17:34:14,011 - FMNIST_evaluation - INFO - Completed ditto evaluation
+2025-01-18 17:34:14,127 - FMNIST_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2025-01-18 17:37:33,033 - FMNIST_evaluation - INFO - Completed localadaptation evaluation
+2025-01-18 17:37:33,147 - FMNIST_evaluation - INFO - Evaluating babu model with best hyperparameters
+2025-01-18 17:40:51,818 - FMNIST_evaluation - INFO - Completed babu evaluation
+2025-01-18 17:40:51,931 - FMNIST_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2025-01-18 17:44:06,250 - FMNIST_evaluation - INFO - Completed fedlp evaluation
+2025-01-18 17:44:06,363 - FMNIST_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2025-01-18 17:47:21,718 - FMNIST_evaluation - INFO - Completed fedlama evaluation
+2025-01-18 17:47:21,830 - FMNIST_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2025-01-18 17:50:40,497 - FMNIST_evaluation - INFO - Completed pfedla evaluation
+2025-01-18 17:50:40,612 - FMNIST_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2025-01-18 17:53:56,423 - FMNIST_evaluation - INFO - Completed layerpfl evaluation
+2025-01-18 17:53:56,536 - FMNIST_evaluation - INFO - Evaluating layerpfl_minus_1 model with best hyperparameters
+2025-01-18 17:57:11,882 - FMNIST_evaluation - INFO - Completed layerpfl_minus_1 evaluation
+2025-01-18 17:57:11,994 - FMNIST_evaluation - INFO - Evaluating layerpfl_plus_1 model with best hyperparameters
+2025-01-18 18:00:26,701 - FMNIST_evaluation - INFO - Completed layerpfl_plus_1 evaluation
+2025-01-18 18:00:26,829 - FMNIST_evaluation - INFO - Successfully completed run 8
+2025-01-18 18:00:26,829 - FMNIST_evaluation - INFO - Starting run 9/20
+2025-01-18 18:00:26,894 - FMNIST_evaluation - INFO - Evaluating local model with best hyperparameters
+2025-01-18 18:03:41,392 - FMNIST_evaluation - INFO - Completed local evaluation
+2025-01-18 18:03:41,506 - FMNIST_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2025-01-18 18:06:56,180 - FMNIST_evaluation - INFO - Completed fedavg evaluation
+2025-01-18 18:06:56,293 - FMNIST_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2025-01-18 18:10:12,185 - FMNIST_evaluation - INFO - Completed fedprox evaluation
+2025-01-18 18:10:12,299 - FMNIST_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2025-01-18 18:13:28,263 - FMNIST_evaluation - INFO - Completed pfedme evaluation
+2025-01-18 18:13:28,381 - FMNIST_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2025-01-18 18:19:57,024 - FMNIST_evaluation - INFO - Completed ditto evaluation
+2025-01-18 18:19:57,141 - FMNIST_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2025-01-18 18:23:15,768 - FMNIST_evaluation - INFO - Completed localadaptation evaluation
+2025-01-18 18:23:15,881 - FMNIST_evaluation - INFO - Evaluating babu model with best hyperparameters
+2025-01-18 18:26:34,758 - FMNIST_evaluation - INFO - Completed babu evaluation
+2025-01-18 18:26:34,871 - FMNIST_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2025-01-18 18:29:49,296 - FMNIST_evaluation - INFO - Completed fedlp evaluation
+2025-01-18 18:29:49,411 - FMNIST_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2025-01-18 18:33:04,376 - FMNIST_evaluation - INFO - Completed fedlama evaluation
+2025-01-18 18:33:04,491 - FMNIST_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2025-01-18 18:36:22,906 - FMNIST_evaluation - INFO - Completed pfedla evaluation
+2025-01-18 18:36:23,022 - FMNIST_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2025-01-18 18:39:38,082 - FMNIST_evaluation - INFO - Completed layerpfl evaluation
+2025-01-18 18:39:38,197 - FMNIST_evaluation - INFO - Evaluating layerpfl_minus_1 model with best hyperparameters
+2025-01-18 18:42:53,336 - FMNIST_evaluation - INFO - Completed layerpfl_minus_1 evaluation
+2025-01-18 18:42:53,451 - FMNIST_evaluation - INFO - Evaluating layerpfl_plus_1 model with best hyperparameters
+2025-01-18 18:46:08,518 - FMNIST_evaluation - INFO - Completed layerpfl_plus_1 evaluation
+2025-01-18 18:46:08,649 - FMNIST_evaluation - INFO - Successfully completed run 9
+2025-01-18 18:46:08,650 - FMNIST_evaluation - INFO - Starting run 10/20
+2025-01-18 18:46:08,715 - FMNIST_evaluation - INFO - Evaluating local model with best hyperparameters
+2025-01-18 18:49:23,529 - FMNIST_evaluation - INFO - Completed local evaluation
+2025-01-18 18:49:23,643 - FMNIST_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2025-01-18 18:52:37,974 - FMNIST_evaluation - INFO - Completed fedavg evaluation
+2025-01-18 18:52:38,090 - FMNIST_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2025-01-18 18:55:53,583 - FMNIST_evaluation - INFO - Completed fedprox evaluation
+2025-01-18 18:55:53,699 - FMNIST_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2025-01-18 18:59:09,551 - FMNIST_evaluation - INFO - Completed pfedme evaluation
+2025-01-18 18:59:09,667 - FMNIST_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2025-01-18 19:05:38,670 - FMNIST_evaluation - INFO - Completed ditto evaluation
+2025-01-18 19:05:38,785 - FMNIST_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2025-01-18 19:08:56,694 - FMNIST_evaluation - INFO - Completed localadaptation evaluation
+2025-01-18 19:08:56,809 - FMNIST_evaluation - INFO - Evaluating babu model with best hyperparameters
+2025-01-18 19:12:15,580 - FMNIST_evaluation - INFO - Completed babu evaluation
+2025-01-18 19:12:15,694 - FMNIST_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2025-01-18 19:15:30,050 - FMNIST_evaluation - INFO - Completed fedlp evaluation
+2025-01-18 19:15:30,166 - FMNIST_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2025-01-18 19:18:45,038 - FMNIST_evaluation - INFO - Completed fedlama evaluation
+2025-01-18 19:18:45,154 - FMNIST_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2025-01-18 19:22:03,339 - FMNIST_evaluation - INFO - Completed pfedla evaluation
+2025-01-18 19:22:03,454 - FMNIST_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2025-01-18 19:25:18,424 - FMNIST_evaluation - INFO - Completed layerpfl evaluation
+2025-01-18 19:25:18,539 - FMNIST_evaluation - INFO - Evaluating layerpfl_minus_1 model with best hyperparameters
+2025-01-18 19:28:33,040 - FMNIST_evaluation - INFO - Completed layerpfl_minus_1 evaluation
+2025-01-18 19:28:33,156 - FMNIST_evaluation - INFO - Evaluating layerpfl_plus_1 model with best hyperparameters
+2025-01-18 19:31:48,328 - FMNIST_evaluation - INFO - Completed layerpfl_plus_1 evaluation
+2025-01-18 19:31:48,459 - FMNIST_evaluation - INFO - Successfully completed run 10
+2025-01-18 19:31:48,460 - FMNIST_evaluation - INFO - Starting run 11/20
+2025-01-18 19:31:48,527 - FMNIST_evaluation - INFO - Evaluating local model with best hyperparameters
+2025-01-18 19:35:04,452 - FMNIST_evaluation - INFO - Completed local evaluation
+2025-01-18 19:35:04,567 - FMNIST_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2025-01-18 19:38:20,051 - FMNIST_evaluation - INFO - Completed fedavg evaluation
+2025-01-18 19:38:20,165 - FMNIST_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2025-01-18 19:41:37,916 - FMNIST_evaluation - INFO - Completed fedprox evaluation
+2025-01-18 19:41:38,031 - FMNIST_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2025-01-18 19:44:55,470 - FMNIST_evaluation - INFO - Completed pfedme evaluation
+2025-01-18 19:44:55,588 - FMNIST_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2025-01-18 19:51:28,103 - FMNIST_evaluation - INFO - Completed ditto evaluation
+2025-01-18 19:51:28,219 - FMNIST_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2025-01-18 19:54:48,266 - FMNIST_evaluation - INFO - Completed localadaptation evaluation
+2025-01-18 19:54:48,382 - FMNIST_evaluation - INFO - Evaluating babu model with best hyperparameters
+2025-01-18 19:58:08,331 - FMNIST_evaluation - INFO - Completed babu evaluation
+2025-01-18 19:58:08,446 - FMNIST_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2025-01-18 20:01:24,620 - FMNIST_evaluation - INFO - Completed fedlp evaluation
+2025-01-18 20:01:24,736 - FMNIST_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2025-01-18 20:04:41,408 - FMNIST_evaluation - INFO - Completed fedlama evaluation
+2025-01-18 20:04:41,524 - FMNIST_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2025-01-18 20:08:01,653 - FMNIST_evaluation - INFO - Completed pfedla evaluation
+2025-01-18 20:08:01,769 - FMNIST_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2025-01-18 20:11:18,241 - FMNIST_evaluation - INFO - Completed layerpfl evaluation
+2025-01-18 20:11:18,355 - FMNIST_evaluation - INFO - Evaluating layerpfl_minus_1 model with best hyperparameters
+2025-01-18 20:14:34,360 - FMNIST_evaluation - INFO - Completed layerpfl_minus_1 evaluation
+2025-01-18 20:14:34,473 - FMNIST_evaluation - INFO - Evaluating layerpfl_plus_1 model with best hyperparameters
+2025-01-18 20:17:50,673 - FMNIST_evaluation - INFO - Completed layerpfl_plus_1 evaluation
+2025-01-18 20:17:50,803 - FMNIST_evaluation - INFO - Successfully completed run 11
+2025-01-18 20:17:50,803 - FMNIST_evaluation - INFO - Starting run 12/20
+2025-01-18 20:17:50,869 - FMNIST_evaluation - INFO - Evaluating local model with best hyperparameters
+2025-01-18 20:21:07,023 - FMNIST_evaluation - INFO - Completed local evaluation
+2025-01-18 20:21:07,138 - FMNIST_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2025-01-18 20:24:23,797 - FMNIST_evaluation - INFO - Completed fedavg evaluation
+2025-01-18 20:24:23,911 - FMNIST_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2025-01-18 20:27:41,489 - FMNIST_evaluation - INFO - Completed fedprox evaluation
+2025-01-18 20:27:41,603 - FMNIST_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2025-01-18 20:30:58,944 - FMNIST_evaluation - INFO - Completed pfedme evaluation
+2025-01-18 20:30:59,061 - FMNIST_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2025-01-18 20:37:30,788 - FMNIST_evaluation - INFO - Completed ditto evaluation
+2025-01-18 20:37:30,904 - FMNIST_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2025-01-18 20:40:51,549 - FMNIST_evaluation - INFO - Completed localadaptation evaluation
+2025-01-18 20:40:51,664 - FMNIST_evaluation - INFO - Evaluating babu model with best hyperparameters
+2025-01-18 20:44:12,114 - FMNIST_evaluation - INFO - Completed babu evaluation
+2025-01-18 20:44:12,227 - FMNIST_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2025-01-18 20:47:28,458 - FMNIST_evaluation - INFO - Completed fedlp evaluation
+2025-01-18 20:47:28,572 - FMNIST_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2025-01-18 20:50:45,041 - FMNIST_evaluation - INFO - Completed fedlama evaluation
+2025-01-18 20:50:45,156 - FMNIST_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2025-01-18 20:54:04,447 - FMNIST_evaluation - INFO - Completed pfedla evaluation
+2025-01-18 20:54:04,563 - FMNIST_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2025-01-18 20:57:21,601 - FMNIST_evaluation - INFO - Completed layerpfl evaluation
+2025-01-18 20:57:21,715 - FMNIST_evaluation - INFO - Evaluating layerpfl_minus_1 model with best hyperparameters
+2025-01-18 21:00:38,345 - FMNIST_evaluation - INFO - Completed layerpfl_minus_1 evaluation
+2025-01-18 21:00:38,459 - FMNIST_evaluation - INFO - Evaluating layerpfl_plus_1 model with best hyperparameters
+2025-01-18 21:03:54,831 - FMNIST_evaluation - INFO - Completed layerpfl_plus_1 evaluation
+2025-01-18 21:03:54,962 - FMNIST_evaluation - INFO - Successfully completed run 12
+2025-01-18 21:03:54,962 - FMNIST_evaluation - INFO - Starting run 13/20
+2025-01-18 21:03:55,029 - FMNIST_evaluation - INFO - Evaluating local model with best hyperparameters
+2025-01-18 21:07:11,009 - FMNIST_evaluation - INFO - Completed local evaluation
+2025-01-18 21:07:11,124 - FMNIST_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2025-01-18 21:10:28,269 - FMNIST_evaluation - INFO - Completed fedavg evaluation
+2025-01-18 21:10:28,385 - FMNIST_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2025-01-18 21:13:45,959 - FMNIST_evaluation - INFO - Completed fedprox evaluation
+2025-01-18 21:13:46,075 - FMNIST_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2025-01-18 21:17:03,755 - FMNIST_evaluation - INFO - Completed pfedme evaluation
+2025-01-18 21:17:03,873 - FMNIST_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2025-01-18 21:23:36,556 - FMNIST_evaluation - INFO - Completed ditto evaluation
+2025-01-18 21:23:36,673 - FMNIST_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2025-01-18 21:26:56,824 - FMNIST_evaluation - INFO - Completed localadaptation evaluation
+2025-01-18 21:26:56,937 - FMNIST_evaluation - INFO - Evaluating babu model with best hyperparameters
+2025-01-18 21:30:17,953 - FMNIST_evaluation - INFO - Completed babu evaluation
+2025-01-18 21:30:18,068 - FMNIST_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2025-01-18 21:33:34,622 - FMNIST_evaluation - INFO - Completed fedlp evaluation
+2025-01-18 21:33:34,737 - FMNIST_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2025-01-18 21:36:51,102 - FMNIST_evaluation - INFO - Completed fedlama evaluation
+2025-01-18 21:36:51,217 - FMNIST_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2025-01-18 21:40:11,848 - FMNIST_evaluation - INFO - Completed pfedla evaluation
+2025-01-18 21:40:11,965 - FMNIST_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2025-01-18 21:43:29,144 - FMNIST_evaluation - INFO - Completed layerpfl evaluation
+2025-01-18 21:43:29,258 - FMNIST_evaluation - INFO - Evaluating layerpfl_minus_1 model with best hyperparameters
+2025-01-18 21:46:46,145 - FMNIST_evaluation - INFO - Completed layerpfl_minus_1 evaluation
+2025-01-18 21:46:46,259 - FMNIST_evaluation - INFO - Evaluating layerpfl_plus_1 model with best hyperparameters
+2025-01-18 21:50:03,315 - FMNIST_evaluation - INFO - Completed layerpfl_plus_1 evaluation
+2025-01-18 21:50:03,448 - FMNIST_evaluation - INFO - Successfully completed run 13
+2025-01-18 21:50:03,448 - FMNIST_evaluation - INFO - Starting run 14/20
+2025-01-18 21:50:03,514 - FMNIST_evaluation - INFO - Evaluating local model with best hyperparameters
+2025-01-18 21:53:20,635 - FMNIST_evaluation - INFO - Completed local evaluation
+2025-01-18 21:53:20,749 - FMNIST_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2025-01-18 21:56:38,385 - FMNIST_evaluation - INFO - Completed fedavg evaluation
+2025-01-18 21:56:38,499 - FMNIST_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2025-01-18 21:59:58,124 - FMNIST_evaluation - INFO - Completed fedprox evaluation
+2025-01-18 21:59:58,239 - FMNIST_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2025-01-18 22:03:17,826 - FMNIST_evaluation - INFO - Completed pfedme evaluation
+2025-01-18 22:03:17,943 - FMNIST_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2025-01-18 22:09:53,500 - FMNIST_evaluation - INFO - Completed ditto evaluation
+2025-01-18 22:09:53,616 - FMNIST_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2025-01-18 22:13:14,921 - FMNIST_evaluation - INFO - Completed localadaptation evaluation
+2025-01-18 22:13:15,034 - FMNIST_evaluation - INFO - Evaluating babu model with best hyperparameters
+2025-01-18 22:16:36,923 - FMNIST_evaluation - INFO - Completed babu evaluation
+2025-01-18 22:16:37,037 - FMNIST_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2025-01-18 22:19:54,887 - FMNIST_evaluation - INFO - Completed fedlp evaluation
+2025-01-18 22:19:55,000 - FMNIST_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2025-01-18 22:23:12,874 - FMNIST_evaluation - INFO - Completed fedlama evaluation
+2025-01-18 22:23:12,987 - FMNIST_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2025-01-18 22:26:34,236 - FMNIST_evaluation - INFO - Completed pfedla evaluation
+2025-01-18 22:26:34,352 - FMNIST_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2025-01-18 22:29:52,268 - FMNIST_evaluation - INFO - Completed layerpfl evaluation
+2025-01-18 22:29:52,384 - FMNIST_evaluation - INFO - Evaluating layerpfl_minus_1 model with best hyperparameters
+2025-01-18 22:33:10,230 - FMNIST_evaluation - INFO - Completed layerpfl_minus_1 evaluation
+2025-01-18 22:33:10,344 - FMNIST_evaluation - INFO - Evaluating layerpfl_plus_1 model with best hyperparameters
+2025-01-18 22:36:27,801 - FMNIST_evaluation - INFO - Completed layerpfl_plus_1 evaluation
+2025-01-18 22:36:27,934 - FMNIST_evaluation - INFO - Successfully completed run 14
+2025-01-18 22:36:27,934 - FMNIST_evaluation - INFO - Starting run 15/20
+2025-01-18 22:36:28,000 - FMNIST_evaluation - INFO - Evaluating local model with best hyperparameters
+2025-01-18 22:39:44,162 - FMNIST_evaluation - INFO - Completed local evaluation
+2025-01-18 22:39:44,276 - FMNIST_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2025-01-18 22:43:01,210 - FMNIST_evaluation - INFO - Completed fedavg evaluation
+2025-01-18 22:43:01,324 - FMNIST_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2025-01-18 22:46:19,537 - FMNIST_evaluation - INFO - Completed fedprox evaluation
+2025-01-18 22:46:19,652 - FMNIST_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2025-01-18 22:49:37,590 - FMNIST_evaluation - INFO - Completed pfedme evaluation
+2025-01-18 22:49:37,707 - FMNIST_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2025-01-18 22:56:11,005 - FMNIST_evaluation - INFO - Completed ditto evaluation
+2025-01-18 22:56:11,123 - FMNIST_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2025-01-18 22:59:30,925 - FMNIST_evaluation - INFO - Completed localadaptation evaluation
+2025-01-18 22:59:31,040 - FMNIST_evaluation - INFO - Evaluating babu model with best hyperparameters
+2025-01-18 23:02:52,202 - FMNIST_evaluation - INFO - Completed babu evaluation
+2025-01-18 23:02:52,317 - FMNIST_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2025-01-18 23:06:08,464 - FMNIST_evaluation - INFO - Completed fedlp evaluation
+2025-01-18 23:06:08,579 - FMNIST_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2025-01-18 23:09:25,476 - FMNIST_evaluation - INFO - Completed fedlama evaluation
+2025-01-18 23:09:25,591 - FMNIST_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2025-01-18 23:12:45,404 - FMNIST_evaluation - INFO - Completed pfedla evaluation
+2025-01-18 23:12:45,521 - FMNIST_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2025-01-18 23:16:02,450 - FMNIST_evaluation - INFO - Completed layerpfl evaluation
+2025-01-18 23:16:02,565 - FMNIST_evaluation - INFO - Evaluating layerpfl_minus_1 model with best hyperparameters
+2025-01-18 23:19:18,864 - FMNIST_evaluation - INFO - Completed layerpfl_minus_1 evaluation
+2025-01-18 23:19:18,980 - FMNIST_evaluation - INFO - Evaluating layerpfl_plus_1 model with best hyperparameters
+2025-01-18 23:22:35,347 - FMNIST_evaluation - INFO - Completed layerpfl_plus_1 evaluation
+2025-01-18 23:22:35,481 - FMNIST_evaluation - INFO - Successfully completed run 15
+2025-01-18 23:22:35,481 - FMNIST_evaluation - INFO - Starting run 16/20
+2025-01-18 23:22:35,547 - FMNIST_evaluation - INFO - Evaluating local model with best hyperparameters
+2025-01-18 23:25:52,365 - FMNIST_evaluation - INFO - Completed local evaluation
+2025-01-18 23:25:52,484 - FMNIST_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2025-01-18 23:29:10,056 - FMNIST_evaluation - INFO - Completed fedavg evaluation
+2025-01-18 23:29:10,171 - FMNIST_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2025-01-18 23:32:28,634 - FMNIST_evaluation - INFO - Completed fedprox evaluation
+2025-01-18 23:32:28,750 - FMNIST_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2025-01-18 23:35:47,537 - FMNIST_evaluation - INFO - Completed pfedme evaluation
+2025-01-18 23:35:47,655 - FMNIST_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2025-01-18 23:42:21,132 - FMNIST_evaluation - INFO - Completed ditto evaluation
+2025-01-18 23:42:21,249 - FMNIST_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2025-01-18 23:45:43,009 - FMNIST_evaluation - INFO - Completed localadaptation evaluation
+2025-01-18 23:45:43,126 - FMNIST_evaluation - INFO - Evaluating babu model with best hyperparameters
+2025-01-18 23:49:04,794 - FMNIST_evaluation - INFO - Completed babu evaluation
+2025-01-18 23:49:04,911 - FMNIST_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2025-01-18 23:52:22,411 - FMNIST_evaluation - INFO - Completed fedlp evaluation
+2025-01-18 23:52:22,528 - FMNIST_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2025-01-18 23:55:39,826 - FMNIST_evaluation - INFO - Completed fedlama evaluation
+2025-01-18 23:55:39,943 - FMNIST_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2025-01-18 23:59:00,317 - FMNIST_evaluation - INFO - Completed pfedla evaluation
+2025-01-18 23:59:00,436 - FMNIST_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2025-01-19 00:02:18,193 - FMNIST_evaluation - INFO - Completed layerpfl evaluation
+2025-01-19 00:02:18,310 - FMNIST_evaluation - INFO - Evaluating layerpfl_minus_1 model with best hyperparameters
+2025-01-19 00:05:35,775 - FMNIST_evaluation - INFO - Completed layerpfl_minus_1 evaluation
+2025-01-19 00:05:35,891 - FMNIST_evaluation - INFO - Evaluating layerpfl_plus_1 model with best hyperparameters
+2025-01-19 00:08:53,716 - FMNIST_evaluation - INFO - Completed layerpfl_plus_1 evaluation
+2025-01-19 00:08:53,851 - FMNIST_evaluation - INFO - Successfully completed run 16
+2025-01-19 00:08:53,851 - FMNIST_evaluation - INFO - Starting run 17/20
+2025-01-19 00:08:53,917 - FMNIST_evaluation - INFO - Evaluating local model with best hyperparameters
+2025-01-19 00:12:09,693 - FMNIST_evaluation - INFO - Completed local evaluation
+2025-01-19 00:12:09,809 - FMNIST_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2025-01-19 00:15:26,007 - FMNIST_evaluation - INFO - Completed fedavg evaluation
+2025-01-19 00:15:26,124 - FMNIST_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2025-01-19 00:19:24,294 - FMNIST_evaluation - INFO - Completed fedprox evaluation
+2025-01-19 00:19:24,413 - FMNIST_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2025-01-19 00:23:02,300 - FMNIST_evaluation - INFO - Completed pfedme evaluation
+2025-01-19 00:23:02,420 - FMNIST_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2025-01-19 00:29:35,878 - FMNIST_evaluation - INFO - Completed ditto evaluation
+2025-01-19 00:29:35,996 - FMNIST_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2025-01-19 00:32:58,149 - FMNIST_evaluation - INFO - Completed localadaptation evaluation
+2025-01-19 00:32:58,329 - FMNIST_evaluation - INFO - Evaluating babu model with best hyperparameters
+2025-01-19 00:36:19,934 - FMNIST_evaluation - INFO - Completed babu evaluation
+2025-01-19 00:36:20,050 - FMNIST_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2025-01-19 00:39:36,810 - FMNIST_evaluation - INFO - Completed fedlp evaluation
+2025-01-19 00:39:36,928 - FMNIST_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2025-01-19 00:42:53,905 - FMNIST_evaluation - INFO - Completed fedlama evaluation
+2025-01-19 00:42:54,020 - FMNIST_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2025-01-19 00:46:14,700 - FMNIST_evaluation - INFO - Completed pfedla evaluation
+2025-01-19 00:46:14,818 - FMNIST_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2025-01-19 00:49:32,352 - FMNIST_evaluation - INFO - Completed layerpfl evaluation
+2025-01-19 00:49:32,469 - FMNIST_evaluation - INFO - Evaluating layerpfl_minus_1 model with best hyperparameters
+2025-01-19 00:52:49,259 - FMNIST_evaluation - INFO - Completed layerpfl_minus_1 evaluation
+2025-01-19 00:52:49,376 - FMNIST_evaluation - INFO - Evaluating layerpfl_plus_1 model with best hyperparameters
+2025-01-19 00:56:05,905 - FMNIST_evaluation - INFO - Completed layerpfl_plus_1 evaluation
+2025-01-19 00:56:06,044 - FMNIST_evaluation - INFO - Successfully completed run 17
+2025-01-19 00:56:06,044 - FMNIST_evaluation - INFO - Starting run 18/20
+2025-01-19 00:56:06,109 - FMNIST_evaluation - INFO - Evaluating local model with best hyperparameters
+2025-01-19 00:59:22,675 - FMNIST_evaluation - INFO - Completed local evaluation
+2025-01-19 00:59:22,791 - FMNIST_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2025-01-19 01:02:40,321 - FMNIST_evaluation - INFO - Completed fedavg evaluation
+2025-01-19 01:02:40,438 - FMNIST_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2025-01-19 01:05:58,854 - FMNIST_evaluation - INFO - Completed fedprox evaluation
+2025-01-19 01:05:58,973 - FMNIST_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2025-01-19 01:09:17,635 - FMNIST_evaluation - INFO - Completed pfedme evaluation
+2025-01-19 01:09:17,756 - FMNIST_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2025-01-19 01:15:51,919 - FMNIST_evaluation - INFO - Completed ditto evaluation
+2025-01-19 01:15:52,038 - FMNIST_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2025-01-19 01:19:12,970 - FMNIST_evaluation - INFO - Completed localadaptation evaluation
+2025-01-19 01:19:13,087 - FMNIST_evaluation - INFO - Evaluating babu model with best hyperparameters
+2025-01-19 01:22:34,602 - FMNIST_evaluation - INFO - Completed babu evaluation
+2025-01-19 01:22:34,717 - FMNIST_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2025-01-19 01:25:51,835 - FMNIST_evaluation - INFO - Completed fedlp evaluation
+2025-01-19 01:25:51,950 - FMNIST_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2025-01-19 01:29:09,122 - FMNIST_evaluation - INFO - Completed fedlama evaluation
+2025-01-19 01:29:09,237 - FMNIST_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2025-01-19 01:32:30,421 - FMNIST_evaluation - INFO - Completed pfedla evaluation
+2025-01-19 01:32:30,538 - FMNIST_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2025-01-19 01:35:48,059 - FMNIST_evaluation - INFO - Completed layerpfl evaluation
+2025-01-19 01:35:48,175 - FMNIST_evaluation - INFO - Evaluating layerpfl_minus_1 model with best hyperparameters
+2025-01-19 01:39:05,239 - FMNIST_evaluation - INFO - Completed layerpfl_minus_1 evaluation
+2025-01-19 01:39:05,356 - FMNIST_evaluation - INFO - Evaluating layerpfl_plus_1 model with best hyperparameters
+2025-01-19 01:42:21,367 - FMNIST_evaluation - INFO - Completed layerpfl_plus_1 evaluation
+2025-01-19 01:42:21,503 - FMNIST_evaluation - INFO - Successfully completed run 18
+2025-01-19 01:42:21,503 - FMNIST_evaluation - INFO - Starting run 19/20
+2025-01-19 01:42:21,567 - FMNIST_evaluation - INFO - Evaluating local model with best hyperparameters
+2025-01-19 01:45:38,942 - FMNIST_evaluation - INFO - Completed local evaluation
+2025-01-19 01:45:39,058 - FMNIST_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2025-01-19 01:48:56,429 - FMNIST_evaluation - INFO - Completed fedavg evaluation
+2025-01-19 01:48:56,546 - FMNIST_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2025-01-19 01:52:15,121 - FMNIST_evaluation - INFO - Completed fedprox evaluation
+2025-01-19 01:52:15,237 - FMNIST_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2025-01-19 01:55:33,907 - FMNIST_evaluation - INFO - Completed pfedme evaluation
+2025-01-19 01:55:34,024 - FMNIST_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2025-01-19 02:02:07,361 - FMNIST_evaluation - INFO - Completed ditto evaluation
+2025-01-19 02:02:07,478 - FMNIST_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2025-01-19 02:05:28,997 - FMNIST_evaluation - INFO - Completed localadaptation evaluation
+2025-01-19 02:05:29,113 - FMNIST_evaluation - INFO - Evaluating babu model with best hyperparameters
+2025-01-19 02:08:51,086 - FMNIST_evaluation - INFO - Completed babu evaluation
+2025-01-19 02:08:51,202 - FMNIST_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2025-01-19 02:12:09,030 - FMNIST_evaluation - INFO - Completed fedlp evaluation
+2025-01-19 02:12:09,147 - FMNIST_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2025-01-19 02:15:27,266 - FMNIST_evaluation - INFO - Completed fedlama evaluation
+2025-01-19 02:15:27,382 - FMNIST_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2025-01-19 02:18:48,239 - FMNIST_evaluation - INFO - Completed pfedla evaluation
+2025-01-19 02:18:48,357 - FMNIST_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2025-01-19 02:22:06,430 - FMNIST_evaluation - INFO - Completed layerpfl evaluation
+2025-01-19 02:22:06,546 - FMNIST_evaluation - INFO - Evaluating layerpfl_minus_1 model with best hyperparameters
+2025-01-19 02:25:24,517 - FMNIST_evaluation - INFO - Completed layerpfl_minus_1 evaluation
+2025-01-19 02:25:24,632 - FMNIST_evaluation - INFO - Evaluating layerpfl_plus_1 model with best hyperparameters
+2025-01-19 02:28:42,712 - FMNIST_evaluation - INFO - Completed layerpfl_plus_1 evaluation
+2025-01-19 02:28:42,848 - FMNIST_evaluation - INFO - Successfully completed run 19
+2025-01-19 02:28:42,848 - FMNIST_evaluation - INFO - Starting run 20/20
+2025-01-19 02:28:42,912 - FMNIST_evaluation - INFO - Evaluating local model with best hyperparameters
+2025-01-19 02:32:00,005 - FMNIST_evaluation - INFO - Completed local evaluation
+2025-01-19 02:32:00,121 - FMNIST_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2025-01-19 02:35:17,432 - FMNIST_evaluation - INFO - Completed fedavg evaluation
+2025-01-19 02:35:17,549 - FMNIST_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2025-01-19 02:38:36,242 - FMNIST_evaluation - INFO - Completed fedprox evaluation
+2025-01-19 02:38:36,358 - FMNIST_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2025-01-19 02:41:54,193 - FMNIST_evaluation - INFO - Completed pfedme evaluation
+2025-01-19 02:41:54,313 - FMNIST_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2025-01-19 02:48:27,743 - FMNIST_evaluation - INFO - Completed ditto evaluation
+2025-01-19 02:48:27,860 - FMNIST_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2025-01-19 02:51:49,309 - FMNIST_evaluation - INFO - Completed localadaptation evaluation
+2025-01-19 02:51:49,426 - FMNIST_evaluation - INFO - Evaluating babu model with best hyperparameters
+2025-01-19 02:55:10,412 - FMNIST_evaluation - INFO - Completed babu evaluation
+2025-01-19 02:55:10,529 - FMNIST_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2025-01-19 02:58:27,513 - FMNIST_evaluation - INFO - Completed fedlp evaluation
+2025-01-19 02:58:27,629 - FMNIST_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2025-01-19 03:01:45,194 - FMNIST_evaluation - INFO - Completed fedlama evaluation
+2025-01-19 03:01:45,311 - FMNIST_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2025-01-19 03:05:05,541 - FMNIST_evaluation - INFO - Completed pfedla evaluation
+2025-01-19 03:05:05,659 - FMNIST_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2025-01-19 03:08:23,130 - FMNIST_evaluation - INFO - Completed layerpfl evaluation
+2025-01-19 03:08:23,246 - FMNIST_evaluation - INFO - Evaluating layerpfl_minus_1 model with best hyperparameters
+2025-01-19 03:11:40,304 - FMNIST_evaluation - INFO - Completed layerpfl_minus_1 evaluation
+2025-01-19 03:11:40,421 - FMNIST_evaluation - INFO - Evaluating layerpfl_plus_1 model with best hyperparameters
+2025-01-19 03:14:57,764 - FMNIST_evaluation - INFO - Completed layerpfl_plus_1 evaluation
+2025-01-19 03:14:57,903 - FMNIST_evaluation - INFO - Successfully completed run 20

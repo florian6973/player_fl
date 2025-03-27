@@ -3,7 +3,7 @@ from configs import *
 
 class PerformanceLogger:
     def __init__(self, log_dir='logs/python_logs'):
-        self.log_dir = f'{ROOT_DIR}/code/{log_dir}'
+        self.log_dir = f'{EVAL_DIR}/{log_dir}'
         os.makedirs(log_dir, exist_ok=True)
         self.loggers = {}
         

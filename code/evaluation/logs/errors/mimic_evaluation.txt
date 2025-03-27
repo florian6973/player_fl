@@ -1,0 +1,281 @@
+2025-01-18 11:46:14,246 - mimic_evaluation - INFO - Starting final evaluation phase
+2025-01-18 11:46:14,247 - mimic_evaluation - INFO - Starting run 1/10
+2025-01-18 11:46:14,553 - mimic_evaluation - INFO - Evaluating local model with best hyperparameters
+2025-01-18 11:47:56,350 - mimic_evaluation - INFO - Completed local evaluation
+2025-01-18 11:47:56,503 - mimic_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2025-01-18 11:49:39,179 - mimic_evaluation - INFO - Completed fedavg evaluation
+2025-01-18 11:49:39,333 - mimic_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2025-01-18 11:51:23,463 - mimic_evaluation - INFO - Completed fedprox evaluation
+2025-01-18 11:51:23,619 - mimic_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2025-01-18 11:53:08,190 - mimic_evaluation - INFO - Completed pfedme evaluation
+2025-01-18 11:53:08,361 - mimic_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2025-01-18 11:56:34,064 - mimic_evaluation - INFO - Completed ditto evaluation
+2025-01-18 11:56:34,195 - mimic_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2025-01-18 11:58:25,017 - mimic_evaluation - INFO - Completed localadaptation evaluation
+2025-01-18 11:58:25,140 - mimic_evaluation - INFO - Evaluating babu model with best hyperparameters
+2025-01-18 12:00:08,816 - mimic_evaluation - INFO - Completed babu evaluation
+2025-01-18 12:00:08,948 - mimic_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2025-01-18 12:01:52,161 - mimic_evaluation - INFO - Completed fedlp evaluation
+2025-01-18 12:01:52,285 - mimic_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2025-01-18 12:03:35,326 - mimic_evaluation - INFO - Completed fedlama evaluation
+2025-01-18 12:03:35,449 - mimic_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2025-01-18 12:05:19,083 - mimic_evaluation - INFO - Completed pfedla evaluation
+2025-01-18 12:05:19,216 - mimic_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2025-01-18 12:07:02,930 - mimic_evaluation - INFO - Completed layerpfl evaluation
+2025-01-18 12:07:03,053 - mimic_evaluation - INFO - Evaluating layerpfl_minus_1 model with best hyperparameters
+2025-01-18 12:08:46,637 - mimic_evaluation - INFO - Completed layerpfl_minus_1 evaluation
+2025-01-18 12:08:46,760 - mimic_evaluation - INFO - Evaluating layerpfl_plus_1 model with best hyperparameters
+2025-01-18 12:10:30,307 - mimic_evaluation - INFO - Completed layerpfl_plus_1 evaluation
+2025-01-18 12:10:30,449 - mimic_evaluation - INFO - Successfully completed run 1
+2025-01-18 12:10:30,449 - mimic_evaluation - INFO - Starting run 2/10
+2025-01-18 12:10:30,478 - mimic_evaluation - INFO - Evaluating local model with best hyperparameters
+2025-01-18 12:12:13,866 - mimic_evaluation - INFO - Completed local evaluation
+2025-01-18 12:12:13,991 - mimic_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2025-01-18 12:13:57,404 - mimic_evaluation - INFO - Completed fedavg evaluation
+2025-01-18 12:13:57,528 - mimic_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2025-01-18 12:15:41,912 - mimic_evaluation - INFO - Completed fedprox evaluation
+2025-01-18 12:15:42,036 - mimic_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2025-01-18 12:17:26,778 - mimic_evaluation - INFO - Completed pfedme evaluation
+2025-01-18 12:17:26,908 - mimic_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2025-01-18 12:20:52,590 - mimic_evaluation - INFO - Completed ditto evaluation
+2025-01-18 12:20:52,707 - mimic_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2025-01-18 12:22:43,994 - mimic_evaluation - INFO - Completed localadaptation evaluation
+2025-01-18 12:22:44,108 - mimic_evaluation - INFO - Evaluating babu model with best hyperparameters
+2025-01-18 12:24:27,690 - mimic_evaluation - INFO - Completed babu evaluation
+2025-01-18 12:24:27,811 - mimic_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2025-01-18 12:26:10,796 - mimic_evaluation - INFO - Completed fedlp evaluation
+2025-01-18 12:26:10,912 - mimic_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2025-01-18 12:27:53,964 - mimic_evaluation - INFO - Completed fedlama evaluation
+2025-01-18 12:27:54,082 - mimic_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2025-01-18 12:29:37,439 - mimic_evaluation - INFO - Completed pfedla evaluation
+2025-01-18 12:29:37,562 - mimic_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2025-01-18 12:31:20,901 - mimic_evaluation - INFO - Completed layerpfl evaluation
+2025-01-18 12:31:21,018 - mimic_evaluation - INFO - Evaluating layerpfl_minus_1 model with best hyperparameters
+2025-01-18 12:33:04,271 - mimic_evaluation - INFO - Completed layerpfl_minus_1 evaluation
+2025-01-18 12:33:04,386 - mimic_evaluation - INFO - Evaluating layerpfl_plus_1 model with best hyperparameters
+2025-01-18 12:34:47,592 - mimic_evaluation - INFO - Completed layerpfl_plus_1 evaluation
+2025-01-18 12:34:47,721 - mimic_evaluation - INFO - Successfully completed run 2
+2025-01-18 12:34:47,721 - mimic_evaluation - INFO - Starting run 3/10
+2025-01-18 12:34:47,749 - mimic_evaluation - INFO - Evaluating local model with best hyperparameters
+2025-01-18 12:36:31,054 - mimic_evaluation - INFO - Completed local evaluation
+2025-01-18 12:36:31,172 - mimic_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2025-01-18 12:38:14,505 - mimic_evaluation - INFO - Completed fedavg evaluation
+2025-01-18 12:38:14,622 - mimic_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2025-01-18 12:39:59,473 - mimic_evaluation - INFO - Completed fedprox evaluation
+2025-01-18 12:39:59,592 - mimic_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2025-01-18 12:41:44,902 - mimic_evaluation - INFO - Completed pfedme evaluation
+2025-01-18 12:41:45,025 - mimic_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2025-01-18 12:45:12,682 - mimic_evaluation - INFO - Completed ditto evaluation
+2025-01-18 12:45:12,803 - mimic_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2025-01-18 12:47:04,928 - mimic_evaluation - INFO - Completed localadaptation evaluation
+2025-01-18 12:47:05,047 - mimic_evaluation - INFO - Evaluating babu model with best hyperparameters
+2025-01-18 12:48:49,273 - mimic_evaluation - INFO - Completed babu evaluation
+2025-01-18 12:48:49,391 - mimic_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2025-01-18 12:50:32,388 - mimic_evaluation - INFO - Completed fedlp evaluation
+2025-01-18 12:50:32,507 - mimic_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2025-01-18 12:52:15,657 - mimic_evaluation - INFO - Completed fedlama evaluation
+2025-01-18 12:52:15,777 - mimic_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2025-01-18 12:53:59,267 - mimic_evaluation - INFO - Completed pfedla evaluation
+2025-01-18 12:53:59,393 - mimic_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2025-01-18 12:55:42,690 - mimic_evaluation - INFO - Completed layerpfl evaluation
+2025-01-18 12:55:42,809 - mimic_evaluation - INFO - Evaluating layerpfl_minus_1 model with best hyperparameters
+2025-01-18 12:57:25,982 - mimic_evaluation - INFO - Completed layerpfl_minus_1 evaluation
+2025-01-18 12:57:26,102 - mimic_evaluation - INFO - Evaluating layerpfl_plus_1 model with best hyperparameters
+2025-01-18 12:59:09,510 - mimic_evaluation - INFO - Completed layerpfl_plus_1 evaluation
+2025-01-18 12:59:09,641 - mimic_evaluation - INFO - Successfully completed run 3
+2025-01-18 12:59:09,641 - mimic_evaluation - INFO - Starting run 4/10
+2025-01-18 12:59:09,670 - mimic_evaluation - INFO - Evaluating local model with best hyperparameters
+2025-01-18 13:00:52,986 - mimic_evaluation - INFO - Completed local evaluation
+2025-01-18 13:00:53,105 - mimic_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2025-01-18 13:02:36,842 - mimic_evaluation - INFO - Completed fedavg evaluation
+2025-01-18 13:02:36,962 - mimic_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2025-01-18 13:04:22,015 - mimic_evaluation - INFO - Completed fedprox evaluation
+2025-01-18 13:04:22,136 - mimic_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2025-01-18 13:06:07,309 - mimic_evaluation - INFO - Completed pfedme evaluation
+2025-01-18 13:06:07,435 - mimic_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2025-01-18 13:09:34,032 - mimic_evaluation - INFO - Completed ditto evaluation
+2025-01-18 13:09:34,152 - mimic_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2025-01-18 13:11:25,746 - mimic_evaluation - INFO - Completed localadaptation evaluation
+2025-01-18 13:11:25,866 - mimic_evaluation - INFO - Evaluating babu model with best hyperparameters
+2025-01-18 13:13:09,916 - mimic_evaluation - INFO - Completed babu evaluation
+2025-01-18 13:13:10,035 - mimic_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2025-01-18 13:14:53,755 - mimic_evaluation - INFO - Completed fedlp evaluation
+2025-01-18 13:14:53,874 - mimic_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2025-01-18 13:16:36,863 - mimic_evaluation - INFO - Completed fedlama evaluation
+2025-01-18 13:16:36,983 - mimic_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2025-01-18 13:18:21,250 - mimic_evaluation - INFO - Completed pfedla evaluation
+2025-01-18 13:18:21,380 - mimic_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2025-01-18 13:20:05,170 - mimic_evaluation - INFO - Completed layerpfl evaluation
+2025-01-18 13:20:05,290 - mimic_evaluation - INFO - Evaluating layerpfl_minus_1 model with best hyperparameters
+2025-01-18 13:21:48,690 - mimic_evaluation - INFO - Completed layerpfl_minus_1 evaluation
+2025-01-18 13:21:48,809 - mimic_evaluation - INFO - Evaluating layerpfl_plus_1 model with best hyperparameters
+2025-01-18 13:23:32,175 - mimic_evaluation - INFO - Completed layerpfl_plus_1 evaluation
+2025-01-18 13:23:32,303 - mimic_evaluation - INFO - Successfully completed run 4
+2025-01-18 13:23:32,304 - mimic_evaluation - INFO - Starting run 5/10
+2025-01-18 13:23:32,329 - mimic_evaluation - INFO - Evaluating local model with best hyperparameters
+2025-01-18 13:25:15,956 - mimic_evaluation - INFO - Completed local evaluation
+2025-01-18 13:25:16,075 - mimic_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2025-01-18 13:26:59,788 - mimic_evaluation - INFO - Completed fedavg evaluation
+2025-01-18 13:26:59,907 - mimic_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2025-01-18 13:28:44,892 - mimic_evaluation - INFO - Completed fedprox evaluation
+2025-01-18 13:28:45,015 - mimic_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2025-01-18 13:30:30,378 - mimic_evaluation - INFO - Completed pfedme evaluation
+2025-01-18 13:30:30,508 - mimic_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2025-01-18 13:33:57,082 - mimic_evaluation - INFO - Completed ditto evaluation
+2025-01-18 13:33:57,208 - mimic_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2025-01-18 13:35:48,823 - mimic_evaluation - INFO - Completed localadaptation evaluation
+2025-01-18 13:35:48,947 - mimic_evaluation - INFO - Evaluating babu model with best hyperparameters
+2025-01-18 13:37:32,837 - mimic_evaluation - INFO - Completed babu evaluation
+2025-01-18 13:37:32,959 - mimic_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2025-01-18 13:39:16,155 - mimic_evaluation - INFO - Completed fedlp evaluation
+2025-01-18 13:39:16,280 - mimic_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2025-01-18 13:40:59,578 - mimic_evaluation - INFO - Completed fedlama evaluation
+2025-01-18 13:40:59,702 - mimic_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2025-01-18 13:42:43,214 - mimic_evaluation - INFO - Completed pfedla evaluation
+2025-01-18 13:42:43,347 - mimic_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2025-01-18 13:44:26,789 - mimic_evaluation - INFO - Completed layerpfl evaluation
+2025-01-18 13:44:26,912 - mimic_evaluation - INFO - Evaluating layerpfl_minus_1 model with best hyperparameters
+2025-01-18 13:46:10,362 - mimic_evaluation - INFO - Completed layerpfl_minus_1 evaluation
+2025-01-18 13:46:10,486 - mimic_evaluation - INFO - Evaluating layerpfl_plus_1 model with best hyperparameters
+2025-01-18 13:47:54,057 - mimic_evaluation - INFO - Completed layerpfl_plus_1 evaluation
+2025-01-18 13:47:54,192 - mimic_evaluation - INFO - Successfully completed run 5
+2025-01-18 13:47:54,192 - mimic_evaluation - INFO - Starting run 6/10
+2025-01-18 13:47:54,218 - mimic_evaluation - INFO - Evaluating local model with best hyperparameters
+2025-01-18 13:49:37,582 - mimic_evaluation - INFO - Completed local evaluation
+2025-01-18 13:49:37,705 - mimic_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2025-01-18 13:51:21,102 - mimic_evaluation - INFO - Completed fedavg evaluation
+2025-01-18 13:51:21,227 - mimic_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2025-01-18 13:53:06,298 - mimic_evaluation - INFO - Completed fedprox evaluation
+2025-01-18 13:53:06,424 - mimic_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2025-01-18 13:54:51,630 - mimic_evaluation - INFO - Completed pfedme evaluation
+2025-01-18 13:54:51,763 - mimic_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2025-01-18 13:58:17,860 - mimic_evaluation - INFO - Completed ditto evaluation
+2025-01-18 13:58:17,985 - mimic_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2025-01-18 14:00:09,435 - mimic_evaluation - INFO - Completed localadaptation evaluation
+2025-01-18 14:00:09,556 - mimic_evaluation - INFO - Evaluating babu model with best hyperparameters
+2025-01-18 14:01:53,411 - mimic_evaluation - INFO - Completed babu evaluation
+2025-01-18 14:01:53,530 - mimic_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2025-01-18 14:03:36,933 - mimic_evaluation - INFO - Completed fedlp evaluation
+2025-01-18 14:03:37,055 - mimic_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2025-01-18 14:05:20,490 - mimic_evaluation - INFO - Completed fedlama evaluation
+2025-01-18 14:05:20,611 - mimic_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2025-01-18 14:07:04,288 - mimic_evaluation - INFO - Completed pfedla evaluation
+2025-01-18 14:07:04,413 - mimic_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2025-01-18 14:08:47,684 - mimic_evaluation - INFO - Completed layerpfl evaluation
+2025-01-18 14:08:47,807 - mimic_evaluation - INFO - Evaluating layerpfl_minus_1 model with best hyperparameters
+2025-01-18 14:10:31,391 - mimic_evaluation - INFO - Completed layerpfl_minus_1 evaluation
+2025-01-18 14:10:31,511 - mimic_evaluation - INFO - Evaluating layerpfl_plus_1 model with best hyperparameters
+2025-01-18 14:12:15,084 - mimic_evaluation - INFO - Completed layerpfl_plus_1 evaluation
+2025-01-18 14:12:15,216 - mimic_evaluation - INFO - Successfully completed run 6
+2025-01-18 14:12:15,216 - mimic_evaluation - INFO - Starting run 7/10
+2025-01-18 14:12:15,245 - mimic_evaluation - INFO - Evaluating local model with best hyperparameters
+2025-01-18 14:13:58,803 - mimic_evaluation - INFO - Completed local evaluation
+2025-01-18 14:13:58,925 - mimic_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2025-01-18 14:15:42,576 - mimic_evaluation - INFO - Completed fedavg evaluation
+2025-01-18 14:15:42,699 - mimic_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2025-01-18 14:17:27,605 - mimic_evaluation - INFO - Completed fedprox evaluation
+2025-01-18 14:17:27,729 - mimic_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2025-01-18 14:19:12,869 - mimic_evaluation - INFO - Completed pfedme evaluation
+2025-01-18 14:19:12,996 - mimic_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2025-01-18 14:22:43,729 - mimic_evaluation - INFO - Completed ditto evaluation
+2025-01-18 14:22:43,854 - mimic_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2025-01-18 14:24:39,511 - mimic_evaluation - INFO - Completed localadaptation evaluation
+2025-01-18 14:24:39,632 - mimic_evaluation - INFO - Evaluating babu model with best hyperparameters
+2025-01-18 14:26:27,475 - mimic_evaluation - INFO - Completed babu evaluation
+2025-01-18 14:26:27,594 - mimic_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2025-01-18 14:28:14,665 - mimic_evaluation - INFO - Completed fedlp evaluation
+2025-01-18 14:28:14,787 - mimic_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2025-01-18 14:30:01,824 - mimic_evaluation - INFO - Completed fedlama evaluation
+2025-01-18 14:30:01,947 - mimic_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2025-01-18 14:31:49,575 - mimic_evaluation - INFO - Completed pfedla evaluation
+2025-01-18 14:31:49,704 - mimic_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2025-01-18 14:33:37,284 - mimic_evaluation - INFO - Completed layerpfl evaluation
+2025-01-18 14:33:37,405 - mimic_evaluation - INFO - Evaluating layerpfl_minus_1 model with best hyperparameters
+2025-01-18 14:35:24,957 - mimic_evaluation - INFO - Completed layerpfl_minus_1 evaluation
+2025-01-18 14:35:25,079 - mimic_evaluation - INFO - Evaluating layerpfl_plus_1 model with best hyperparameters
+2025-01-18 14:37:12,501 - mimic_evaluation - INFO - Completed layerpfl_plus_1 evaluation
+2025-01-18 14:37:12,641 - mimic_evaluation - INFO - Successfully completed run 7
+2025-01-18 14:37:12,641 - mimic_evaluation - INFO - Starting run 8/10
+2025-01-18 14:37:12,926 - mimic_evaluation - INFO - Evaluating local model with best hyperparameters
+2025-01-18 14:39:00,050 - mimic_evaluation - INFO - Completed local evaluation
+2025-01-18 14:39:00,172 - mimic_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2025-01-18 14:40:47,605 - mimic_evaluation - INFO - Completed fedavg evaluation
+2025-01-18 14:40:47,728 - mimic_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2025-01-18 14:42:36,245 - mimic_evaluation - INFO - Completed fedprox evaluation
+2025-01-18 14:42:36,367 - mimic_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2025-01-18 14:44:25,459 - mimic_evaluation - INFO - Completed pfedme evaluation
+2025-01-18 14:44:25,588 - mimic_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2025-01-18 14:47:59,568 - mimic_evaluation - INFO - Completed ditto evaluation
+2025-01-18 14:47:59,690 - mimic_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2025-01-18 14:49:55,268 - mimic_evaluation - INFO - Completed localadaptation evaluation
+2025-01-18 14:49:55,388 - mimic_evaluation - INFO - Evaluating babu model with best hyperparameters
+2025-01-18 14:51:43,384 - mimic_evaluation - INFO - Completed babu evaluation
+2025-01-18 14:51:43,505 - mimic_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2025-01-18 14:53:30,613 - mimic_evaluation - INFO - Completed fedlp evaluation
+2025-01-18 14:53:30,732 - mimic_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2025-01-18 14:55:18,069 - mimic_evaluation - INFO - Completed fedlama evaluation
+2025-01-18 14:55:18,189 - mimic_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2025-01-18 14:57:05,858 - mimic_evaluation - INFO - Completed pfedla evaluation
+2025-01-18 14:57:05,983 - mimic_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2025-01-18 14:58:53,331 - mimic_evaluation - INFO - Completed layerpfl evaluation
+2025-01-18 14:58:53,452 - mimic_evaluation - INFO - Evaluating layerpfl_minus_1 model with best hyperparameters
+2025-01-18 15:00:40,960 - mimic_evaluation - INFO - Completed layerpfl_minus_1 evaluation
+2025-01-18 15:00:41,081 - mimic_evaluation - INFO - Evaluating layerpfl_plus_1 model with best hyperparameters
+2025-01-18 15:02:28,800 - mimic_evaluation - INFO - Completed layerpfl_plus_1 evaluation
+2025-01-18 15:02:28,934 - mimic_evaluation - INFO - Successfully completed run 8
+2025-01-18 15:02:28,934 - mimic_evaluation - INFO - Starting run 9/10
+2025-01-18 15:02:28,960 - mimic_evaluation - INFO - Evaluating local model with best hyperparameters
+2025-01-18 15:04:16,619 - mimic_evaluation - INFO - Completed local evaluation
+2025-01-18 15:04:16,739 - mimic_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2025-01-18 15:06:04,445 - mimic_evaluation - INFO - Completed fedavg evaluation
+2025-01-18 15:06:04,564 - mimic_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2025-01-18 15:07:53,588 - mimic_evaluation - INFO - Completed fedprox evaluation
+2025-01-18 15:07:53,710 - mimic_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2025-01-18 15:09:42,912 - mimic_evaluation - INFO - Completed pfedme evaluation
+2025-01-18 15:09:43,037 - mimic_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2025-01-18 15:13:17,551 - mimic_evaluation - INFO - Completed ditto evaluation
+2025-01-18 15:13:17,674 - mimic_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2025-01-18 15:15:13,515 - mimic_evaluation - INFO - Completed localadaptation evaluation
+2025-01-18 15:15:13,636 - mimic_evaluation - INFO - Evaluating babu model with best hyperparameters
+2025-01-18 15:17:01,441 - mimic_evaluation - INFO - Completed babu evaluation
+2025-01-18 15:17:01,559 - mimic_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2025-01-18 15:18:48,705 - mimic_evaluation - INFO - Completed fedlp evaluation
+2025-01-18 15:18:48,826 - mimic_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2025-01-18 15:20:35,685 - mimic_evaluation - INFO - Completed fedlama evaluation
+2025-01-18 15:20:35,807 - mimic_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2025-01-18 15:22:23,153 - mimic_evaluation - INFO - Completed pfedla evaluation
+2025-01-18 15:22:23,282 - mimic_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2025-01-18 15:24:10,424 - mimic_evaluation - INFO - Completed layerpfl evaluation
+2025-01-18 15:24:10,546 - mimic_evaluation - INFO - Evaluating layerpfl_minus_1 model with best hyperparameters
+2025-01-18 15:25:57,927 - mimic_evaluation - INFO - Completed layerpfl_minus_1 evaluation
+2025-01-18 15:25:58,049 - mimic_evaluation - INFO - Evaluating layerpfl_plus_1 model with best hyperparameters
+2025-01-18 15:27:45,252 - mimic_evaluation - INFO - Completed layerpfl_plus_1 evaluation
+2025-01-18 15:27:45,388 - mimic_evaluation - INFO - Successfully completed run 9
+2025-01-18 15:27:45,388 - mimic_evaluation - INFO - Starting run 10/10
+2025-01-18 15:27:45,415 - mimic_evaluation - INFO - Evaluating local model with best hyperparameters
+2025-01-18 15:29:32,435 - mimic_evaluation - INFO - Completed local evaluation
+2025-01-18 15:29:32,555 - mimic_evaluation - INFO - Evaluating fedavg model with best hyperparameters
+2025-01-18 15:31:20,129 - mimic_evaluation - INFO - Completed fedavg evaluation
+2025-01-18 15:31:20,251 - mimic_evaluation - INFO - Evaluating fedprox model with best hyperparameters
+2025-01-18 15:33:09,004 - mimic_evaluation - INFO - Completed fedprox evaluation
+2025-01-18 15:33:09,127 - mimic_evaluation - INFO - Evaluating pfedme model with best hyperparameters
+2025-01-18 15:34:57,950 - mimic_evaluation - INFO - Completed pfedme evaluation
+2025-01-18 15:34:58,079 - mimic_evaluation - INFO - Evaluating ditto model with best hyperparameters
+2025-01-18 15:38:32,675 - mimic_evaluation - INFO - Completed ditto evaluation
+2025-01-18 15:38:32,797 - mimic_evaluation - INFO - Evaluating localadaptation model with best hyperparameters
+2025-01-18 15:40:28,522 - mimic_evaluation - INFO - Completed localadaptation evaluation
+2025-01-18 15:40:28,642 - mimic_evaluation - INFO - Evaluating babu model with best hyperparameters
+2025-01-18 15:42:16,451 - mimic_evaluation - INFO - Completed babu evaluation
+2025-01-18 15:42:16,571 - mimic_evaluation - INFO - Evaluating fedlp model with best hyperparameters
+2025-01-18 15:44:03,721 - mimic_evaluation - INFO - Completed fedlp evaluation
+2025-01-18 15:44:03,841 - mimic_evaluation - INFO - Evaluating fedlama model with best hyperparameters
+2025-01-18 15:45:51,095 - mimic_evaluation - INFO - Completed fedlama evaluation
+2025-01-18 15:45:51,215 - mimic_evaluation - INFO - Evaluating pfedla model with best hyperparameters
+2025-01-18 15:47:38,813 - mimic_evaluation - INFO - Completed pfedla evaluation
+2025-01-18 15:47:38,936 - mimic_evaluation - INFO - Evaluating layerpfl model with best hyperparameters
+2025-01-18 15:49:26,496 - mimic_evaluation - INFO - Completed layerpfl evaluation
+2025-01-18 15:49:26,616 - mimic_evaluation - INFO - Evaluating layerpfl_minus_1 model with best hyperparameters
+2025-01-18 15:51:14,477 - mimic_evaluation - INFO - Completed layerpfl_minus_1 evaluation
+2025-01-18 15:51:14,595 - mimic_evaluation - INFO - Evaluating layerpfl_plus_1 model with best hyperparameters
+2025-01-18 15:53:02,129 - mimic_evaluation - INFO - Completed layerpfl_plus_1 evaluation
+2025-01-18 15:53:02,267 - mimic_evaluation - INFO - Successfully completed run 10

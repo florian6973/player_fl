@@ -94,7 +94,7 @@ source ${ENV_PATH} ${ENV_NAME}
 export PYTHONUNBUFFERED=1
 export PYTHON_LOG_DIR="logs/python_logs"
 # Run the Python script
-python ${DIR}/code/run.py -ds ${dataset} -exp ${exp_type}
+python ${DIR}/code/evaluation/run.py -ds ${dataset} -exp ${exp_type}
 EOF
 
         echo "Submitted job for dataset: ${dataset} and experiment type: ${exp_type}"

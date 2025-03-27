@@ -3,7 +3,7 @@ from helper import *
 from dataset_processing import *
 import models
 from losses import MulticlassFocalLoss
-from clients import *
+from layer_pfl.code.evaluation.clients import *
 from servers import *
 from performance_logging import *
 import time
