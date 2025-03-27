@@ -358,14 +358,6 @@ class Experiment:
             test_loader=loaders[2]
         )
 
-    def _load_data(self, client_num):
-        loader = UnifiedDataLoader(root_dir=self.root_dir, dataset_name=self.config.dataset)
-        dataset_df = loader.load()
-        
-        # Filter dataset for the specific client (if applicable)
-        client_df = dataset_df[dataset_df['site'] == client_num]
-        return client_df['data'].values, client_df['label'].values
-
 
     def _train_and_evaluate(self, server, rounds):
         for round_num in range(rounds):

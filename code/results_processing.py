@@ -273,7 +273,7 @@ class ResultAnalyzer:
         except Exception:
             return None
     
-    def format_tables(self, analysis_results: Dict) -> Dict:
+    def format_tables(self, DATASETS, analysis_results: Dict) -> Dict:
         """Format analysis results into presentation-ready tables with confidence intervals."""
         formatted_tables = {}
         
@@ -284,9 +284,7 @@ class ResultAnalyzer:
             'pfedla', 'layerpfl', 'layerpfl_random'
         ]
         
-        dataset_order = [
-            'FMNIST', 'EMNIST', 'CIFAR', 'ISIC', 'Heart', 'Sentiment', 'mimic', 'Mean Rank'
-        ]
+        dataset_order = DATASETS +  ['Mean Rank']
 
         fairness_algorithm_order = [
             'fedprox', 'pfedme', 'ditto', 'localadaptation', 'babu', 
@@ -344,7 +342,7 @@ class ResultAnalyzer:
                     
                     # Format numbers
                     for col in var_pivot.columns[:-1]:  # Exclude Mean Rank
-                        var_pivot[col] = var_pivot[col].apply(lambda x: f"{x:.4f}")
+                        var_pivot[col] = var_pivot[col].apply(lambda x: f"{x:.6f}")
                     var_pivot['Mean Rank'] = var_pivot['Mean Rank'].apply(lambda x: f"{x:.2f}")
                     
                     # Reorder rows and columns
@@ -394,7 +392,7 @@ def analyze_experiment_results(DATASETS) -> Dict:
             all_results[dataset] = load_eval_results(dataset)
         analyzer = ResultAnalyzer(all_results)
         analysis_results = analyzer.analyze_all()
-        formatted_tables = analyzer.format_tables(analysis_results)
+        formatted_tables = analyzer.format_tables(DATASETS, analysis_results)
         return formatted_tables
     except Exception as e:
         print(f"Error analyzing results: {str(e)}")
