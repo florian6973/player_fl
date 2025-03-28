@@ -1,0 +1,4 @@
+2025-03-28 13:00:55,182 - FMNIST_evaluation - INFO - Starting final evaluation phase
+2025-03-28 13:00:55,182 - FMNIST_evaluation - INFO - Starting run 1/20
+2025-03-28 13:00:55,309 - FMNIST_evaluation - INFO - Evaluating local model with best hyperparameters
+2025-03-28 13:00:55,498 - FMNIST_evaluation - ERROR - Run 1 failed with error: local variable 'server' referenced before assignment

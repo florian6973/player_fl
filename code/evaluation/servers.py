@@ -1,3 +1,6 @@
+ROOT_DIR = '/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl'
+import sys
+sys.path.append(f'{ROOT_DIR}/code')
 from helper import *
 from configs import *
 from clients import *

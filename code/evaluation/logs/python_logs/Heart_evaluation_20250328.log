@@ -1,0 +1,4 @@
+2025-03-28 13:00:55,182 - Heart_evaluation - INFO - Starting final evaluation phase
+2025-03-28 13:00:55,182 - Heart_evaluation - INFO - Starting run 1/50
+2025-03-28 13:00:55,251 - Heart_evaluation - INFO - Evaluating local model with best hyperparameters
+2025-03-28 13:00:55,421 - Heart_evaluation - ERROR - Run 1 failed with error: local variable 'server' referenced before assignment

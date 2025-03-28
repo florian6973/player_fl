@@ -2,6 +2,7 @@ ROOT_DIR = '/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl'
 DATA_DIR = f'{ROOT_DIR}/data_2'
 EVAL_DIR = f'{ROOT_DIR}/code/evaluation'
 METRIC_DIR = f'{ROOT_DIR}/code/layer_metrics'
+RESULTS_DIR = f'{ROOT_DIR}/results_2'
 import torch
 import torch.nn as nn
 import random
@@ -11,7 +12,8 @@ import sys
 sys.path.append(f'{ROOT_DIR}/code')
 sys.path.append(f'{ROOT_DIR}/code/datasets')
 sys.path.append(f'{EVAL_DIR}')
-from torch.utils.data  import DataLoader, Dataset
+sys.path.append(f'{METRIC_DIR}')
+from torch.utils.data  import DataLoader, Dataset, Subset
 from torchvision.transforms import transforms
 from torchvision.datasets import FashionMNIST, EMNIST, CIFAR10
 import warnings
@@ -24,7 +26,7 @@ from sklearn.model_selection import train_test_split
 import copy
 from collections import OrderedDict
 from sklearn.metrics import f1_score, matthews_corrcoef, balanced_accuracy_score
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Tuple, Union
 from dataclasses import dataclass, field
 import torch.nn.functional as F
 import pickle
@@ -39,11 +41,16 @@ from concurrent.futures import ProcessPoolExecutor, as_completed, wait
 import torch.multiprocessing as mp
 from multiprocessing import Pool
 from torch.nn.utils.rnn import pad_sequence
+from torch import Tensor
 from tqdm import tqdm
 from tqdm.contrib.concurrent import process_map
 from sklearn import metrics
 from transformers import BertModel, BertTokenizer, AutoTokenizer, AutoModel
 import argparse 
+from netrep.metrics import LinearMetric
+from netrep.conv_layers import convolve_metric
+import scipy.stats
+from itertools import combinations
 
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 N_WORKERS = 4
@@ -82,6 +89,7 @@ DATASET_ALPHA = {
 DEFAULT_PARAMS = {
     'FMNIST': {
         'learning_rates_try': [5e-3, 1e-3, 5e-4, 1e-4],
+        'learning_rate': 1e-3,
         'num_clients': 5,
         'sizes_per_client': 2000,
         'classes': 10,
@@ -93,6 +101,7 @@ DEFAULT_PARAMS = {
     },
     'EMNIST': {
         'learning_rates_try': [5e-3, 1e-3, 5e-4, 1e-4],
+        'learning_rate': 1e-3,
         'num_clients': 5,
         'sizes_per_client': 3000,
         'classes': 62,
@@ -104,6 +113,7 @@ DEFAULT_PARAMS = {
     },
     'CIFAR': {
         'learning_rates_try': [5e-3, 1e-3, 5e-4],
+        'learning_rate': 1e-3,
         'num_clients': 5,
         'sizes_per_client': 10000,
         'classes': 10,
@@ -115,6 +125,7 @@ DEFAULT_PARAMS = {
     },
     'ISIC': {
         'learning_rates_try': [5e-3, 1e-3, 5e-4, 1e-4],
+        'learning_rate': 1e-3,
         'num_clients': 4,
         'sizes_per_client': None,
         'classes': 4,
@@ -126,6 +137,7 @@ DEFAULT_PARAMS = {
     },
     'Sentiment': {
         'learning_rates_try': [1e-3, 5e-4, 1e-4, 8e-5],
+        'learning_rate': 1e-3,
         'num_clients': 15,
         'sizes_per_client': None,
         'classes': 2,
@@ -137,6 +149,7 @@ DEFAULT_PARAMS = {
     },
     'Heart': {
         'learning_rates_try': [5e-1, 1e-1, 5e-2, 1e-2],
+        'learning_rate': 5e-2,
         'num_clients': 4,
         'sizes_per_client': None,
         'classes': 5,
@@ -148,6 +161,7 @@ DEFAULT_PARAMS = {
     },
     'mimic': {
         'learning_rates_try': [1e-3, 5e-4, 1e-4, 8e-5],
+        'learning_rate': 1e-4,
         'num_clients': 4,
         'sizes_per_client': None,
         'classes': 2,

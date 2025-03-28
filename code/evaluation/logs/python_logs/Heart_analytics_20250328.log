@@ -1,0 +1,48 @@
+2025-03-28 16:43:30,039 - Heart_analytics - INFO - Starting Analytics Experiment for dataset: Heart
+2025-03-28 16:43:30,039 - Heart_analytics - INFO - Configuration: AnalyticsConfig(dataset='Heart', num_runs=1, results_dir='results_2', cpus_for_analysis=4)
+2025-03-28 16:43:30,040 - Heart_analytics - INFO - Found 0 completed runs. Total runs needed: 1
+2025-03-28 16:43:30,040 - Heart_analytics - INFO - Starting Analytics Run 1/1
+2025-03-28 16:43:30,100 - Heart_analytics - INFO - Run 1: Analyzing local
+2025-03-28 16:43:30,100 - Heart_analytics - WARNING - Run 1: Could not find best LR for local. Using default: 0.05
+2025-03-28 16:43:30,278 - Heart_analytics - INFO - Created AnalyticsServer for base algorithm: local
+2025-03-28 16:43:30,283 - Heart_analytics - INFO - Running initial analysis for local...
+2025-03-28 16:43:33,866 - Heart_analytics - INFO - Starting training for local (20 rounds)...
+2025-03-28 16:43:34,081 - Heart_analytics - ERROR - Training failed at round 1 for local: validate() missing 2 required positional arguments: 'personal' and 'validate'
+Traceback (most recent call last):
+  File "/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl/code/layer_metrics/analytics_pipeline.py", line 187, in _train_and_analyze
+    _ = server.train_round()
+  File "/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl/code/evaluation/servers.py", line 71, in train_round
+    client_val_loss, client_val_score = client.validate(self.personal)
+TypeError: validate() missing 2 required positional arguments: 'personal' and 'validate'
+2025-03-28 16:43:34,082 - Heart_analytics - ERROR - Run 1: Analysis failed for local: validate() missing 2 required positional arguments: 'personal' and 'validate'
+Traceback (most recent call last):
+  File "/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl/code/layer_metrics/analytics_pipeline.py", line 161, in _analytics_evaluation
+    analysis_results = self._train_and_analyze(server)
+  File "/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl/code/layer_metrics/analytics_pipeline.py", line 187, in _train_and_analyze
+    _ = server.train_round()
+  File "/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl/code/evaluation/servers.py", line 71, in train_round
+    client_val_loss, client_val_score = client.validate(self.personal)
+TypeError: validate() missing 2 required positional arguments: 'personal' and 'validate'
+2025-03-28 16:43:35,197 - Heart_analytics - INFO - Run 1: Analyzing fedavg
+2025-03-28 16:43:35,197 - Heart_analytics - WARNING - Run 1: Could not find best LR for fedavg. Using default: 0.05
+2025-03-28 16:43:35,199 - Heart_analytics - INFO - Created AnalyticsServer for base algorithm: fedavg
+2025-03-28 16:43:35,204 - Heart_analytics - INFO - Running initial analysis for fedavg...
+2025-03-28 16:43:38,831 - Heart_analytics - INFO - Starting training for fedavg (20 rounds)...
+2025-03-28 16:43:39,021 - Heart_analytics - ERROR - Training failed at round 1 for fedavg: validate() missing 2 required positional arguments: 'personal' and 'validate'
+Traceback (most recent call last):
+  File "/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl/code/layer_metrics/analytics_pipeline.py", line 187, in _train_and_analyze
+    _ = server.train_round()
+  File "/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl/code/evaluation/servers.py", line 71, in train_round
+    client_val_loss, client_val_score = client.validate(self.personal)
+TypeError: validate() missing 2 required positional arguments: 'personal' and 'validate'
+2025-03-28 16:43:39,021 - Heart_analytics - ERROR - Run 1: Analysis failed for fedavg: validate() missing 2 required positional arguments: 'personal' and 'validate'
+Traceback (most recent call last):
+  File "/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl/code/layer_metrics/analytics_pipeline.py", line 161, in _analytics_evaluation
+    analysis_results = self._train_and_analyze(server)
+  File "/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl/code/layer_metrics/analytics_pipeline.py", line 187, in _train_and_analyze
+    _ = server.train_round()
+  File "/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl/code/evaluation/servers.py", line 71, in train_round
+    client_val_loss, client_val_score = client.validate(self.personal)
+TypeError: validate() missing 2 required positional arguments: 'personal' and 'validate'
+2025-03-28 16:43:40,138 - Heart_analytics - INFO - Successfully completed and saved Analytics Run 1
+2025-03-28 16:43:40,238 - Heart_analytics - INFO - Analytics Experiment Finished.

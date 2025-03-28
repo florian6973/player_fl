@@ -1,0 +1,40 @@
+2025-03-28 13:00:55,182 - Heart_evaluation - INFO - Starting final evaluation phase
+2025-03-28 13:00:55,182 - Heart_evaluation - INFO - Starting run 1/50
+2025-03-28 13:00:55,251 - Heart_evaluation - INFO - Evaluating local model with best hyperparameters
+2025-03-28 13:00:55,421 - Heart_evaluation - ERROR - Run 1 failed with error: local variable 'server' referenced before assignment
+Traceback (most recent call last):
+  File "/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl/code/evaluation/pipeline.py", line 249, in _final_evaluation
+    server = self._create_server_instance(server_type, hyperparms, tuning = False)
+  File "/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl/code/evaluation/pipeline.py", line 319, in _create_server_instance
+    model, criterion, optimizer = self._create_model(learning_rate)
+  File "/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl/code/evaluation/pipeline.py", line 302, in _create_model
+    optimizer = torch.optim.Adam(
+  File "/gpfs/commons/home/aelhussein/anaconda3/envs/cuda_env_ne1/lib/python3.9/site-packages/torch/optim/adam.py", line 55, in __init__
+    if not 0.0 <= lr:
+TypeError: '<=' not supported between instances of 'float' and 'NoneType'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl/code/evaluation/pipeline.py", line 224, in _run_final_evaluation
+    results_run = self._final_evaluation()
+  File "/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl/code/evaluation/pipeline.py", line 255, in _final_evaluation
+    del server
+UnboundLocalError: local variable 'server' referenced before assignment
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl/code/evaluation/run.py", line 47, in <module>
+    main()
+  File "/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl/code/evaluation/run.py", line 40, in main
+    run_experiments(args.dataset, experiment_type)
+  File "/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl/code/evaluation/run.py", line 17, in run_experiments
+    return experiment.run_experiment()
+  File "/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl/code/evaluation/pipeline.py", line 132, in run_experiment
+    return self._run_final_evaluation()
+  File "/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl/code/evaluation/pipeline.py", line 232, in _run_final_evaluation
+    self.results_manager.save_results(results,  self.config.experiment_type)
+  File "/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl/code/evaluation/pipeline.py", line 51, in save_results
+    with open(path, 'wb') as f:
+FileNotFoundError: [Errno 2] No such file or directory: '/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl/code/results_2/evaluation/Heart_evaluation.pkl'

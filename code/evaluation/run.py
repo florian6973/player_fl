@@ -1,7 +1,12 @@
 import argparse
-from configs import DATASETS, mp, ROOT_DIR, EVAL_DIR
+import os
+import sys
+ROOT_DIR = '/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl'
+EVAL_DIR = f'{ROOT_DIR}/code/evaluation'
+RESULTS_DIR = f'{ROOT_DIR}/results_2'
 sys.path.append(f'{ROOT_DIR}/code')
 sys.path.append(f'{EVAL_DIR}')
+from configs import DATASETS
 from pipeline import ExperimentType, ExperimentConfig, Experiment
 
 
@@ -22,9 +27,9 @@ def main():
 
     args = parser.parse_args()
 
-    os.makedirs(f'{ROOT_DIR}/results', exist_ok = True)
-    os.makedirs(f'{ROOT_DIR}/results/evaluation', exist_ok=True)
-    os.makedirs(f'{ROOT_DIR}/results/lr_tuning', exist_ok=True)
+    os.makedirs(f'{RESULTS_DIR}', exist_ok = True)
+    os.makedirs(f'{RESULTS_DIR}/evaluation', exist_ok=True)
+    os.makedirs(f'{RESULTS_DIR}/lr_tuning', exist_ok=True)
     try:
         # Map experiment type string to ExperimentType
         type_mapping = {
