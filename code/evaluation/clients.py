@@ -1,5 +1,6 @@
-from configs import *
 from helper import *
+from configs import *
+
 
 @dataclass
 class TrainerConfig:

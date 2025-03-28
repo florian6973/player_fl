@@ -1,7 +1,8 @@
 import argparse
-from configs import DATASETS, mp
+from configs import DATASETS, mp, ROOT_DIR, EVAL_DIR
+sys.path.append(f'{ROOT_DIR}/code')
+sys.path.append(f'{EVAL_DIR}')
 from pipeline import ExperimentType, ExperimentConfig, Experiment
-
 
 
 def run_experiments(dataset: str, experiment_type: str):
@@ -20,7 +21,10 @@ def main():
                       help="Type of experiment to run")
 
     args = parser.parse_args()
-    
+
+    os.makedirs(f'{ROOT_DIR}/results', exist_ok = True)
+    os.makedirs(f'{ROOT_DIR}/results/evaluation', exist_ok=True)
+    os.makedirs(f'{ROOT_DIR}/results/lr_tuning', exist_ok=True)
     try:
         # Map experiment type string to ExperimentType
         type_mapping = {

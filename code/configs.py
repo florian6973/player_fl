@@ -1,5 +1,5 @@
 ROOT_DIR = '/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl'
-DATA_DIR = f'{ROOT_DIR}/data'
+DATA_DIR = f'{ROOT_DIR}/data_2'
 EVAL_DIR = f'{ROOT_DIR}/code/evaluation'
 METRIC_DIR = f'{ROOT_DIR}/code/layer_metrics'
 import torch
@@ -9,6 +9,7 @@ import numpy as np
 import pandas as pd
 import sys
 sys.path.append(f'{ROOT_DIR}/code')
+sys.path.append(f'{ROOT_DIR}/code/datasets')
 sys.path.append(f'{EVAL_DIR}')
 from torch.utils.data  import DataLoader, Dataset
 from torchvision.transforms import transforms

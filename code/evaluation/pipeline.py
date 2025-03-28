@@ -1,9 +1,9 @@
-from configs import *
 from helper import *
+from configs import *
 from dataset_processing import *
 import models
 from losses import MulticlassFocalLoss
-from layer_pfl.code.evaluation.clients import *
+from clients import *
 from servers import *
 from performance_logging import *
 import time
@@ -48,7 +48,6 @@ class ResultsManager:
 
     def save_results(self, results, experiment_type):
         path = self._get_results_path(experiment_type)
-        os.makedirs(os.path.dirname(path), exist_ok=True)
         with open(path, 'wb') as f:
             pickle.dump(results, f)
 

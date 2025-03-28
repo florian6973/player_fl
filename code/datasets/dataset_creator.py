@@ -1,10 +1,14 @@
+ROOT_DIR = '/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl'
+import sys
+sys.path.append(f'{ROOT_DIR}/code')
 from configs import *
 warnings.simplefilter(action='ignore')
 
 # Constants
 
 BATCH_SIZE = 32
-
+print(f"Using device: {DEVICE}")
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 # ================= Utility Functions =================
 
@@ -22,17 +26,46 @@ def convert_ids_to_embedding_indices(input_ids, token_to_index, default_index=0)
     return embedding_indices
 
 
+# ================= Benchmark Dataset =================
+def _load_benchmark_images():
+    """Handle torchvision datasets with download functionality"""
+    print("\n================ Loading Benchmark Images ================")
+    
+    # Create the data directory if it doesn't exist
+    os.makedirs(DATA_DIR, exist_ok=True)
+    
+    # Define dataset classes with download=True to ensure datasets are available
+    dataset_classes = {
+        'EMNIST': lambda: EMNIST(f'{DATA_DIR}/EMNIST', split='byclass', download=True, train=True),
+        'CIFAR': lambda: CIFAR10(f'{DATA_DIR}/CIFAR10', download=True, train=True),
+        'FMNIST': lambda: FashionMNIST(f'{DATA_DIR}/FMNIST', download=True, train=True),
+    }
+    
+    # Load each dataset
+    datasets = {}
+    for name, dataset_fn in dataset_classes.items():
+        try:
+            print(f"Loading {name} dataset...")
+            datasets[name] = dataset_fn()
+            print(f"Successfully loaded {name} dataset")
+        except Exception as e:
+            print(f"Error loading {name} dataset: {e}")
+    
+    print("Benchmark images loading complete.")
+    return
+
+
 # ================= ISIC Dataset Processing =================
 
 def create_isic_dataset():
     # Load ground truth labels and assign category codes
-    labels_path = os.path.join(ROOT_DIR, 'data', 'ISIC', 'ISIC_2019_Training_GroundTruth.csv')
+    labels_path = os.path.join(DATA_DIR, 'ISIC', 'ISIC_2019_Training_GroundTruth.csv')
     labels = pd.read_csv(labels_path)
     labels['category'] = labels[['MEL', 'NV', 'BCC', 'AK', 'BKL', 'DF', 'VASC', 'SCC', 'UNK']].idxmax(axis=1)
     labels['target'] = labels['category'].astype('category').cat.codes
 
     # Load metadata and merge labels
-    metadata_path = os.path.join(ROOT_DIR, 'data', 'ISIC', 'ISIC_2019_Training_Metadata_FL.csv')
+    metadata_path = os.path.join(DATA_DIR, 'ISIC', 'ISIC_2019_Training_Metadata_FL.csv')
     metadata = pd.read_csv(metadata_path)
     metadata = metadata.merge(labels[['image', 'target']], on='image')
     metadata = metadata[metadata['target'].isin([1, 2, 4, 5])]
@@ -40,33 +73,45 @@ def create_isic_dataset():
     # Sample images per site and remap targets
     sampled_metadata = metadata.groupby('dataset').apply(custom_sample).reset_index(drop=True)
     sampled_metadata['target'] = sampled_metadata['target'].map({1: 0, 2: 1, 4: 2, 5: 3})
-    prefix = os.path.join(ROOT_DIR, 'data', 'ISIC', 'ISIC_2019_Training_Input_preprocessed')
+    prefix = os.path.join(DATA_DIR, 'ISIC', 'ISIC_2019_Training_Input_preprocessed')
     sampled_metadata['path'] = prefix + '/' + sampled_metadata['image'].astype(str) + '.jpg'
 
     # Save metadata for each unique site
     for i, dataset in enumerate(sampled_metadata['dataset'].unique()):
         df_site = sampled_metadata[sampled_metadata['dataset'] == dataset]
-        out_path = os.path.join(ROOT_DIR, 'data', 'ISIC', f'site_{i}_metadata.csv')
+        out_path = os.path.join(DATA_DIR, 'ISIC', f'site_{i}_metadata.csv')
         df_site.to_csv(out_path, index=False)
 
     print("ISIC dataset metadata has been saved.")
 
 
-# ---------------- Twitter Dataset Processing ----------------
+# ---------------- Sentiment Dataset Processing ----------------
 
-def create_twitter_dataset():
+def create_sentiment_dataset():
+    # Unzip the sentiment.zip file if it exists
+    zip_path = os.path.join(DATA_DIR, 'Sentiment', 'sentiment.zip')
+    sentiment_dir = os.path.join(DATA_DIR, 'Sentiment')
+    
+    # Create the Sentiment directory if it doesn't exist
+    os.makedirs(sentiment_dir, exist_ok=True)
+    
+    if os.path.exists(zip_path):
+        print("Unzipping sentiment.zip file...")
+        import zipfile
+        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+            zip_ref.extractall(sentiment_dir)
+        print("Sentiment dataset unzipped successfully.")
+    else:
+        print("sentiment.zip not found, assuming data is already extracted.")
+    
     # Load tweet data and filter for top users
-    data_path = os.path.join(ROOT_DIR, 'data', 'Sentiment', 'data_processed.csv')
-    df = pd.read_csv(
-        data_path, 
-        names=['target', 'id', 'date', 'flag', 'user', 'tweet'],
-        usecols=['target', 'user', 'tweet'],
-        encoding='utf-8', errors='replace'
-    )
+    data_path = os.path.join(DATA_DIR, 'Sentiment', 'training.1600000.processed.noemoticon.csv')
+    with open(data_path, 'r', encoding='utf-8', errors='replace') as file:
+        df = pd.read_csv(file, names= ['target','id', 'date', 'flag', 'user', 'tweet'], usecols=['target', 'user', 'tweet'])
     users = list(df['user'].value_counts().index)
     users_included = users[:50]
     df_used = df[df['user'].isin(users_included)]
-    df_used['target'] = df_used['target'].map({0: 0, 4: 1})
+    df_used['target'] = df_used['target'].map({0: 0, 4: 1}) # 4 is labelled as postive and 0 as negative, turn into 0,1
     tweets = df_used['tweet'].tolist()
 
     # Tokenise tweets using BERT tokenizer
@@ -77,6 +122,7 @@ def create_twitter_dataset():
 
     # Compute tweet embeddings using BERT model with GPU if available
     model = BertModel.from_pretrained('bert-base-uncased').to(DEVICE)
+    model.eval()
     all_embeddings = []
     for i in range(0, len(input_ids), BATCH_SIZE):
         # Move input batch to the correct device
@@ -87,7 +133,7 @@ def create_twitter_dataset():
             # Move results back to CPU for concatenation
             all_embeddings.append(embeddings_chunk.cpu())
     all_embeddings = torch.cat(all_embeddings, dim=0)
-    torch.save(all_embeddings, os.path.join(ROOT_DIR, 'data', 'Sentiment', 'embeddings.pt'))
+    torch.save(all_embeddings, os.path.join(DATA_DIR, 'Sentiment', 'embeddings.pt'))
 
     # Create token embeddings dictionary for index mapping
     unique_token_ids = input_ids.unique().sort()[0]
@@ -96,8 +142,8 @@ def create_twitter_dataset():
         if token_id == tokenizer.pad_token_id:
             token_embedding = torch.zeros(model.config.hidden_size)
         else:
-            token_embedding = model.embeddings.word_embeddings(torch.tensor([token_id]))
-        token_to_embedding_dict[token_id.item()] = token_embedding.squeeze(0).detach()
+            token_embedding = model.embeddings.word_embeddings(torch.tensor([token_id], device=DEVICE))
+        token_to_embedding_dict[token_id.item()] = token_embedding.squeeze(0).detach().cpu()
 
     token_ids = list(token_to_embedding_dict.keys())
     embeddings = [token_to_embedding_dict[token_id] for token_id in token_ids]
@@ -105,7 +151,7 @@ def create_twitter_dataset():
     token_to_index = {token_id: index for index, token_id in enumerate(token_ids)}
     torch.save(
         {'token_to_index': token_to_index, 'embeddings': embedding_tensor},
-        os.path.join(ROOT_DIR, 'data', 'Sentiment', 'token_to_index_and_embeddings.pth')
+        os.path.join(DATA_DIR, 'Sentiment', 'token_to_index_and_embeddings.pth')
     )
 
     # Convert token IDs to embedding indices
@@ -121,9 +167,9 @@ def create_twitter_dataset():
             'data': token_indices[df_user.index],
             'labels': torch.tensor(df_user['target'].values),
             'masks': attention_masks[df_user.index]
-        }, os.path.join(ROOT_DIR, 'data', 'Sentiment', f'data_device_{i}_indices.pth'))
+        }, os.path.join(DATA_DIR, 'Sentiment', f'data_device_{i}_indices.pth'))
 
-    print("Twitter dataset embeddings and token indices have been saved.")
+    print("sentiment dataset embeddings and token indices have been saved.")
 
 
 # ---------------- MIMIC Dataset Processing ----------------
@@ -143,7 +189,7 @@ class MimicEmbedDataset(Dataset):
 
 def create_mimic_dataset():
     # ----- Process Admissions -----
-    admissions_path = os.path.join(ROOT_DIR, 'data', 'mimic_iii', 'ADMISSIONS.csv')
+    admissions_path = os.path.join(DATA_DIR, 'mimic_iii', 'ADMISSIONS.csv')
     admissions = pd.read_csv(admissions_path)
     emergency_adm = admissions.loc[
         (admissions['HOSPITAL_EXPIRE_FLAG'].isin([0, 1])) &
@@ -152,24 +198,24 @@ def create_mimic_dataset():
     ]
 
     # Define diagnosis groups
-    infection_dx = ['PNEUMONIA', 'PNEUMONIA;CHRONIC OBST PULM DISEASE',
+    infection_dx = ['PNEUMONIA','PNEUMONIA;CHRONIC OBST PULM DISEASE',
                     'RESPIRATORY FAILURE', 'SEPSIS',
-                    'URINARY TRACT INFECTION;PYELONEPHRITIS', 'SEPSIS;TELEMETRY',
-                    'PNEUMONIA;TELEMETRY', 'URINARY TRACT INFECTION', 'UTI/PYELONEPHRITIS',
-                    'SEPTIC SHOCK']
+                'URINARY TRACT INFECTION;PYELONEPHRITIS','SEPSIS;TELEMETRY',
+                    'PNEUMONIA;TELEMETRY','URINARY TRACT INFECTION','UTI/PYELONEPHRITIS',
+                'SEPTIC SHOCK']
     mi_dx = ['CORONARY ARTERY DISEASE', 'CHEST PAIN',
-             'CORONARY ARTERY DISEASE\\CATH', 'ACUTE CORONARY SYNDROME',
-             'MYOCARDIAL INFARCTION', 'ACUTE MYOCARDIAL INFARCTION', 'CHEST PAIN;TELEMETRY',
-             'MYOCARDIAL INFARCTION\\CATH', 'UNSTABLE ANGINA', 'STEMI',
-             'ST ELEVATED MYOCARDIAL INFARCTION', 'ACUTE MYOCARDIAL INFARCTION\\CATH',
-             'UNSTABLE ANGINA\\CATH', 'NON-ST SEGMENT ELEVATION MYOCARDIAL INFARCTION']
-    brain_dx = ['INTRACRANIAL HEMORRHAGE', 'SUBARACHNOID HEMORRHAGE',
-                'SUBDURAL HEMATOMA', 'STROKE;TELEMETRY;TRANSIENT ISCHEMIC ATTACK',
-                'ACUTE SUBDURAL HEMATOMA', 'CEREBROVASCULAR ACCIDENT', 'CARDIAC ARREST',
-                'S/P CARDIAC ARREST', 'SUBDURAL HEMORRHAGE',
-                'STROKE;TELEMETRY', 'INTRACRANIAL BLEED', 'STROKE', 'STROKE/TIA']
-    gi_dx = ['GASTROINTESTINAL BLEED', 'UPPER GI BLEED', 'ABDOMINAL PAIN',
-             'UPPER GASTROINTESTINAL BLEED', 'LOWER GASTROINTESTINAL BLEED']
+            'CORONARY ARTERY DISEASE\CATH', 'ACUTE CORONARY SYNDROME',
+            'MYOCARDIAL INFARCTION','ACUTE MYOCARDIAL INFARCTION','CHEST PAIN;TELEMETRY',
+            'MYOCARDIAL INFARCTION\CATH', 'UNSTABLE ANGINA', 'STEMI',
+            'ST ELEVATED MYOCARDIAL INFARCTION','ACUTE MYOCARDIAL INFARCTION\CATH',
+            'UNSTABLE ANGINA\CATH','NON-ST SEGMENT ELEVATION MYOCARDIAL INFARCTION']
+    brain_dx = ['INTRACRANIAL HEMORRHAGE','SUBARACHNOID HEMORRHAGE',
+                'SUBDURAL HEMATOMA','STROKE;TELEMETRY;TRANSIENT ISCHEMIC ATTACK',
+                'ACUTE SUBDURAL HEMATOMA','CEREBROVASCULAR ACCIDENT', 'CARDIAC ARREST',
+                'S/P CARDIAC ARREST','SUBDURAL HEMORRHAGE'
+            'STROKE;TELEMETRY','INTRACRANIAL BLEED','STROKE','STROKE/TIA']
+    gi_dx = ['GASTROINTESTINAL BLEED','UPPER GI BLEED','ABDOMINAL PAIN',
+            'UPPER GASTROINTESTINAL BLEED','LOWER GASTROINTESTINAL BLEED']
     all_dx = infection_dx + mi_dx + brain_dx + gi_dx
 
     # Filter for emergency admissions with one of the diagnoses
@@ -198,7 +244,7 @@ def create_mimic_dataset():
 
     # ----- Process Clinical Notes -----
     notes_cols = ['SUBJECT_ID', 'HADM_ID', 'CHARTDATE', 'CHARTTIME', 'CATEGORY', 'TEXT']
-    notes_path = os.path.join(ROOT_DIR, 'data', 'mimic_iii', 'NOTEEVENTS.csv')
+    notes_path = os.path.join(DATA_DIR, 'mimic_iii', 'NOTEEVENTS.csv')
     notes = pd.read_csv(notes_path, usecols=notes_cols)
     notes = notes[notes['HADM_ID'].isin(emergency_adm['HADM_ID'].unique())]
     notes = notes[notes['CHARTTIME'].notna()]
@@ -239,7 +285,7 @@ def create_mimic_dataset():
             embeddings_batch = model(input_ids_batch, attention_mask=attention_masks_batch)[0]
             all_embeddings_list.append(embeddings_batch.cpu())
     all_embeddings = torch.cat(all_embeddings_list, dim=0)
-    torch.save(all_embeddings, os.path.join(ROOT_DIR, 'data', 'mimic_iii', 'embeddings.pt'))
+    torch.save(all_embeddings, os.path.join(DATA_DIR, 'mimic_iii', 'embeddings.pt'))
 
     # Create token embeddings dictionary for indices
     unique_token_ids = input_ids.unique().sort()[0]
@@ -248,8 +294,9 @@ def create_mimic_dataset():
         if token_id == tokenizer.pad_token_id:
             token_embedding = torch.zeros(model.config.hidden_size)
         else:
-            token_embedding = model.embeddings.word_embeddings(torch.tensor([token_id]))
-        token_to_embedding_dict[token_id.item()] = token_embedding.squeeze(0).detach()
+            token_embedding = model.embeddings.word_embeddings(torch.tensor([token_id], device=DEVICE))
+
+        token_to_embedding_dict[token_id.item()] = token_embedding.squeeze(0).detach().cpu()
 
     token_ids = list(token_to_embedding_dict.keys())
     embeddings = [token_to_embedding_dict[token_id] for token_id in token_ids]
@@ -257,7 +304,7 @@ def create_mimic_dataset():
     token_to_index = {token_id: index for index, token_id in enumerate(token_ids)}
     torch.save(
         {'token_to_index': token_to_index, 'embeddings': embedding_tensor},
-        os.path.join(ROOT_DIR, 'data', 'mimic_iii', 'token_to_index_and_embeddings.pth')
+        os.path.join(DATA_DIR, 'mimic_iii', 'token_to_index_and_embeddings.pth')
     )
 
     token_indices = convert_ids_to_embedding_indices(input_ids, token_to_index, default_index=0)
@@ -272,7 +319,7 @@ def create_mimic_dataset():
     for dx in ['infection', 'gi', 'brain', 'mi']:
         df_dx = df_used[df_used['DX_GROUP'] == dx]
         pt_order = df_dx['index'].values
-        out_file = os.path.join(ROOT_DIR, 'data', 'mimic_iii', f'dataset_{dx}_indices.pt')
+        out_file = os.path.join(DATA_DIR, 'mimic_iii', f'dataset_{dx}_indices.pt')
         torch.save({
             'data': token_indices[pt_order],
             'labels': {
@@ -291,19 +338,28 @@ def main(args):
 
     # Determine which datasets to process based on arguments
     run_isic = args.isic
-    run_twitter = args.twitter
+    run_sentiment = args.sentiment
     run_mimic = args.mimic
+    run_benchmark = args.benchmark
 
     # --- Default behavior: If no specific dataset flag is true, run all ---
-    run_all_default = not (run_isic or run_twitter or run_mimic)
+    run_all_default = not (run_isic or run_sentiment or run_mimic or run_benchmark)
     if run_all_default:
         print("No specific dataset selected via command line, processing ALL datasets by default.")
         run_isic = True
-        run_twitter = True
+        run_sentiment = True
         run_mimic = True
+        run_benchmark = True
     else:
         print("Processing datasets selected via command line arguments.")
 
+    # Load benchmark images if requested
+    if run_benchmark:
+        try:
+            benchmark_datasets = _load_benchmark_images()
+            print(f"Successfully loaded {len(benchmark_datasets)} benchmark datasets")
+        except Exception as e:
+            print(f"\n--- ERROR loading benchmark images: {e} ---")
 
     if run_isic:
         print("\n================ Processing ISIC ================")
@@ -312,12 +368,12 @@ def main(args):
         except Exception as e:
             print(f"\n--- ERROR processing ISIC dataset: {e} ---")
 
-    if run_twitter:
-        print("\n================ Processing Twitter ================")
+    if run_sentiment:
+        print("\n================ Processing sentiment ================")
         try:
-            create_twitter_dataset()
+            create_sentiment_dataset()
         except Exception as e:
-            print(f"\n--- ERROR processing Twitter dataset: {e} ---")
+            print(f"\n--- ERROR processing sentiment dataset: {e} ---")
 
     if run_mimic:
         print("\n================ Processing MIMIC-III ================")
@@ -329,10 +385,9 @@ def main(args):
     print("\nDataset creation process finished.")
 
 
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description="Create datasets for ISIC, Twitter, and/or MIMIC. Runs all if no specific dataset is selected.",
+        description="Create datasets for ISIC, sentiment, MIMIC, and/or benchmark datasets. Runs all if no specific dataset is selected.",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
     
@@ -342,18 +397,22 @@ if __name__ == '__main__':
         help='Flag to process the ISIC dataset.'
     )
     parser.add_argument(
-        '--twitter',
+        '--sentiment',
         action='store_true',
-        help='Flag to process the Twitter dataset.'
+        help='Flag to process the sentiment dataset.'
     )
     parser.add_argument(
         '--mimic',
         action='store_true',
         help='Flag to process the MIMIC-III dataset.'
     )
+    parser.add_argument(
+        '--benchmark',
+        action='store_true',
+        help='Flag to download and load benchmark image datasets (EMNIST, CIFAR10, FashionMNIST).'
+    )
 
     args = parser.parse_args()
-
 
     main(args)
 

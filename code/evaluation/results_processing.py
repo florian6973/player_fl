@@ -1,7 +1,8 @@
 
-from configs import ROOT_DIR
+from configs import ROOT_DIR, EVAL_DIR
 import sys
 sys.path.append(f'{ROOT_DIR}/code')
+sys.path.append(f'{EVAL_DIR}')
 import pickle
 import numpy as np
 import pandas as pd

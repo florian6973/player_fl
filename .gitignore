@@ -1,6 +1,7 @@
 script_annonymize
 annon/
 data/
+data_2/
 archive/
 *.pkl
 code/slurm*
