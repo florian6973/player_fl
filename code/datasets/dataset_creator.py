@@ -1,11 +1,10 @@
-ROOT_DIR = '/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl'
-import sys
-sys.path.append(f'{ROOT_DIR}/code')
+_CURRENT_DIR = os.path.dirname(os.path.abspath(__file__)) # -> ./layer_pfl/code/evaluation
+_PROJECT_ROOT = os.path.dirname(_CURRENT_DIR) # -> (...)/layer_pfl/code
+sys.path.insert(0, _PROJECT_ROOT)
+sys.path.insert(0, _CURRENT_DIR)
+
 from configs import *
-warnings.simplefilter(action='ignore')
-
 # Constants
-
 BATCH_SIZE = 32
 print(f"Using device: {DEVICE}")
 os.environ["TOKENIZERS_PARALLELISM"] = "false"

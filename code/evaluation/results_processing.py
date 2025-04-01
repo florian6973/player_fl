@@ -1,397 +1,815 @@
+"""
+Tools for loading, analyzing, and formatting experimental results.
 
-from configs import ROOT_DIR, EVAL_DIR, RESULTS_DIR
-import sys
-sys.path.append(f'{ROOT_DIR}/code')
-sys.path.append(f'{EVAL_DIR}')
-import pickle
-import numpy as np
-import pandas as pd
-from scipy import stats
-from typing import Dict, Optional
+Includes:
+- Functions to load results from pickle files (`load_lr_results`, `load_eval_results`).
+- `bootstrap_ci`: Calculates bootstrap confidence intervals for medians.
+- `ResultAnalyzer`: A class to perform statistical analysis (median, CI, variance)
+  on results across datasets and algorithms, including fairness metrics.
+- `analyze_experiment_results`: Top-level function to orchestrate the analysis
+  and formatting of results into tables.
+"""
+from configs import *
+from typing import Dict, Optional, List, Tuple, Union
 
 
-def load_lr_results(DATASET):
-    with open(f'{ROOT_DIR}/results/lr_tuning/{DATASET}_lr_tuning.pkl', 'rb') as f :
-        results = pickle.load(f)
+def load_lr_results(DATASET: str) -> Optional[Dict]:
+    """
+    Loads learning rate tuning results from the corresponding pickle file.
 
-    return results
+    Args:
+        DATASET (str): The name of the dataset whose LR tuning results to load.
 
-def get_lr_results(DATASET):
+    Returns:
+        Optional[Dict]: The loaded results dictionary, or None if the file is not found
+                        or cannot be loaded.
+    """
+    filepath = f'{RESULTS_DIR}/lr_tuning/{DATASET}_lr_tuning.pkl' # Adjusted path
+    try:
+        with open(filepath, 'rb') as f:
+            results = pickle.load(f)
+        print(f"Successfully loaded LR tuning results from: {filepath}")
+        return results
+    except FileNotFoundError:
+        print(f"Error: LR tuning results file not found at: {filepath}")
+        return None
+    except (pickle.UnpicklingError, EOFError) as e:
+        print(f"Error loading or unpickling LR results from {filepath}: {e}")
+        return None
+
+def get_lr_results(DATASET: str) -> Optional[pd.DataFrame]:
+    """
+    Analyzes loaded learning rate tuning results to find the best round and performance
+    for each algorithm at each tested learning rate.
+
+    Calculates the mean loss across runs for each round, finds the round with the
+    minimum mean loss, and reports the metrics (mean accuracy, mean F1) from that best round.
+
+    Args:
+        DATASET (str): The name of the dataset whose LR tuning results to analyze.
+
+    Returns:
+        Optional[pd.DataFrame]: A DataFrame summarizing the best performance for each
+                                algorithm-LR combination, sorted by the best median loss achieved.
+                                Returns None if results cannot be loaded.
+    """
     results = load_lr_results(DATASET)
+    if results is None:
+        return None
+
     results_output = []
-    for lr, algorithms in results.items():
-        for algo, metrics in algorithms.items():
-            global_metrics = metrics['global']
-            
-            # For each round, calculate the mean loss across all runs
-            num_rounds = len(global_metrics['losses'][0])  # Assuming all runs have same number of rounds
-            median_losses_per_round = []
-            accuracies_at_best = []
-            f1_at_best = []
-            
+    # Structure: results = {lr1: {'algoA': {'global': {'losses': [[run1_r1,...], [run2_r1,...]], 'scores': [...]}}}}
+    for lr, algorithms_data in results.items():
+        for algo, metrics_data in algorithms_data.items():
+            # Check if required keys exist
+            if 'global' not in metrics_data or 'losses' not in metrics_data['global'] or 'scores' not in metrics_data['global']:
+                print(f"Warning: Skipping LR={lr}, Algo={algo} due to missing 'global' metrics.")
+                continue
+            if not metrics_data['global']['losses'] or not metrics_data['global']['scores']:
+                 print(f"Warning: Skipping LR={lr}, Algo={algo} due to empty 'losses' or 'scores' list.")
+                 continue
+
+            global_metrics = metrics_data['global']
+            losses_all_runs = global_metrics['losses'] # [[run1_r1,...], [run2_r1,...]]
+            scores_all_runs = global_metrics['scores'] # [[run1_r1_dict,...], [run2_r1_dict,...]]
+
+            try:
+                num_runs = len(losses_all_runs)
+                num_rounds = len(losses_all_runs[0])
+                # Verify consistency
+                if not all(len(run) == num_rounds for run in losses_all_runs) or \
+                   not all(len(run) == num_rounds for run in scores_all_runs) or \
+                   len(scores_all_runs) != num_runs:
+                    print(f"Warning: Inconsistent number of runs/rounds for LR={lr}, Algo={algo}. Skipping.")
+                    continue
+            except IndexError:
+                print(f"Warning: Empty run data for LR={lr}, Algo={algo}. Skipping.")
+                continue
+
+            mean_losses_per_round = []
             for round_idx in range(num_rounds):
                 # Get losses for this round across all runs
-                round_losses = [run[round_idx] for run in global_metrics['losses']]
-                median_loss = np.mean(round_losses)
-                median_losses_per_round.append((round_idx, median_loss))
-            
-            # Find the round with the best (lowest) mean loss
-            best_round_idx, best_median_loss = min(median_losses_per_round, key=lambda x: x[1])
-            # Get accuracies and F1 scores from the best round
-            accuracies = [run[best_round_idx]['accuracy'] for run in global_metrics['scores']]
-            f1_scores = [run[best_round_idx]['f1_macro'] for run in global_metrics['scores']]
-            
+                try:
+                    round_losses = [losses_all_runs[run_idx][round_idx] for run_idx in range(num_runs)]
+                    mean_loss = np.mean(round_losses)
+                    mean_losses_per_round.append((round_idx, mean_loss))
+                except IndexError:
+                     print(f"Warning: IndexError accessing losses at round {round_idx} for LR={lr}, Algo={algo}. Skipping round.")
+                     continue # Skip this round if data is incomplete
+
+            if not mean_losses_per_round:
+                 print(f"Warning: No valid rounds found for LR={lr}, Algo={algo}. Skipping combo.")
+                 continue
+
+            # Find the round index with the minimum mean loss
+            best_round_idx, best_mean_loss = min(mean_losses_per_round, key=lambda item: item[1])
+
+            # Get metrics (accuracy, F1) from that specific best round across all runs
+            try:
+                accuracies_at_best_round = [scores_all_runs[run_idx][best_round_idx]['accuracy'] for run_idx in range(num_runs)]
+                f1_scores_at_best_round = [scores_all_runs[run_idx][best_round_idx]['f1_macro'] for run_idx in range(num_runs)]
+            except (IndexError, KeyError) as e:
+                 print(f"Warning: Could not extract metrics at best round {best_round_idx} for LR={lr}, Algo={algo}. Error: {e}. Skipping combo.")
+                 continue
+
+            # Calculate mean of metrics at the best round
+            mean_accuracy = np.mean(accuracies_at_best_round)
+            mean_f1 = np.mean(f1_scores_at_best_round)
+
             results_output.append({
                 'learning_rate': lr,
                 'algorithm': algo,
                 'best_round': best_round_idx,
-                'median_loss': best_median_loss,
-                'median_accuracy': np.mean(accuracies),
-                'median_f1': np.mean(f1_scores)
+                'mean_loss_at_best_round': best_mean_loss, 
+                'mean_accuracy_at_best_round': mean_accuracy, 
+                'mean_f1_at_best_round': mean_f1
             })
 
+    if not results_output:
+        print("No results were processed successfully.")
+        return None
+
     df_results = pd.DataFrame(results_output)
-    # Sort by best mean accuracy among the rounds with best mean loss for each algorithm
-    return df_results.loc[df_results.groupby('algorithm')['median_loss'].idxmin()].sort_values(by='median_loss', ascending=True)
+    # Find the row corresponding to the minimum mean loss for each algorithm
+    best_lr_indices = df_results.loc[df_results.groupby('algorithm')['mean_loss_at_best_round'].idxmin()]
+    # Sort these best rows by loss
+    return best_lr_indices.sort_values(by='mean_loss_at_best_round', ascending=True)
 
 
-def load_eval_results(DATASET):
-    with open(f'{RESULTS_DIR}/evaluation/{DATASET}_evaluation.pkl', 'rb') as f :
-        results = pickle.load(f)
-    return results
+def load_eval_results(DATASET: str) -> Optional[Dict]:
+    """
+    Loads final evaluation results from the corresponding pickle file.
 
-def bootstrap_ci(data: np.ndarray, n_bootstrap: int = 1000, 
-                          confidence: float = 0.95, min_samples: int = 2) -> tuple:
-    """Calculate bootstrap confidence interval for the median using vectorized operations.
+    Args:
+        DATASET (str): The name of the dataset whose evaluation results to load.
+
+    Returns:
+        Optional[Dict]: The loaded results dictionary, or None if the file is not found
+                        or cannot be loaded.
+    """
+    filepath = f'{RESULTS_DIR}/evaluation/{DATASET}_evaluation.pkl' # Adjusted path
+    try:
+        with open(filepath, 'rb') as f:
+            results = pickle.load(f)
+        print(f"Successfully loaded evaluation results from: {filepath}")
+        return results
+    except FileNotFoundError:
+        print(f"Error: Evaluation results file not found at: {filepath}")
+        return None
+    except (pickle.UnpicklingError, EOFError) as e:
+        print(f"Error loading or unpickling evaluation results from {filepath}: {e}")
+        return None
+
+def bootstrap_ci(data: np.ndarray, n_bootstrap: int = 1000,
+                 confidence: float = 0.95, min_samples: int = 5) -> Tuple[float, float]:
+    """
+    Calculate bootstrap confidence interval for the median using vectorized operations.
+
+    Generates bootstrap samples by resampling with replacement, calculates the
+    median for each sample, and determines the confidence interval from the
+    percentiles of the bootstrap median distribution.
+
+    Args:
+        data (np.ndarray): 1D array of sample data.
+        n_bootstrap (int): Number of bootstrap samples to generate. Defaults to 1000.
+        confidence (float): Confidence level (e.g., 0.95 for 95% CI). Defaults to 0.95.
+        min_samples (int): Minimum number of samples required in the data. Defaults to 5.
+
+    Returns:
+        Tuple[float, float]: A tuple containing the lower and upper bounds of the
+                             confidence interval. Returns (median, median) if CI
+                             cannot be computed (e.g., too few samples).
+
+    Raises:
+        ValueError: If the number of samples is less than `min_samples`.
     """
     if len(data) < min_samples:
-        raise ValueError(f"Need at least {min_samples} samples for bootstrap CI")
-        
+        # Instead of raising ValueError, return median as both bounds for robustness in tables
+        median_val = np.median(data) if len(data) > 0 else np.nan
+        print(f"Warning: Need at least {min_samples} samples for bootstrap CI, got {len(data)}. Returning median ({median_val}) as bounds.")
+        return (median_val, median_val)
+        # raise ValueError(f"Need at least {min_samples} samples for bootstrap CI, got {len(data)}")
+
     size = len(data)
+    # Use default_rng for better random number generation
     rng = np.random.default_rng()
-    
-    # Vectorized sampling and median calculation
+
+    # Generate indices for bootstrap samples: shape (n_bootstrap, size)
     indices = rng.integers(0, size, size=(n_bootstrap, size))
+    # Create bootstrap samples using fancy indexing: shape (n_bootstrap, size)
     bootstrap_samples = data[indices]
+    # Calculate median along the sample dimension (axis=1): shape (n_bootstrap,)
     bootstrap_medians = np.median(bootstrap_samples, axis=1)
-    
-    lower_percentile = ((1 - confidence) / 2) * 100
-    upper_percentile = (confidence + (1 - confidence) / 2) * 100
-    
-    return np.percentile(bootstrap_medians, [lower_percentile, upper_percentile])
+
+    # Calculate percentiles for the confidence interval
+    lower_percentile = (1.0 - confidence) / 2.0 * 100
+    upper_percentile = (1.0 - (1.0 - confidence) / 2.0) * 100
+
+    # Compute the percentile values from the bootstrap median distribution
+    ci_lower, ci_upper = np.percentile(bootstrap_medians, [lower_percentile, upper_percentile])
+
+    return ci_lower, ci_upper
+
 
 class ResultAnalyzer:
-    """Analyzes experimental results across multiple datasets and metrics."""
-    
-    def __init__(self, all_dataset_results: Dict):
-        """Initialize analyzer with experimental results.
-        """
-        self.all_dataset_results = all_dataset_results        
-        # Extract metrics from first valid dataset
-        self.first_dataset = next(iter(all_dataset_results.values()))
-        self.first_scores = self.first_dataset[next(iter(self.first_dataset.keys()))]['global']['scores'][0][0]
-        self.metrics = list(self.first_scores.keys()) + ['loss']
-        
+    """
+    Analyzes processed experimental results (loaded from pickle files).
 
-    
-    def analyze_dataset(self, results: Dict) -> Dict:
-        """Analyze results for all metrics in a single dataset.
+    Provides methods to calculate summary statistics (median, CI) for global metrics,
+    analyze fairness metrics (variance across clients, percentage of clients
+    outperforming baselines), and format these analyses into pandas DataFrames
+    and presentation-ready tables.
+    """
+
+    def __init__(self, all_dataset_results: Dict[str, Dict]):
         """
-        algorithms = list(results.keys())
-        metrics_data = {}
-        
+        Initializes the ResultAnalyzer with results loaded for multiple datasets.
+
+        Args:
+            all_dataset_results (Dict[str, Dict]): A dictionary where keys are dataset names
+                                                   and values are the corresponding loaded
+                                                   results dictionaries (typically from evaluation runs).
+                                                   Example: {'FMNIST': eval_results_fmnist, 'CIFAR': eval_results_cifar}
+        """
+        if not all_dataset_results:
+             raise ValueError("Input `all_dataset_results` dictionary cannot be empty.")
+        self.all_dataset_results = all_dataset_results
+
+        # Infer the list of metrics from the structure of the first valid result entry
+        try:
+            # Navigate through the nested structure to find a sample metric dictionary
+            first_dataset_name = next(iter(all_dataset_results))
+            first_dataset_data = all_dataset_results[first_dataset_name]
+            first_run_key = next(iter(first_dataset_data)) # e.g., 'run_1'
+            first_algo_key = next(iter(first_dataset_data[first_run_key])) # e.g., 'fedavg'
+            first_scores_list = first_dataset_data[first_run_key][first_algo_key]['global']['scores']
+            first_run_final_scores_dict = first_scores_list[0] # Get scores from the first run
+            self.metrics = list(first_run_final_scores_dict.keys()) + ['loss'] # Add 'loss' manually
+            print(f"Inferred metrics: {self.metrics}")
+        except (StopIteration, KeyError, IndexError, TypeError) as e:
+            print(f"Error inferring metrics from results structure: {e}")
+            # Fallback or default metrics list
+            self.metrics = ['accuracy', 'balanced_accuracy', 'f1_macro', 'f1_weighted', 'mcc', 'loss']
+            print(f"Using default metrics list: {self.metrics}")
+
+
+    def analyze_dataset(self, results: Dict) -> Dict[str, Dict[str, Dict[str, float]]]:
+        """
+        Analyzes global performance metrics for a single dataset's results.
+
+        Calculates the median and bootstrap confidence interval for each metric
+        (including loss) across all runs for each algorithm.
+
+        Args:
+            results (Dict): The loaded results dictionary for one dataset.
+                            Expected structure includes runs as top-level keys, then algorithms.
+                            e.g., {'run_1': {'fedavg': {'global':...}}, 'run_2':{...}}
+
+        Returns:
+            Dict[str, Dict[str, Dict[str, float]]]: A nested dictionary:
+                {algorithm: {metric_name: {'median': X, 'ci_lower': Y, 'ci_upper': Z}}}
+        """
+        # --- Step 1: Aggregate metrics across runs for each algorithm ---
+        aggregated_metrics = {}
+        # Expected structure: results = {'run_1': {'algoA': {'global':...}, 'algoB':...}, 'run_2': ...}
+
+        # Find all algorithms present across runs
+        algorithms = set()
+        for run_key in results:
+            algorithms.update(results[run_key].keys())
+        algorithms = list(algorithms)
+
         for algo in algorithms:
-            metrics_data[algo] = {}
-            
-            # Get all scores and calculate statistics once
-            scores_dict = {}
-            for metric in self.metrics[:-1]:  # Exclude loss
-                scores = np.array([x[0][metric] for x in results[algo]['global']['scores']])
-                scores_dict[metric] = scores
-            
-            # Handle loss consistently - store raw values
-            losses = np.array([x[0] for x in results[algo]['global']['losses']])
-            scores_dict['loss'] = losses
-            
-            # Calculate statistics for all metrics
-            for metric, scores in scores_dict.items():
+            aggregated_metrics[algo] = {metric: [] for metric in self.metrics} # Initialize lists for each metric
+
+            for run_key in results:
+                if algo in results[run_key]:
+                    run_data = results[run_key][algo]
+                    if 'global' not in run_data or 'scores' not in run_data['global'] or 'losses' not in run_data['global']:
+                        print(f"Warning: Missing global data for algo '{algo}' in run '{run_key}'. Skipping run.")
+                        continue
+
+                    # Extract final score/loss for this run (assuming list contains only final value)
+                    final_score_dict = run_data['global']['scores'][-1] if run_data['global']['scores'] else None
+                    final_loss = run_data['global']['losses'][-1] if run_data['global']['losses'] else None
+
+                    if final_score_dict is not None:
+                        for metric_name in self.metrics[:-1]: # Exclude 'loss' here
+                            if metric_name in final_score_dict:
+                                aggregated_metrics[algo][metric_name].append(final_score_dict[metric_name])
+                            else:
+                                print(f"Warning: Metric '{metric_name}' not found in scores for algo '{algo}', run '{run_key}'.")
+                    else:
+                        print(f"Warning: Missing final scores for algo '{algo}', run '{run_key}'.")
+
+
+                    if final_loss is not None:
+                         aggregated_metrics[algo]['loss'].append(final_loss)
+                    else:
+                         print(f"Warning: Missing final loss for algo '{algo}', run '{run_key}'.")
+
+
+        # --- Step 2: Calculate statistics (median, CI) for each algorithm and metric ---
+        analysis_output = {}
+        for algo, metrics_values in aggregated_metrics.items():
+            analysis_output[algo] = {}
+            for metric, values_list in metrics_values.items():
+                if not values_list:
+                    print(f"Warning: No data found for metric '{metric}' for algorithm '{algo}'. Setting stats to NaN.")
+                    analysis_output[algo][metric] = {'median': np.nan, 'ci_lower': np.nan, 'ci_upper': np.nan}
+                    continue
+
+                scores_np = np.array(values_list)
+                median = np.median(scores_np)
                 try:
-                    median = np.median(scores)
-                    ci_lower, ci_upper = bootstrap_ci(scores)
-                    metrics_data[algo][metric] = {
+                    ci_lower, ci_upper = bootstrap_ci(scores_np)
+                    analysis_output[algo][metric] = {
                         'median': median,
                         'ci_lower': ci_lower,
                         'ci_upper': ci_upper
                     }
                 except ValueError as e:
-                    print(f"Warning: Could not compute CI for {algo}, {metric}: {str(e)}")
-                    metrics_data[algo][metric] = {
+                    # Handle cases where bootstrap_ci fails (e.g., < min_samples)
+                    print(f"Warning: Could not compute CI for {algo}, {metric}: {e}. Using median as bounds.")
+                    analysis_output[algo][metric] = {
                         'median': median,
-                        'ci_lower': median,
+                        'ci_lower': median, # Use median as CI bounds if calculation fails
                         'ci_upper': median
                     }
-        
-        return metrics_data
-    
-    def _get_client_metrics(self, results: Dict, algorithm: str, client_id: str) -> Dict:
-        """Extract metrics for a specific client.
+
+        return analysis_output
+
+    def _get_client_metrics(self, results_all_runs: Dict, algorithm: str, client_id: str) -> Dict[str, float]:
         """
-        client_data = results[algorithm]['sites'][client_id]
-        metrics = {}
-        
-        # Store raw loss values consistently
-        loss_values = np.array([loss[0] for loss in client_data['losses']])
-        metrics['loss'] = np.median(loss_values)
-        
-        # Process other metrics
-        scores = client_data['scores']
-        for metric in self.metrics[:-1]:
-            values = np.array([score[0][metric] for score in scores])
-            metrics[metric] = np.median(values)
-        
-        return metrics
-    
-    def analyze_fairness(self, results: Dict) -> pd.DataFrame:
-        """Analyze fairness metrics for a single dataset.
+        Extracts the median metric values for a specific client across all runs.
+
+        Args:
+            results_all_runs (Dict): The loaded results dictionary for a dataset (containing multiple runs).
+            algorithm (str): The algorithm identifier.
+            client_id (str): The client identifier.
+
+        Returns:
+            Dict[str, float]: Dictionary mapping metric names to their median value
+                              across runs for the specified client and algorithm.
+                              Returns NaNs if data is missing.
         """
-        # Keep the same logic for getting all algorithms and baselines
-        algorithms = [algo for algo in results.keys() if algo not in ['local', 'fedavg']]
-        client_ids = list(results['local']['sites'].keys())
-        
-        # Get baselines once
-        baselines = {
-            'local': {client_id: self._get_client_metrics(results, 'local', client_id)
-                    for client_id in client_ids},
-            'fedavg': {client_id: self._get_client_metrics(results, 'fedavg', client_id)
-                    for client_id in client_ids}
-        }
-        
-        fairness_data = []
-        
-        for algo in algorithms:  # This already excludes local and fedavg
-            algo_metrics = {
-                client_id: self._get_client_metrics(results, algo, client_id)
-                for client_id in client_ids
-            }
-            
-            for metric in self.metrics:
-                metric_values = np.array([metrics[metric] for metrics in algo_metrics.values()])
-                variance = np.var(metric_values)
-                
-                # For comparing with baseline, consider if higher or lower is better
-                is_loss = metric == 'loss'
-                if is_loss:
-                    better_count = sum(
-                        1 for client_id in client_ids
-                        if (algo_metrics[client_id][metric] < min(
-                            baselines['local'][client_id][metric],
-                            baselines['fedavg'][client_id][metric]
-                            )
-                        )
-                    )
-                else: 
-                    better_count = sum(
-                        1 for client_id in client_ids 
-                        if ( algo_metrics[client_id][metric] > max(
-                            baselines['local'][client_id][metric],
-                            baselines['fedavg'][client_id][metric]
-                            )
-                        )
-                    )
-                pct_better = (better_count / len(client_ids)) * 100
-                
-                fairness_data.append({
-                    'Algorithm': algo,
-                    'Metric': metric,
-                    'Variance': variance,
-                    'Pct_Better': pct_better
-                })
-        
-        return pd.DataFrame(fairness_data)
-    def analyze_all(self) -> Dict:
-        """Analyze all datasets and metrics.
+        client_metrics_all_runs = {metric: [] for metric in self.metrics}
+
+        for run_key in results_all_runs:
+             if algorithm in results_all_runs[run_key]:
+                 algo_data = results_all_runs[run_key][algorithm]
+                 if 'sites' in algo_data and client_id in algo_data['sites']:
+                     client_run_data = algo_data['sites'][client_id]
+
+                     # Extract final score/loss for this client in this run
+                     final_score_dict = client_run_data['scores'][-1] if client_run_data.get('scores') else None
+                     final_loss = client_run_data['losses'][-1] if client_run_data.get('losses') else None
+
+                     if final_score_dict:
+                         for metric_name in self.metrics[:-1]:
+                             if metric_name in final_score_dict:
+                                 client_metrics_all_runs[metric_name].append(final_score_dict[metric_name])
+                             # else: # Optionally warn if metric missing for client
+                             #     print(f"Warning: Metric '{metric_name}' missing for {client_id}, {algorithm}, {run_key}")
+                     if final_loss is not None:
+                         client_metrics_all_runs['loss'].append(final_loss)
+                 # else: # Optionally warn if client missing
+                 #      print(f"Warning: Client '{client_id}' missing for {algorithm}, {run_key}")
+
+
+        # Calculate median for each metric across runs
+        median_metrics = {}
+        for metric, values in client_metrics_all_runs.items():
+            if values:
+                median_metrics[metric] = np.median(values)
+            else:
+                 # print(f"Warning: No data found for metric '{metric}' for client '{client_id}', algorithm '{algorithm}'.")
+                 median_metrics[metric] = np.nan # Use NaN if no data collected
+
+        return median_metrics
+
+    def analyze_fairness(self, results_all_runs: Dict) -> pd.DataFrame:
+        """
+        Analyzes fairness metrics for a single dataset across multiple runs.
+
+        Calculates:
+        1. Variance: The variance of the median client performance for each metric.
+           Lower variance suggests higher fairness (more uniform performance).
+        2. Pct_Better: The percentage of clients whose median performance with a given
+           algorithm is better than their median performance with *both* 'local'
+           and 'fedavg' baselines.
+
+        Args:
+            results_all_runs (Dict): The loaded results dictionary for one dataset,
+                                     containing multiple runs.
+
+        Returns:
+            pd.DataFrame: DataFrame summarizing fairness metrics (Variance, Pct_Better)
+                          for each algorithm (excluding baselines) and metric.
+        """
+        # Identify all algorithms and clients present across runs
+        algorithms = set()
+        client_ids = set()
+        for run_key in results_all_runs:
+             for algo, algo_data in results_all_runs[run_key].items():
+                 algorithms.add(algo)
+                 if 'sites' in algo_data:
+                     client_ids.update(algo_data['sites'].keys())
+        algorithms = list(algorithms)
+        client_ids = list(client_ids)
+
+        if 'local' not in algorithms or 'fedavg' not in algorithms:
+            print("Warning: 'local' or 'fedavg' baseline results missing. Cannot calculate Pct_Better fairness metric.")
+            # Return empty dataframe or dataframe with only variance
+            # return pd.DataFrame(columns=['Algorithm', 'Metric', 'Variance', 'Pct_Better'])
+
+        # Algorithms to compare against baselines
+        pfl_algorithms = [algo for algo in algorithms if algo not in ['local', 'fedavg']]
+
+        # --- Get Median Client Metrics for Baselines and PFL Algorithms ---
+        all_median_client_metrics = {} # Structure: {algo: {client_id: {metric: median_value}}}
+        for algo in algorithms:
+            all_median_client_metrics[algo] = {}
+            for client_id in client_ids:
+                 # Calculate median metrics across runs for this client/algo combo
+                 all_median_client_metrics[algo][client_id] = self._get_client_metrics(
+                     results_all_runs, algo, client_id
+                 )
+
+        # Store baseline metrics separately for easier access
+        baselines = {}
+        if 'local' in all_median_client_metrics:
+             baselines['local'] = all_median_client_metrics['local']
+        if 'fedavg' in all_median_client_metrics:
+             baselines['fedavg'] = all_median_client_metrics['fedavg']
+
+
+        # --- Calculate Fairness Metrics ---
+        fairness_data_list = []
+        for algo in pfl_algorithms:
+             if algo not in all_median_client_metrics: continue # Skip if algo had no results
+
+             algo_client_medians = all_median_client_metrics[algo] # {client_id: {metric: median}}
+
+             for metric in self.metrics:
+                 # Calculate Variance across clients for this algo/metric
+                 median_metric_values = np.array([
+                     client_metrics[metric] for client_metrics in algo_client_medians.values() if metric in client_metrics and not np.isnan(client_metrics[metric])
+                 ])
+                 variance = np.var(median_metric_values) if len(median_metric_values) > 0 else np.nan
+
+                 # Calculate Pct_Better compared to baselines
+                 better_count = 0
+                 valid_clients_for_comparison = 0
+                 if 'local' in baselines and 'fedavg' in baselines: # Check if baselines exist
+                     for client_id in client_ids:
+                         if client_id in algo_client_medians and \
+                            client_id in baselines['local'] and \
+                            client_id in baselines['fedavg']:
+
+                             algo_metric = algo_client_medians[client_id].get(metric)
+                             local_metric = baselines['local'][client_id].get(metric)
+                             fedavg_metric = baselines['fedavg'][client_id].get(metric)
+
+                             # Ensure all metrics are valid numbers for comparison
+                             if algo_metric is not None and not np.isnan(algo_metric) and \
+                                local_metric is not None and not np.isnan(local_metric) and \
+                                fedavg_metric is not None and not np.isnan(fedavg_metric):
+
+                                 valid_clients_for_comparison += 1
+                                 is_loss = metric == 'loss'
+                                 # Check if algo performs better than *both* baselines
+                                 if is_loss:
+                                     if algo_metric < local_metric and algo_metric < fedavg_metric:
+                                         better_count += 1
+                                 else: # Higher is better for other metrics
+                                     if algo_metric > local_metric and algo_metric > fedavg_metric:
+                                         better_count += 1
+                     pct_better = (better_count / valid_clients_for_comparison * 100) if valid_clients_for_comparison > 0 else 0.0
+                 else:
+                     pct_better = np.nan # Cannot calculate if baselines missing
+
+
+                 fairness_data_list.append({
+                     'Algorithm': algo,
+                     'Metric': metric,
+                     'Variance': variance,
+                     'Pct_Better': pct_better
+                 })
+
+        return pd.DataFrame(fairness_data_list)
+
+
+    def analyze_all(self) -> Dict[str, Dict[str, pd.DataFrame]]:
+        """
+        Performs analysis (global metrics and fairness) for all datasets provided at initialization.
+
+        Returns:
+            Dict[str, Dict[str, pd.DataFrame]]: A dictionary containing the analysis results,
+                structured as: {'metrics': {metric_name: DataFrame},
+                                'fairness': {metric_name: DataFrame}}
+                Each DataFrame summarizes results across all datasets for that specific metric.
         """
         results = {
-            'metrics': {},
-            'fairness': {}
+            'metrics': {}, # Store global metric summaries
+            'fairness': {} # Store fairness metric summaries
         }
-        
+
+        # Initialize dictionaries for each metric type
+        for metric in self.metrics:
+             results['metrics'][metric] = []
+             results['fairness'][f'variance_{metric}'] = [] # Store variance results
+             results['fairness'][f'pct_better_{metric}'] = [] # Store pct_better results
+
+
+        # Analyze each dataset
         for dataset_name, dataset_results in self.all_dataset_results.items():
-            # Analyze metrics
-            metrics_data = self.analyze_dataset(dataset_results)
-            for metric in self.metrics:
-                if metric not in results['metrics']:
-                    results['metrics'][metric] = []
-                
-                for algo, algo_data in metrics_data.items():
-                    results['metrics'][metric].append({
-                        'Dataset': dataset_name,
-                        'Algorithm': algo,
-                        'Median': algo_data[metric]['median'],
-                        'CI_Lower': algo_data[metric]['ci_lower'],
-                        'CI_Upper': algo_data[metric]['ci_upper']
-                    })
-            
-            # Analyze fairness
+            print(f"\n--- Analyzing Dataset: {dataset_name} ---")
+            if not dataset_results:
+                 print(f"Warning: No results found for dataset {dataset_name}. Skipping analysis.")
+                 continue
+
+            # --- Analyze Global Metrics ---
+            global_metrics_data = self.analyze_dataset(dataset_results)
+            for algo, algo_metrics in global_metrics_data.items():
+                for metric, stats in algo_metrics.items():
+                     results['metrics'][metric].append({
+                         'Dataset': dataset_name,
+                         'Algorithm': algo,
+                         'Median': stats['median'],
+                         'CI_Lower': stats['ci_lower'],
+                         'CI_Upper': stats['ci_upper']
+                     })
+
+            # --- Analyze Fairness Metrics ---
             try:
                 fairness_df = self.analyze_fairness(dataset_results)
+                # Append fairness results to the respective lists
                 for _, row in fairness_df.iterrows():
-                    if row['Metric'] not in results['fairness']:
-                        results['fairness'][row['Metric']] = []
-                    results['fairness'][row['Metric']].append({
-                        'Dataset': dataset_name,
-                        'Algorithm': row['Algorithm'],
-                        'Variance': row['Variance'],
-                        'Pct_Better': row['Pct_Better']
-                    })
+                     metric = row['Metric']
+                     results['fairness'][f'variance_{metric}'].append({
+                         'Dataset': dataset_name,
+                         'Algorithm': row['Algorithm'],
+                         'Value': row['Variance'] # Use generic 'Value' column name
+                     })
+                     results['fairness'][f'pct_better_{metric}'].append({
+                         'Dataset': dataset_name,
+                         'Algorithm': row['Algorithm'],
+                         'Value': row['Pct_Better'] # Use generic 'Value' column name
+                     })
             except Exception as e:
-                print(f"Warning: Fairness analysis failed for {dataset_name}: {str(e)}")
-        
-        # Convert to DataFrames
+                # Catch errors during fairness analysis (e.g., missing baselines)
+                print(f"Warning: Fairness analysis failed for dataset {dataset_name}: {e}")
+
+
+        # --- Convert accumulated results into DataFrames ---
+        final_results = {'metrics': {}, 'fairness': {}}
         for metric in results['metrics']:
-            results['metrics'][metric] = pd.DataFrame(results['metrics'][metric])
-        for metric in results['fairness']:
-            results['fairness'][metric] = pd.DataFrame(results['fairness'][metric])
-        
-        return results
-    
-    def _perform_friedman_test(self, pivot_table: pd.DataFrame) -> Optional[Dict]:
-        """Perform Friedman test on pivot table data.
+            if results['metrics'][metric]:
+                 final_results['metrics'][metric] = pd.DataFrame(results['metrics'][metric])
+            else:
+                 print(f"Warning: No global metrics data collected for metric '{metric}'.")
+
+        for fairness_key in results['fairness']:
+             if results['fairness'][fairness_key]:
+                 final_results['fairness'][fairness_key] = pd.DataFrame(results['fairness'][fairness_key])
+             # else: # No need to warn if no fairness data was generated (e.g., due to missing baselines)
+             #    print(f"Warning: No fairness data collected for '{fairness_key}'.")
+
+
+        return final_results # Return dict containing DataFrames
+
+
+    def _perform_friedman_test(self, pivot_table: pd.DataFrame) -> Optional[Dict[str, float]]:
         """
+        Performs the Friedman test on performance data arranged in a pivot table.
+
+        The Friedman test is a non-parametric test to detect differences in treatments
+        across multiple test attempts (datasets in this case). It ranks the algorithms
+        within each dataset and checks if the mean ranks are significantly different.
+
+        Args:
+            pivot_table (pd.DataFrame): A DataFrame where rows are algorithms, columns
+                                        are datasets (or other blocking factor), and
+                                        values are the performance metric (e.g., median).
+                                        Should *not* include 'Mean Rank' column yet.
+
+        Returns:
+            Optional[Dict[str, float]]: A dictionary with 'statistic' (chi-squared) and 'pvalue',
+                                        or None if the test cannot be performed (e.g., < 2 algorithms).
+        """
+        # Identify the data columns (datasets) excluding potential rank columns
         data_columns = [col for col in pivot_table.columns if col not in ['Mean Rank', 'Friedman Test']]
-        
-        if len(data_columns) < 2:
+        valid_data = pivot_table[data_columns].dropna(axis=1, how='all').dropna(axis=0, how='any') # Drop datasets with all NaNs, drop algos with any NaN
+
+        # Need at least 2 groups (algorithms) and 2 blocks (datasets) to compare
+        if valid_data.shape[0] < 2 or valid_data.shape[1] < 2:
+            print(f"Warning: Friedman test requires at least 2 algorithms and 2 datasets with non-NaN values. Found {valid_data.shape}. Skipping test.")
             return None
-            
+
         try:
+            # Perform the Friedman test on the valid data
             statistic, pvalue = stats.friedmanchisquare(
-                *[pivot_table[col] for col in data_columns]
+                *[valid_data[col].values for col in valid_data.columns]
             )
             return {'statistic': statistic, 'pvalue': pvalue}
-        except Exception:
+        except Exception as e:
+            print(f"Error performing Friedman test: {e}")
             return None
-    
-    def format_tables(self, DATASETS, analysis_results: Dict) -> Dict:
-        """Format analysis results into presentation-ready tables with confidence intervals."""
+
+
+    def format_tables(self, datasets_order: List[str], analysis_results: Dict[str, Dict[str, pd.DataFrame]]) -> Dict[str, Dict[str, Union[pd.DataFrame, str]]]:
+        """
+        Formats the analyzed results (medians, CIs, fairness metrics) into
+        presentation-ready pandas DataFrames with specific ordering and formatting.
+
+        Calculates mean ranks across datasets and performs Friedman tests.
+
+        Args:
+            datasets_order (List[str]): The desired order of dataset columns in the tables.
+            analysis_results (Dict): The dictionary of DataFrames produced by `analyze_all`.
+                                     {'metrics': {metric: df}, 'fairness': {fairness_key: df}}
+
+        Returns:
+            Dict[str, Dict[str, Union[pd.DataFrame, str]]]: A dictionary where keys are descriptive names
+                (e.g., 'accuracy_summary', 'fairness_variance_loss') and values are dicts
+                containing the formatted DataFrame ('table') and Friedman test results ('friedman').
+        """
         formatted_tables = {}
-        
-        # Define custom ordering for algorithms and datasets
-        algorithm_order = [
-            'local', 'fedavg', 'fedprox', 'pfedme', 'ditto', 
-            'localadaptation', 'babu', 'fedlp', 'fedlama', 
-            'pfedla', 'layerpfl', 'layerpfl_random'
-        ]
-        
-        dataset_order = DATASETS +  ['Mean Rank']
 
-        fairness_algorithm_order = [
-            'fedprox', 'pfedme', 'ditto', 'localadaptation', 'babu', 
-            'fedlp', 'fedlama', 'pfedla', 'layerpfl', 'layerpfl_random'
-        ]
-        
-        # Format metric summaries
-        for metric, df in analysis_results['metrics'].items():
-            # Create pivot tables for each statistic
-            pivot_median = df.pivot(index='Algorithm', columns='Dataset', values='Median')
-            pivot_ci_lower = df.pivot(index='Algorithm', columns='Dataset', values='CI_Lower')
-            pivot_ci_upper = df.pivot(index='Algorithm', columns='Dataset', values='CI_Upper')
-            
-            # Calculate ranks - handle loss metric differently
-            ranks = df.copy()
-            ascending = metric == 'loss'  # True for loss (lower is better)
-            ranks['Rank'] = df.groupby('Dataset')['Median'].rank(ascending=ascending)
-            mean_ranks = ranks.groupby('Algorithm')['Rank'].mean()
-            
-            # Create combined pivot table
-            pivot = pivot_median.copy()
-            pivot['Mean Rank'] = mean_ranks
-            
-            # Format numbers as strings with confidence intervals
-            for col in pivot.columns[:-1]:  # Exclude Mean Rank
-                pivot[col] = pivot.apply(
-                    lambda x: f"{x[col]:.3f} ± {(pivot_ci_upper[col][x.name] - pivot_ci_lower[col][x.name])/2:.3f}" 
-                    if not pd.isna(x[col]) else "N/A",
-                    axis=1
-                )
-            
-            pivot['Mean Rank'] = pivot['Mean Rank'].apply(lambda x: f"{x:.2f}")
-            
-            # Reorder rows and columns according to defined orders
-            pivot = pivot.reindex(index=algorithm_order)
-            pivot = pivot[dataset_order]
-            
-            # Perform Friedman test if possible
-            friedman_result = self._perform_friedman_test(pivot_median)
-            formatted_tables[f'{metric}_summary'] = {
-                'table': pivot,
-                'friedman': f"Friedman test p-value: {friedman_result['pvalue']:.5f}" if friedman_result else "Friedman test not applicable"
-            }
-            
-            # Format fairness summaries
-            if 'fairness' in analysis_results:
-                for metric, df in analysis_results['fairness'].items():
-                    # Variance tables (lower is better)
-                    var_pivot = df.pivot(index='Algorithm', columns='Dataset', values='Variance')
-                    var_ranks = df.copy()
-                    var_ranks['Rank'] = df.groupby('Dataset')['Variance'].rank()
-                    var_mean_ranks = var_ranks.groupby('Algorithm')['Rank'].mean()
-                    
-                    var_pivot['Mean Rank'] = var_mean_ranks
-                    
-                    # Format numbers
-                    for col in var_pivot.columns[:-1]:  # Exclude Mean Rank
-                        var_pivot[col] = var_pivot[col].apply(lambda x: f"{x:.6f}")
-                    var_pivot['Mean Rank'] = var_pivot['Mean Rank'].apply(lambda x: f"{x:.2f}")
-                    
-                    # Reorder rows and columns
-                    var_pivot = var_pivot.reindex(index=fairness_algorithm_order)
-                    var_pivot = var_pivot[dataset_order]
-                    
-                    # Add Friedman test result
-                    friedman_result = self._perform_friedman_test(var_pivot)
-                    formatted_tables[f'fairness_variance_{metric}'] = {
-                        'table': var_pivot,
-                        'friedman': f"Friedman test p-value: {friedman_result['pvalue']:.5f}" if friedman_result else "Friedman test not applicable"
+        # --- Define Algorithm and Dataset Ordering ---
+        # Use ALGORITHMS and DATASETS from configs.py for consistency
+        algorithm_order = ALGORITHMS
+        dataset_order_with_rank = datasets_order + ['Mean Rank'] # Add Mean Rank column
+
+        # Define order for fairness tables (excluding baselines)
+        fairness_algorithm_order = [algo for algo in algorithm_order if algo not in ['local', 'fedavg']]
+
+        # --- Format Global Metric Summaries ---
+        if 'metrics' in analysis_results:
+            for metric, df in analysis_results['metrics'].items():
+                if df.empty: continue # Skip empty dataframes
+
+                try:
+                    # Create pivot tables for median and CI bounds
+                    pivot_median = df.pivot(index='Algorithm', columns='Dataset', values='Median')
+                    pivot_ci_lower = df.pivot(index='Algorithm', columns='Dataset', values='CI_Lower')
+                    pivot_ci_upper = df.pivot(index='Algorithm', columns='Dataset', values='CI_Upper')
+
+                    # --- Calculate Ranks ---
+                    ranks_df = df.copy()
+                    # Determine ranking direction (lower is better for loss, higher otherwise)
+                    ascending_rank = (metric == 'loss')
+                    # Rank algorithms within each dataset based on median performance
+                    ranks_df['Rank'] = ranks_df.groupby('Dataset')['Median'].rank(method='average', ascending=ascending_rank)
+                    # Calculate mean rank across datasets for each algorithm
+                    mean_ranks = ranks_df.groupby('Algorithm')['Rank'].mean()
+
+                    # --- Combine into Final Pivot Table ---
+                    pivot_final = pivot_median.copy()
+                    pivot_final['Mean Rank'] = mean_ranks
+
+                    # --- Format Numbers with Confidence Intervals ---
+                    # Calculate CI width / 2 for the ± notation
+                    ci_half_width = (pivot_ci_upper - pivot_ci_lower) / 2.0
+                    # Iterate through dataset columns to format
+                    for col in datasets_order: # Only format dataset columns
+                        if col in pivot_final.columns:
+                             pivot_final[col] = pivot_final.apply(
+                                 # Format as "Median ± CI_HalfWidth"
+                                 lambda x: f"{x[col]:.3f} ± {ci_half_width.loc[x.name, col]:.3f}"
+                                           if pd.notna(x[col]) and pd.notna(ci_half_width.loc[x.name, col]) else "N/A", # Handle NaNs
+                                 axis=1
+                             )
+
+                    # Format Mean Rank column
+                    if 'Mean Rank' in pivot_final.columns:
+                        pivot_final['Mean Rank'] = pivot_final['Mean Rank'].apply(lambda x: f"{x:.2f}" if pd.notna(x) else "N/A")
+
+                    # --- Reorder Rows and Columns ---
+                    # Reindex rows (algorithms) based on defined order, drop missing
+                    pivot_final = pivot_final.reindex(index=algorithm_order).dropna(how='all')
+                    # Reindex columns (datasets + Mean Rank), drop missing
+                    pivot_final = pivot_final.reindex(columns=dataset_order_with_rank).dropna(axis=1, how='all')
+
+                    # --- Perform Friedman Test ---
+                    # Use the original median pivot table for the test
+                    friedman_result = self._perform_friedman_test(pivot_median.reindex(index=algorithm_order).dropna(how='all'))
+                    friedman_str = f"Friedman test p-value: {friedman_result['pvalue']:.5f}" if friedman_result and 'pvalue' in friedman_result else "Friedman test not applicable or failed"
+
+                    # Store formatted table and Friedman result
+                    formatted_tables[f'{metric}_summary'] = {
+                        'table': pivot_final,
+                        'friedman': friedman_str
                     }
-                    
-                    # Percentage better tables (higher is better)
-                    pct_pivot = df.pivot(index='Algorithm', columns='Dataset', values='Pct_Better')
-                    pct_ranks = df.copy()
-                    pct_ranks['Rank'] = df.groupby('Dataset')['Pct_Better'].rank(ascending=False)
-                    pct_mean_ranks = pct_ranks.groupby('Algorithm')['Rank'].mean()
-                    
-                    pct_pivot['Mean Rank'] = pct_mean_ranks
-                    
-                    # Format numbers
-                    for col in pct_pivot.columns[:-1]:  # Exclude Mean Rank
-                        pct_pivot[col] = pct_pivot[col].apply(lambda x: f"{x:.1f}")
-                    pct_pivot['Mean Rank'] = pct_pivot['Mean Rank'].apply(lambda x: f"{x:.2f}")
-                    
-                    # Reorder rows and columns
-                    pct_pivot = pct_pivot.reindex(index=fairness_algorithm_order)
-                    pct_pivot = pct_pivot[dataset_order]
-                    
-                    # Add Friedman test result
-                    friedman_result = self._perform_friedman_test(pct_pivot)
-                    formatted_tables[f'fairness_pct_better_{metric}'] = {
-                        'table': pct_pivot,
-                        'friedman': f"Friedman test p-value: {friedman_result['pvalue']:.5f}" if friedman_result else "Friedman test not applicable"
+                except Exception as e:
+                     print(f"Error formatting global metrics table for '{metric}': {e}")
+
+
+        # --- Format Fairness Metric Summaries ---
+        if 'fairness' in analysis_results:
+             # Process variance and pct_better separately
+             for fairness_key, df in analysis_results['fairness'].items():
+                if df.empty: continue
+
+                try:
+                    # Determine if higher is better (Pct_Better) or lower is better (Variance)
+                    is_variance = 'variance' in fairness_key
+                    metric_name = fairness_key.replace('variance_', '').replace('pct_better_', '')
+                    table_type = 'Variance' if is_variance else 'Pct_Better'
+
+                    # Create pivot table for the fairness value
+                    pivot_value = df.pivot(index='Algorithm', columns='Dataset', values='Value')
+
+                    # --- Calculate Ranks ---
+                    ranks_df = df.copy()
+                    # Lower variance is better, higher Pct_Better is better
+                    ascending_rank = is_variance
+                    ranks_df['Rank'] = ranks_df.groupby('Dataset')['Value'].rank(method='average', ascending=ascending_rank)
+                    mean_ranks = ranks_df.groupby('Algorithm')['Rank'].mean()
+
+                    # --- Combine into Final Pivot Table ---
+                    pivot_final = pivot_value.copy()
+                    pivot_final['Mean Rank'] = mean_ranks
+
+                    # --- Format Numbers ---
+                    value_format = "{:.6f}" if is_variance else "{:.1f}" # Different precision
+                    for col in datasets_order: # Only format dataset columns
+                         if col in pivot_final.columns:
+                             pivot_final[col] = pivot_final[col].apply(lambda x: value_format.format(x) if pd.notna(x) else "N/A")
+
+                    # Format Mean Rank column
+                    if 'Mean Rank' in pivot_final.columns:
+                        pivot_final['Mean Rank'] = pivot_final['Mean Rank'].apply(lambda x: f"{x:.2f}" if pd.notna(x) else "N/A")
+
+                    # --- Reorder Rows and Columns ---
+                    pivot_final = pivot_final.reindex(index=fairness_algorithm_order).dropna(how='all')
+                    pivot_final = pivot_final.reindex(columns=dataset_order_with_rank).dropna(axis=1, how='all')
+
+                    # --- Perform Friedman Test ---
+                    friedman_result = self._perform_friedman_test(pivot_value.reindex(index=fairness_algorithm_order).dropna(how='all'))
+                    friedman_str = f"Friedman test p-value: {friedman_result['pvalue']:.5f}" if friedman_result and 'pvalue' in friedman_result else "Friedman test not applicable or failed"
+
+                    # Store formatted table and Friedman result
+                    formatted_tables[f'fairness_{table_type.lower()}_{metric_name}'] = {
+                        'table': pivot_final,
+                        'friedman': friedman_str
                     }
-        
+                except Exception as e:
+                    print(f"Error formatting fairness table for '{fairness_key}': {e}")
+
+
         return formatted_tables
 
-def analyze_experiment_results(DATASETS) -> Dict:
+
+def analyze_experiment_results(datasets_to_analyze: List[str]) -> Dict:
     """
-    Analyze experimental results across all datasets.
+    Top-level function to load evaluation results for specified datasets,
+    analyze them using `ResultAnalyzer`, and format them into tables.
+
+    Args:
+        datasets_to_analyze (List[str]): A list of dataset names for which to
+                                         load and analyze evaluation results.
+
+    Returns:
+        Dict: A dictionary containing the formatted tables and Friedman test results,
+              as generated by `ResultAnalyzer.format_tables`. Returns an empty
+              dictionary if major errors occur.
     """
+    print(f"Starting analysis for datasets: {datasets_to_analyze}")
     try:
+        # Load results for all specified datasets
         all_results = {}
-        for dataset in DATASETS:
-            all_results[dataset] = load_eval_results(dataset)
+        loaded_datasets = []
+        for dataset in datasets_to_analyze:
+            eval_results = load_eval_results(dataset)
+            if eval_results is not None:
+                all_results[dataset] = eval_results
+                loaded_datasets.append(dataset)
+            else:
+                print(f"Warning: Could not load evaluation results for dataset '{dataset}'. It will be excluded from analysis.")
+
+        if not all_results:
+             print("Error: No evaluation results could be loaded for any specified dataset. Aborting analysis.")
+             return {}
+
+        # Initialize analyzer with the loaded results
         analyzer = ResultAnalyzer(all_results)
-        analysis_results = analyzer.analyze_all()
-        formatted_tables = analyzer.format_tables(DATASETS, analysis_results)
+
+        # Perform the analysis (calculates stats, fairness)
+        print("\nPerforming comprehensive analysis...")
+        analysis_results = analyzer.analyze_all() # Returns {'metrics': {m: df}, 'fairness': {f: df}}
+
+        # Format the analysis into tables
+        print("\nFormatting results into tables...")
+        # Use the list of datasets that were actually loaded for table ordering
+        formatted_tables = analyzer.format_tables(loaded_datasets, analysis_results)
+
+        print("\nAnalysis complete.")
         return formatted_tables
+
     except Exception as e:
-        print(f"Error analyzing results: {str(e)}")
-        return {}
+        print(f"FATAL ERROR during results analysis: {e}", file=sys.stderr)
+        import traceback
+        traceback.print_exc()
+        return {} # Return empty dict on major failure

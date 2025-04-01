@@ -1,8 +1,11 @@
-ROOT_DIR = '/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl'
-DATA_DIR = f'{ROOT_DIR}/data_2'
-EVAL_DIR = f'{ROOT_DIR}/code/evaluation'
-METRIC_DIR = f'{ROOT_DIR}/code/layer_metrics'
-RESULTS_DIR = f'{ROOT_DIR}/results_2'
+"""
+Central configuration file for the Layer-PFL project.
+
+Defines directory paths, constants, default hyperparameters,
+algorithm-specific settings (like layers to federate, regularization parameters),
+and imports common libraries used throughout the project.
+"""
+
 import torch
 import torch.nn as nn
 import random
@@ -10,24 +13,18 @@ import numpy as np
 import pandas as pd
 import sys
 import traceback
-sys.path.append(f'{ROOT_DIR}/code')
-sys.path.append(f'{ROOT_DIR}/code/datasets')
-sys.path.append(f'{EVAL_DIR}')
-sys.path.append(f'{METRIC_DIR}')
-from torch.utils.data  import DataLoader, Dataset, Subset, RandomSampler
+from torch.utils.data import DataLoader, Dataset, Subset, RandomSampler
 from torchvision.transforms import transforms
 from torchvision.datasets import FashionMNIST, EMNIST, CIFAR10
 import warnings
-warnings.simplefilter(action='ignore', category=FutureWarning)
-warnings.simplefilter(action='ignore', category=UserWarning)
 from PIL import Image
 from sklearn.preprocessing import StandardScaler
-import albumentations 
+import albumentations # For image augmentations
 from sklearn.model_selection import train_test_split
 import copy
 from collections import OrderedDict
 from sklearn.metrics import f1_score, matthews_corrcoef, balanced_accuracy_score
-from typing import List, Dict, Optional, Tuple, Union
+from typing import List, Dict, Optional, Tuple, Union, Iterator, Iterable
 from dataclasses import dataclass, field
 import torch.nn.functional as F
 import pickle
@@ -43,63 +40,96 @@ import torch.multiprocessing as mp
 from multiprocessing import Pool
 from torch.nn.utils.rnn import pad_sequence
 from torch import Tensor
-from tqdm import tqdm
-from tqdm.contrib.concurrent import process_map
-from sklearn import metrics
+from tqdm import tqdm # Progress bars
+from tqdm.contrib.concurrent import process_map # Progress bars for parallel processing
+from sklearn import metrics # General metrics utilities
 from transformers import BertModel, BertTokenizer, AutoTokenizer, AutoModel
-import argparse 
-from netrep.metrics import LinearMetric
-from netrep import convolve_metric
+import argparse
+from netrep.metrics import LinearMetric # Representation similarity metrics
+from netrep import convolve_metric # Representation similarity metrics
 import scipy.stats
 from itertools import combinations
-from torch.linalg import svdvals # Use this for consistency
-from torch.utils.data import RandomSampler, DataLoader # Added for data sampling fix
+from torch.linalg import svdvals
+from functools import wraps
 
-DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
-N_WORKERS = 4
 
+# --- Core Directories ---
+_CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+_CODE_DIR = os.path.dirname(_CURRENT_DIR)
+_PROJECT_ROOT = os.path.dirname(_CODE_DIR)
+ROOT_DIR = _PROJECT_ROOT
+DATA_DIR = f'{ROOT_DIR}/data_2'       # Directory containing datasets
+DATA_PROCESSING_DIR = f'{ROOT_DIR}/code/datasets' # Directory for data preproccessing
+EVAL_DIR = f'{ROOT_DIR}/code/evaluation' # Directory for evaluation scripts/results
+METRIC_DIR = f'{ROOT_DIR}/code/layer_metrics' # Directory for layer-specific metric code
+RESULTS_DIR = f'{ROOT_DIR}/results_2' # Directory to save experiment results
+
+# --- Add project directories to Python path ---
+# Allows importing modules from these directories
+sys.path.append(f'{ROOT_DIR}/code')
+sys.path.append(f'{DATA_PROCESSING_DIR}')
+sys.path.append(f'{EVAL_DIR}')
+sys.path.append(f'{METRIC_DIR}')
+
+# --- Suppress Warnings ---
+# Ignore specific warnings for cleaner output
+warnings.simplefilter(action='ignore', category=FutureWarning)
+warnings.simplefilter(action='ignore', category=UserWarning)
+
+# --- Global Settings ---
+DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu' # Set computation device
+N_WORKERS = 4 # Default number of workers for DataLoader
+
+# --- Supported Algorithms ---
 ALGORITHMS = [
-    'local', 
-    'fedavg', 
-    'fedprox', 
-    'pfedme', 
-    'ditto', 
-    'localadaptation', 
-    'babu', 
-    'fedlp', 
-    'fedlama', 
-    'pfedla', 
-    'layerpfl',
-    'layerpfl_random'
-]
-DATASETS = [
-    'FMNIST',
-    'EMNIST',
-    'CIFAR',
-    'Sentiment',
-    'ISIC',
-    'mimic',
-    'Heart'
+    'local',            # Local training only
+    'fedavg',           # Federated Averaging
+    'fedprox',          # FedProx (adds proximal term to local loss)
+    'pfedme',           # pFedMe (personalized FedAvg with proximal term)
+    'ditto',            # Ditto (dual model training: global and personal)
+    'localadaptation',  # FedAvg followed by local fine-tuning
+    'babu',             # FedAvg for body, local fine-tuning for head
+    'fedlp',            # FedLP (layer-wise probabilistic aggregation)
+    'fedlama',          # FedLAMA (layer-wise adaptive aggregation frequency)
+    'pfedla',           # pFedLA (layer-wise personalized aggregation via hypernetwork)
+    'layerpfl',         # LayerPFL (FedAvg on a fixed subset of layers)
+    'layerpfl_random'   # LayerPFL (FedAvg on a randomly chosen prefix subset of layers)
 ]
 
+# --- Supported Datasets ---
+DATASETS = [
+    'FMNIST',    # FashionMNIST
+    'EMNIST',    # EMNIST
+    'CIFAR',     # CIFAR-10
+    'Sentiment', # Custom Sentiment Analysis dataset
+    'ISIC',      # ISIC Skin Lesion Classification dataset
+    'mimic',     # Custom MIMIC-III dataset (NLP)
+    'Heart'      # Custom Heart Disease dataset (tabular)
+]
+
+# --- Data Heterogeneity Simulation ---
+# Dirichlet distribution alpha parameter for simulating label distribution skew
+# Lower alpha = higher heterogeneity
 DATASET_ALPHA = {
-    'EMNIST':0.5,
-    'CIFAR':0.5,
-    "FMNIST":0.5
+    'EMNIST': 0.5,
+    'CIFAR': 0.5,
+    "FMNIST": 0.5
 }
 
+# --- Default Hyperparameters per Dataset ---
+# These serve as starting points and ranges for tuning.
 DEFAULT_PARAMS = {
     'FMNIST': {
-        'learning_rates_try': [5e-3, 1e-3, 5e-4, 1e-4],
-        'learning_rate': 1e-3,
-        'num_clients': 5,
-        'sizes_per_client': 2000,
-        'classes': 10,
-        'batch_size': 128,
-        'epochs_per_round': 1,
-        'rounds': 100,
-        'runs': 20,
-        'runs_lr': 3
+        'learning_rates_try': [5e-3, 1e-3, 5e-4, 1e-4], # LRs to try during tuning
+        'learning_rate': 1e-3,                      # Default LR for layer metrics analysis
+        'num_clients': 5,                           # Number of clients in federation
+        'sizes_per_client': 2000,                   # Number of samples per client (if simulating)
+        'classes': 10,                              # Number of output classes
+        'batch_size': 128,                          # Training batch size
+        'epochs_per_round': 1,                      # Local epochs per communication round
+        'rounds': 100,                              # Total communication rounds
+        'runs': 20,                                 # Number of independent runs for final evaluation
+        'runs_lr': 3                                # Number of independent runs for LR tuning
     },
     'EMNIST': {
         'learning_rates_try': [5e-3, 1e-3, 5e-4, 1e-4],
@@ -129,7 +159,7 @@ DEFAULT_PARAMS = {
         'learning_rates_try': [5e-3, 1e-3, 5e-4, 1e-4],
         'learning_rate': 1e-3,
         'num_clients': 4,
-        'sizes_per_client': None,
+        'sizes_per_client': None, # Use actual client sizes
         'classes': 4,
         'batch_size': 128,
         'epochs_per_round': 1,
@@ -141,7 +171,7 @@ DEFAULT_PARAMS = {
         'learning_rates_try': [1e-3, 5e-4, 1e-4, 8e-5],
         'learning_rate': 1e-3,
         'num_clients': 15,
-        'sizes_per_client': None,
+        'sizes_per_client': None, # Use actual client sizes
         'classes': 2,
         'batch_size': 64,
         'epochs_per_round': 1,
@@ -153,7 +183,7 @@ DEFAULT_PARAMS = {
         'learning_rates_try': [5e-1, 1e-1, 5e-2, 1e-2],
         'learning_rate': 5e-2,
         'num_clients': 4,
-        'sizes_per_client': None,
+        'sizes_per_client': None, # Use actual client sizes
         'classes': 5,
         'batch_size': 32,
         'epochs_per_round': 1,
@@ -165,7 +195,7 @@ DEFAULT_PARAMS = {
         'learning_rates_try': [1e-3, 5e-4, 1e-4, 8e-5],
         'learning_rate': 1e-4,
         'num_clients': 4,
-        'sizes_per_client': None,
+        'sizes_per_client': None, # Use actual client sizes
         'classes': 2,
         'batch_size': 64,
         'epochs_per_round': 1,
@@ -175,125 +205,137 @@ DEFAULT_PARAMS = {
     }
 }
 
-
+# --- Layer Selection for Layer-wise FL Methods ---
+# Defines which layers (by name prefix) are considered for federation
+# in different layer-wise algorithms.
 LAYERS_TO_FEDERATE_DICT = {
-    "layerpfl":{
-            'EMNIST':['layer1.', 'layer2.', 'layer3.'],
-            'CIFAR':['layer1.', 'layer2.', 'layer3.', 'layer4.', 'layer5.'],
-            "FMNIST":['layer1.', 'layer2.', 'layer3.'],
-            'ISIC':['layer1.', 'layer2.', 'layer3.', 'layer4.', 'layer5.'],
-            "Sentiment":['token_embedding_table1', 'position_embedding_table1', 'attention1', 'proj1'],
-            "Heart": ['fc1', 'fc2'],
-            "mimic":['token_embedding_table1','position_embedding_table1', 'attention1', 'proj1']
-            },
-
-    "babu":{
-            'EMNIST':['layer1.', 'layer2.', 'layer3.', 'fc1'],
-            'CIFAR':['layer1.', 'layer2.', 'layer3.', 'layer4.', 'layer5.', 'fc1'],
-            "FMNIST":['layer1.', 'layer2.', 'layer3.', 'fc1'],
-            'ISIC':['layer1.', 'layer2.', 'layer3.', 'layer4.', 'layer5.', 'fc1'],
-            "Sentiment":['token_embedding_table1','position_embedding_table1', 'attention1', 'proj1', 'fc1'],
-            "Heart": ['fc1', 'fc2', 'fc3'],
-            "mimic":['token_embedding_table1','position_embedding_table1', 'attention1', 'proj1', 'fc1']
-            },
-
-    # Only select a subsect of these layers
-    "layerpfl_random":{
-            'EMNIST':['layer1.', 'layer2.', 'layer3.', 'fc1'],
-            'CIFAR':['layer1.', 'layer2.', 'layer3.', 'layer4.', 'layer5.', 'fc1'],
-            "FMNIST":['layer1.', 'layer2.', 'layer3.', 'fc1'],
-            'ISIC':['layer1.', 'layer2.', 'layer3.', 'layer4.', 'layer5.', 'fc1'],
-            "Sentiment":['token_embedding_table1','position_embedding_table1', 'attention1', 'proj1', 'fc1'],
-            "Heart": ['fc1', 'fc2', 'fc3'],
-            "mimic":['token_embedding_table1','position_embedding_table1', 'attention1', 'proj1', 'fc1']
-            },
-
-            
+    # LayerPFL: Federate a fixed subset based on layer metrics
+    "layerpfl": {
+        'EMNIST': ['layer1.', 'layer2.', 'layer3.'],
+        'CIFAR': ['layer1.', 'layer2.', 'layer3.', 'layer4.', 'layer5.'],
+        "FMNIST": ['layer1.', 'layer2.', 'layer3.'],
+        'ISIC': ['layer1.', 'layer2.', 'layer3.', 'layer4.', 'layer5.'],
+        "Sentiment": ['token_embedding_table1', 'position_embedding_table1', 'attention1', 'proj1'],
+        "Heart": ['fc1', 'fc2'],
+        "mimic": ['token_embedding_table1', 'position_embedding_table1', 'attention1', 'proj1']
+    },
+    # BABU: Federate all layers *except* the final classification head
+    "babu": {
+        'EMNIST': ['layer1.', 'layer2.', 'layer3.', 'fc1'], # fc2 is head
+        'CIFAR': ['layer1.', 'layer2.', 'layer3.', 'layer4.', 'layer5.', 'fc1'], # fc2 is head
+        "FMNIST": ['layer1.', 'layer2.', 'layer3.', 'fc1'], # fc2 is head
+        'ISIC': ['layer1.', 'layer2.', 'layer3.', 'layer4.', 'layer5.', 'fc1'], # fc2 is head
+        "Sentiment": ['token_embedding_table1', 'position_embedding_table1', 'attention1', 'proj1', 'fc1'], # fc2 is head
+        "Heart": ['fc1', 'fc2', 'fc3'], # fc4 is head
+        "mimic": ['token_embedding_table1', 'position_embedding_table1', 'attention1', 'proj1', 'fc1'] # fc2 is head
+    },
+    # LayerPFL_random: Provides the *pool* of all possible layers to federate.
+    # A random prefix subset of these layers will be chosen during runtime.
+    "layerpfl_random": {
+        'EMNIST': ['layer1.', 'layer2.', 'layer3.', 'fc1'], # Full list up to head
+        'CIFAR': ['layer1.', 'layer2.', 'layer3.', 'layer4.', 'layer5.', 'fc1'], # Full list up to head
+        "FMNIST": ['layer1.', 'layer2.', 'layer3.', 'fc1'], # Full list up to head
+        'ISIC': ['layer1.', 'layer2.', 'layer3.', 'layer4.', 'layer5.', 'fc1'], # Full list up to head
+        "Sentiment": ['token_embedding_table1', 'position_embedding_table1', 'attention1', 'proj1', 'fc1'], # Full list up to head
+        "Heart": ['fc1', 'fc2', 'fc3'], # Full list up to head
+        "mimic": ['token_embedding_table1', 'position_embedding_table1', 'attention1', 'proj1', 'fc1'] # Full list up to head
+    },
 }
 
+# --- Regularization Parameters (mu or lambda) ---
+# Used by FedProx, pFedMe, Ditto, potentially LayerPFL if modified
 REG_PARAMS = {
     'fedprox': {
-            'EMNIST': 0.1,
-            'CIFAR': 0.1,
-            "FMNIST":0.1,
-            'ISIC':0.1,
-            "Sentiment":0.1,
-            "Heart": 0.1,
-            "mimic":0.1
-            },
-    
-    'pfedme': {
-            'EMNIST': 0.1,
-            'CIFAR': 0.1,
-            "FMNIST":0.1,
-            'ISIC':0.1,
-            "Sentiment":0.1,
-            "Heart": 0.1,
-            "mimic":0.1
-            },
+        'EMNIST': 0.1,
+        'CIFAR': 0.1,
+        "FMNIST": 0.1,
+        'ISIC': 0.1,
+        "Sentiment": 0.1,
+        "Heart": 0.1,
+        "mimic": 0.1
+    },
+    'pfedme': { # Often denoted as lambda in pFedMe paper
+        'EMNIST': 0.1,
+        'CIFAR': 0.1,
+        "FMNIST": 0.1,
+        'ISIC': 0.1,
+        "Sentiment": 0.1,
+        "Heart": 0.1,
+        "mimic": 0.1
+    },
+    'ditto': { # Often denoted as lambda in Ditto paper
+        'EMNIST': 0.1,
+        'CIFAR': 0.1,
+        "FMNIST": 0.1,
+        'ISIC': 0.1,
+        "Sentiment": 0.1,
+        "Heart": 0.1,
+        "mimic": 0.1
+    },
+    'layerpfl': { # Optional regularization for LayerPFL not used, but included option
+        'EMNIST': 0.1,
+        'CIFAR': 0.1,
+        "FMNIST": 0.1,
+        'ISIC': 0.1,
+        "Sentiment": 0.1,
+        "Heart": 0.1,
+        "mimic": 0.1
+    },
+}
 
-    'ditto': {
-            'EMNIST': 0.1,
-            'CIFAR': 0.1,
-            "FMNIST":0.1,
-            'ISIC':0.1,
-            "Sentiment":0.1,
-            "Heart": 0.1,
-            "mimic":0.1
-            },
-    
-    'layerpfl': {
-            'EMNIST': 0.1,
-            'CIFAR': 0.1,
-            "FMNIST":0.1,
-            'ISIC':0.1,
-            "Sentiment":0.1,
-            "Heart": 0.1,
-            "mimic":0.1
-            },
-    }
-
+# --- FedLP Specific Parameter ---
+# Probability 'p' that a layer's update is preserved/aggregated
 LAYER_PRESERVATION_RATES = {
     'EMNIST': 0.7,
     'CIFAR': 0.7,
-    "FMNIST":0.7,
-    'ISIC':0.7,
-    "Sentiment":0.7,
+    "FMNIST": 0.7,
+    'ISIC': 0.7,
+    "Sentiment": 0.7,
     "Heart": 0.7,
-    "mimic":0.7
+    "mimic": 0.7
 }
 
+# --- FedLAMA Specific Parameters ---
+# Base aggregation interval and Interval increase factor, defaults from paper taken
+LAMA_RATES = {
+    'tau_prime': 2,
+    'phi': 2
+
+}
+
+# --- pFedLA HyperNetwork Parameters ---
+# Configuration for the hypernetwork used in pFedLA
 HYPERNETWORK_PARAMS = {
-    'embedding_dim': {
+    'embedding_dim': { # Dimension of the client embedding vector
         'EMNIST': 32,
         'CIFAR': 64,
-        "FMNIST":32,
-        'ISIC':64,
-        "Sentiment":64,
+        "FMNIST": 32,
+        'ISIC': 64,
+        "Sentiment": 64,
         "Heart": 16,
-        "mimic":64
+        "mimic": 64
     },
-
-    'hidden_dim': {
+    'hidden_dim': { # Dimension of the hidden layer in the per-layer MLPs
         'EMNIST': 64,
         'CIFAR': 128,
-        "FMNIST":64,
-        'ISIC':128,
-        "Sentiment":128,
+        "FMNIST": 64,
+        'ISIC': 128,
+        "Sentiment": 128,
         "Heart": 16,
-        "mimic":128
+        "mimic": 128
     },
-
-    'hn_lr': {
+    'hn_lr': { # Learning rate for updating the hypernetwork parameters
         'EMNIST': 0.01,
         'CIFAR': 0.01,
-        "FMNIST":0.01,
-        'ISIC':0.01,
-        "Sentiment":0.01,
+        "FMNIST": 0.01,
+        'ISIC': 0.01,
+        "Sentiment": 0.01,
         "Heart": 0.01,
-        "mimic":0.01
+        "mimic": 0.01
     }
 }
 
+# --- Datasets using Attention Models ---
+# List of datasets that use transformer/attention-based models
+# This might influence model loading or specific processing steps.
 ATTENTION_MODELS = ['Sentiment', 'mimic']
-
