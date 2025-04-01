@@ -8,7 +8,9 @@ code/slurm*
 code/archive
 *.ipynb
 workbooks/
-code/logs/
+code/evaluation/logs/
+code/layer_metrics/logs/
 __pycache__/
 .ipynb_checkpoints/
 !results/
+*.txt

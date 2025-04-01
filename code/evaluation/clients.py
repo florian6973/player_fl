@@ -80,15 +80,15 @@ class MetricsCalculator:
     def __init__(self, dataset_name):
         self.dataset_name = dataset_name
 
-    def process_predictions(self, predictions, labels):
+    def process_predictions(self, labels, predictions):
         """Process model predictions"""
         predictions = predictions.cpu().numpy()
         labels = labels.cpu().numpy()
         predictions = predictions.argmax(axis=1)
             
-        return predictions, labels
+        return labels, predictions
 
-    def calculate_metrics(self, predictions, labels):
+    def calculate_metrics(self, labels, predictions):
         """Calculate multiple classification metrics."""
         return {
             'accuracy': (predictions == labels).mean(),
@@ -189,8 +189,8 @@ class Client:
                     loss = state.criterion(outputs, batch_y)
                     total_loss += loss.item()
                     
-                    predictions, labels = self.metrics_calculator.process_predictions(
-                        outputs, batch_y
+                    labels, predictions = self.metrics_calculator.process_predictions(
+                        batch_y, outputs
                     )
                     all_predictions.extend(predictions)
                     all_labels.extend(labels)

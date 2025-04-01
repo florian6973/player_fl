@@ -24,7 +24,7 @@ def main():
     if args.runs is None:
         default_params = get_parameters_for_dataset(args.dataset)
         # Use 'runs_analytics' if defined in defaults, else 'runs', else 1
-        num_runs = default_params.get('runs_analytics', default_params.get('runs', 1))
+        num_runs = 5
         print(f"Number of runs not specified, using default for {args.dataset}: {num_runs}")
     else:
         num_runs = args.runs

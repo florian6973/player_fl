@@ -9,11 +9,12 @@ import random
 import numpy as np
 import pandas as pd
 import sys
+import traceback
 sys.path.append(f'{ROOT_DIR}/code')
 sys.path.append(f'{ROOT_DIR}/code/datasets')
 sys.path.append(f'{EVAL_DIR}')
 sys.path.append(f'{METRIC_DIR}')
-from torch.utils.data  import DataLoader, Dataset, Subset
+from torch.utils.data  import DataLoader, Dataset, Subset, RandomSampler
 from torchvision.transforms import transforms
 from torchvision.datasets import FashionMNIST, EMNIST, CIFAR10
 import warnings
@@ -51,6 +52,8 @@ from netrep.metrics import LinearMetric
 from netrep.conv_layers import convolve_metric
 import scipy.stats
 from itertools import combinations
+from torch.linalg import svdvals # Use this for consistency
+from torch.utils.data import RandomSampler, DataLoader # Added for data sampling fix
 
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 N_WORKERS = 4

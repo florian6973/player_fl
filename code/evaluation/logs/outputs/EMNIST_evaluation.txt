@@ -1,2 +1,0 @@
-Evaluating local model with best hyperparameters
-Error running experiments: [Errno 2] No such file or directory: '/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl/code/results_2/evaluation/EMNIST_evaluation.pkl'

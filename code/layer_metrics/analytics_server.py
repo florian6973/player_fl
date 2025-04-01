@@ -3,113 +3,150 @@ import sys
 sys.path.append(f'{ROOT_DIR}/code')
 from helper import move_to_device, cleanup_gpu 
 from configs import *
-from clients import SiteData, ModelState
+from clients import SiteData, ModelState, MetricsCalculator
 from analytics_clients import TrainerConfig, AnalyticsClient 
 from servers import Server
 from layer_analytics  import *
 
 
-class AnalyticsServer(Server): # Inherit from Server or another specific server type
+# Base Server classes (keep as is unless they interfere)
+class AnalyticsServer(Server):
     """
     Extends a Federated Learning Server to orchestrate model analysis across clients.
+    FIX: Uses RandomSampler and fractional sampling for probe data.
     """
     def __init__(self, config: TrainerConfig, globalmodelstate: ModelState):
         super().__init__(config, globalmodelstate)
-        self.analysis_results = {'local': {}, 'similarity': {}} # Store results here
-        self.probe_data_batch = None # Store the consistent batch for similarity
-        self.num_cpus_analysis = config.num_cpus if hasattr(config, 'num_cpus') else 4 # Get CPUs from config
+        self.analysis_results = {'grad_hess': {}, 'similarity': {}}
+        self.probe_data_batch = None
+        self.num_cpus_analysis = config.num_cpus if hasattr(config, 'num_cpus') else 4
+        # Store config parameters needed later
+        self.num_sites_config = config.num_clients # Assuming num_clients is the total expected
+        self.batch_size_config = config.batch_size
 
-    # --- Override Client Creation ---
-    def _create_client(self, clientdata: SiteData, modelstate: ModelState, personal_model: bool) -> AnalyticsClient:
-        """
-        Override to create AnalyticsClient instances instead of base Client.
-        Make sure the base class you inherit from (`FLServer` here) also uses `_create_client`.
-        """
+    def _create_client(self, clientdata: SiteData, modelstate: ModelState, personal_model=False) -> AnalyticsClient:
+        """Creates the fixed AnalyticsClient."""
         print(f"AnalyticsServer: Creating AnalyticsClient for site {clientdata.site_id}")
-        # Ensure MetricsCalculator is available or passed correctly
-        # Assuming MetricsCalculator is accessible via config or created here
+        # Ensure the config passed has requires_personal_model if needed by client __init__
+        if not hasattr(self.config, 'requires_personal_model'):
+            # Add a default if missing from original config for AnalyticsClient init
+             print("Warning: TrainerConfig missing 'requires_personal_model', defaulting to False for client creation.")
+             self.config.requires_personal_model = False
 
         return AnalyticsClient(
             config=self.config,
             data=clientdata,
-            modelstate=modelstate.copy(), # Give each client a copy of the initial state
-            metrics_calculator=None,
-            personal_model=False
+            modelstate=modelstate.copy(),
+            metrics_calculator=MetricsCalculator(self.config.dataset_name),
+            personal_model=self.config.requires_personal_model # Pass the flag
         )
 
-    # --- Analytics Orchestration ---
-    def _prepare_probe_data(self, num_samples_per_site: int = 16):
+    # --- MODIFIED Probe Data Preparation ---
+    def _prepare_probe_data(self, seed: int = 42): # Add seed for reproducibility
         """
         Creates a consistent data batch for activation similarity analysis by
-        sampling from each client's training data. Should only be called once.
+        sampling from each client's training data using RandomSampler and fractional sampling.
+        FIX: Matches old code's _prepare_data_multiple_sites logic.
         """
         if self.probe_data_batch is not None:
-            return # Already prepared
+            print("Server: Probe data batch already prepared.")
+            return
 
-        print("Server: Preparing probe data batch for similarity analysis...")
+        print(f"Server: Preparing probe data batch for similarity analysis (seed={seed})...")
         if not self.clients:
             print("Warning: No clients available to prepare probe data.")
             return
 
         all_features_list = []
         all_labels_list = []
-        feature_type = None # To handle tuples vs tensors
+        feature_type = None
+        num_active_clients = len(self.clients) # Use actual number of clients connected
 
-        total_samples_needed = num_samples_per_site * len(self.clients)
-        samples_collected = 0
+        # Determine samples per site based on actual clients and configured batch size
+        # Mimic: samples = len(batch_label) // self.num_sites
+        # We use the configured batch_size as a proxy for the batch length
+        samples_per_site = self.batch_size_config // num_active_clients if num_active_clients > 0 else 0
+        if samples_per_site == 0:
+            print(f"Warning: Calculated samples_per_site is 0 (batch_size={self.batch_size_config}, clients={num_active_clients}). Setting to 1.")
+            samples_per_site = 1
+
+        print(f"Server: Aiming for {samples_per_site} samples per client for probe data.")
 
         for client_id, client in self.clients.items():
+            if client.data.train_loader is None or client.data.train_loader.dataset is None or len(client.data.train_loader.dataset) == 0:
+                 print(f"Warning: Client {client_id} train_loader or dataset empty/None. Skipping for probe data.")
+                 continue
+
             try:
-                # Make sure dataloader is not empty
-                if len(client.data.train_loader.dataset) == 0:
-                     print(f"Warning: Client {client_id} dataset is empty. Skipping for probe data.")
-                     continue
+                # --- Use RandomSampler like old code ---
+                sampler = RandomSampler(client.data.train_loader.dataset, replacement=True, num_samples=client.data.train_loader.batch_size)
+                # Use a consistent generator for the sampler across clients for this specific probe data prep
+                # Note: This makes the *selection* of the batch reproducible if loaders are deterministic
+                # However, the old code didn't explicitly seed the RandomSampler *per client* like this.
+                # It relied on the global seed affecting `next(iter(random_loader))`.
+                # Let's stick closer to the original: Create loader then get next batch.
+                # We need a seeded way to get *one* batch per client randomly.
+                g = torch.Generator()
+                g.manual_seed(seed + int(client.data.site_id.split('_')[-1])) # Seed per client offset by site_id
 
-                data_iter = iter(client.data.train_loader)
-                features, labels = next(data_iter)
+                random_loader = DataLoader(
+                    dataset=client.data.train_loader.dataset,
+                    batch_size=client.data.train_loader.batch_size,
+                    sampler=RandomSampler(client.data.train_loader.dataset, replacement=True, generator=g), # Seeded sampler
+                    collate_fn=client.data.train_loader.collate_fn,
+                    num_workers=0,
+                    pin_memory=client.data.train_loader.pin_memory,
+                    generator=g # Pass generator to loader too
+                )
+                batch_features, batch_labels = next(iter(random_loader))
+                del random_loader, sampler, g # Cleanup
 
-                # Determine feature type from first client
+                # Determine feature type from first successful client
                 if feature_type is None:
-                    feature_type = type(features)
+                    feature_type = type(batch_features)
 
-                # Take specified number of samples
-                num_samples = min(num_samples_per_site, len(labels))
-                if num_samples == 0: continue
+                # Take specified number of samples (fraction of the random batch)
+                num_samples_to_take = min(samples_per_site, len(batch_labels))
+                if num_samples_to_take == 0:
+                    print(f"Warning: Client {client_id} yielded 0 samples to take for probe data.")
+                    continue
 
+                # Slice the features and labels
                 if feature_type == tuple:
                     # Handle tuple features (e.g., input_ids, attention_mask)
-                    sampled_features = tuple(f[:num_samples] for f in features)
+                    sampled_features = tuple(f[:num_samples_to_take].cpu() for f in batch_features) # Move to CPU
                 elif feature_type == torch.Tensor:
-                    sampled_features = features[:num_samples]
+                    sampled_features = batch_features[:num_samples_to_take].cpu() # Move to CPU
                 else:
                     print(f"Warning: Unsupported feature type {feature_type} for client {client_id}. Skipping.")
                     continue
 
-                sampled_labels = labels[:num_samples]
+                sampled_labels = batch_labels[:num_samples_to_take].cpu() # Move to CPU
 
                 all_features_list.append(sampled_features)
                 all_labels_list.append(sampled_labels)
-                samples_collected += num_samples
+                # print(f" взяли {num_samples_to_take} образцов с клиента {client_id}") # DEBUG: Took samples from client
 
             except StopIteration:
-                print(f"Warning: Client {client_id} train_loader exhausted early. Skipping for probe data.")
+                print(f"Warning: Client {client_id} random_loader failed (StopIteration) during probe data prep.")
                 continue
             except Exception as e:
                 print(f"Error getting probe data from client {client_id}: {e}")
+                traceback.print_exc()
                 continue
 
         if not all_labels_list:
-             print("Error: Could not collect any probe data samples.")
+             print("Error: Could not collect any probe data samples from clients.")
              return
 
-        # Combine samples into a single batch
+        # Combine samples into a single batch (on CPU)
         combined_labels = torch.cat(all_labels_list, dim=0)
 
         if feature_type == tuple:
-            # Combine tuple features element-wise
             num_feature_elements = len(all_features_list[0])
             combined_features_tuple = []
             for i in range(num_feature_elements):
+                # Ensure all tensors in the tuple element are concatenated
                 combined_features_tuple.append(torch.cat([f[i] for f in all_features_list], dim=0))
             combined_features = tuple(combined_features_tuple)
         elif feature_type == torch.Tensor:
@@ -118,99 +155,116 @@ class AnalyticsServer(Server): # Inherit from Server or another specific server 
             print("Error: Could not combine features due to unsupported type.")
             return
 
-
         self.probe_data_batch = (combined_features, combined_labels)
-        print(f"Server: Probe data batch created with {len(combined_labels)} samples.")
+        print(f"Server: Probe data batch created with {len(combined_labels)} samples from {len(all_labels_list)} clients.")
 
 
-    def run_analysis(self, round_identifier: str):
+    def run_analysis(self, round_identifier: str, seed: int): # Require seed
         """
-        Orchestrates the analysis (local metrics and similarity) across all clients
-        for a given round identifier (e.g., 'initial', 'final', 'round_10').
+        Runs the analysis pipeline for a given round/identifier.
+        FIX: Passes seed to clients, prepares probe data with seed.
         """
+        print(f"--- Server: Starting Analysis for '{round_identifier}' (seed={seed}) ---")
+        start_time = time.time()
+
         if not self.clients:
             print("Server: No clients to run analysis on.")
             return
 
-        print(f"\n--- Server: Starting Analysis for '{round_identifier}' ---")
-        start_time = time.time()
+        # --- 1. Prepare Probe Data (using seed) ---
+        # Only prepares if self.probe_data_batch is None
+        self._prepare_probe_data(seed=seed) # Pass seed for reproducibility
 
-        # Determine if personal models should be used for analysis
-        # Based on server's config or potentially the algorithm state
-        use_personal = self.personal # Use the server's 'personal' flag
-
-        # 1. Prepare Probe Data (if not already done)
-        self._prepare_probe_data()
-
-        # 2. Local Metrics Calculation
-        print("Server: Requesting local metrics from clients...")
+        # --- 2. Local Metrics Calculation (Hessian etc.) ---
+        print(f"Server: Requesting local metrics from {len(self.clients)} clients...")
         current_local_metrics = {}
         for client_id, client in self.clients.items():
             try:
+                # Pass the SAME seed to each client for this analysis round
+                # This seed controls both the data sample AND the HVP vector 'v'
                 metrics_df = client.run_local_metrics_calculation(
-                    use_personal_model=use_personal,
+                    seed=seed
                 )
-                current_local_metrics[client_id] = metrics_df
+                current_local_metrics[client_id] = metrics_df if metrics_df is not None else pd.DataFrame()
             except Exception as e:
                 print(f"Error getting local metrics from client {client_id}: {e}")
-                current_local_metrics[client_id] = pd.DataFrame() # Store empty df on error
+                traceback.print_exc()
+                current_local_metrics[client_id] = pd.DataFrame()
 
-        self.analysis_results['local'][round_identifier] = current_local_metrics
+        # Store results for this round
+        self.analysis_results['grad_hess'][round_identifier] = current_local_metrics
         print("Server: Local metrics collected.")
 
-        # 3. Activation Similarity Calculation
+        # --- 3. Activation Similarity Calculation ---
         if self.probe_data_batch is None:
             print("Server: Skipping similarity calculation - probe data not available.")
+            self.analysis_results['similarity'][round_identifier] = {} # Store empty dict
         else:
-            print("Server: Requesting activations from clients...")
+            print(f"Server: Requesting activations from {len(self.clients)} clients...")
             all_client_activations: Dict[str, List[Tuple[str, np.ndarray]]] = {}
             for client_id, client in self.clients.items():
                 try:
-                    # Ensure probe batch is on correct device or handle in client/analytics
+                    # The probe data batch itself is now consistent due to _prepare_probe_data
                     activations = client.run_activation_extraction(
                         probe_data_batch=self.probe_data_batch,
-                        use_personal_model=use_personal
                     )
-                    all_client_activations[client_id] = activations
+                    # Filter out potential None or empty lists robustly
+                    if activations: # Check if list is not empty
+                         all_client_activations[client_id] = activations
+                    else:
+                         print(f"Warning: Client {client_id} returned no activations.")
+                         all_client_activations[client_id] = [] # Ensure key exists but is empty list
+
                 except Exception as e:
                     print(f"Error getting activations from client {client_id}: {e}")
-                    all_client_activations[client_id] = [] # Store empty list on error
-
+                    traceback.print_exc()
+                    all_client_activations[client_id] = []
 
             print("Server: Calculating activation similarity...")
-            # Filter out clients that failed activation extraction
+            # Filter dict for clients that actually provided activations
             valid_activations = {cid: act for cid, act in all_client_activations.items() if act}
 
             if len(valid_activations) >= 2:
-                 similarity_results = calculate_activation_similarity(
+                # Pass the probe batch ONLY for potential mask extraction inside calculate_activation_similarity
+                similarity_results = calculate_activation_similarity(
                     activations_dict=valid_activations,
                     probe_data_batch=self.probe_data_batch,
-                    num_sites=len(valid_activations),
                     cpus=self.num_cpus_analysis
-                 )
-                 self.analysis_results['similarity'][round_identifier] = similarity_results
-                 print("Server: Activation similarity calculated.")
+                    )
+                self.analysis_results['similarity'][round_identifier] = similarity_results
+                print("Server: Activation similarity calculated.")
             else:
-                 print("Server: Skipping similarity calculation - less than 2 clients provided valid activations.")
-                 self.analysis_results['similarity'][round_identifier] = {}
-
+                print(f"Server: Skipping similarity calculation - only {len(valid_activations)} clients provided valid activations.")
+                self.analysis_results['similarity'][round_identifier] = {} # Store empty dict
 
         end_time = time.time()
-        print(f"--- Server: Analysis for '{round_identifier}' finished ({end_time - start_time:.2f}s) ---")
+        print(f"--- Server: Analysis for '{round_identifier}' finished ({end_time - start_time:.2f} sec) ---")
 
 
     def save_analysis_results(self, filepath: str):
         """Saves the collected analysis results to a pickle file."""
         print(f"Server: Saving analysis results to {filepath}...")
         try:
-            # Ensure directory exists
             os.makedirs(os.path.dirname(filepath), exist_ok=True)
+            # Convert DataFrames to dicts for potentially better pickle compatibility across envs? Optional.
+            # results_to_save = copy.deepcopy(self.analysis_results)
+            # for round_id, client_metrics in results_to_save['grad_hess'].items():
+            #     for client_id, df in client_metrics.items():
+            #         if isinstance(df, pd.DataFrame):
+            #             results_to_save['grad_hess'][round_id][client_id] = df.to_dict(orient='index')
+            # for round_id, layer_sim in results_to_save['similarity'].items():
+            #      for layer_name, df in layer_sim.items():
+            #           if isinstance(df, pd.DataFrame):
+            #                results_to_save['similarity'][round_id][layer_name] = df.to_dict(orient='index')
+
+            # Save the original structure (with DataFrames)
             with open(filepath, 'wb') as f:
-                pickle.dump(self.analysis_results, f)
+                 pickle.dump(self.analysis_results, f)
+
             print("Server: Analysis results saved successfully.")
         except Exception as e:
             print(f"Error saving analysis results: {e}")
-
+            traceback.print_exc()
 
 
 class AnalyticsFLServer(AnalyticsServer):

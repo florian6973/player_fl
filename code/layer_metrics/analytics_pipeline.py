@@ -124,8 +124,9 @@ class AnalyticsExperiment:
                 print(f"!!! Analytics Run {run} failed: {e} !!!")
                 # Save partial data if available
                 if run_data:
-                     self.results_manager.update_run_results(run, run_data)
-                     self.logger.warning(f"Saved partial results for failed run {run}.")
+                     pass
+                     #self.results_manager.update_run_results(run, run_data)
+                     #self.logger.warning(f"Saved partial results for failed run {run}.")
                 break # Stop experiment if a run fails critically
             finally:
                 cleanup_gpu()
@@ -145,9 +146,7 @@ class AnalyticsExperiment:
             print(f"  Analyzing {server_type}...")
             server = None # Ensure server is reset
             try:
-                lr = self.default_params['learning_rate'] # Fallback
-                self.logger.warning(f"Run {run_number}: Could not find best LR for {server_type}. Using default: {lr}")
-
+                lr = self.default_params['learning_rate']
                 hyperparams = {'learning_rate': lr}
 
                 # 2. Create Server Instance (using consistent naming)
@@ -158,7 +157,7 @@ class AnalyticsExperiment:
                 self._add_clients_to_server(server, client_dataloaders)
 
                 # 4. Train and Collect Analytics (replaces _train_and_evaluate)
-                analysis_results = self._train_and_analyze(server)
+                analysis_results = self._train_and_analyze(server, run_number)
 
                 # Store the collected analytics results
                 run_tracking[server_type] = analysis_results
@@ -173,11 +172,11 @@ class AnalyticsExperiment:
                 time.sleep(1) # Small delay
 
         return run_tracking # Return results dict for this run
-
-    def _train_and_analyze(self, server: AnalyticsServer) -> dict:
+    
+    def _train_and_analyze(self, server: AnalyticsServer, seed: int) -> dict:
         """Handles training and running analysis hooks for a given server."""
         self.logger.info(f"Running initial analysis for {server.server_type}...")
-        server.run_analysis(round_identifier='initial')
+        server.run_analysis(round_identifier='initial', seed = seed)
 
         self.logger.info(f"Starting training for {server.server_type} ({server.config.rounds} rounds)...")
         num_rounds = server.config.rounds
@@ -185,6 +184,9 @@ class AnalyticsExperiment:
             try:
                 # Standard training round
                 _ = server.train_round()
+                if round_num == 0:
+                    self.logger.info(f"Running initial analysis for {server.server_type}...")
+                    server.run_analysis(round_identifier='initial', seed = seed)
 
                 # Handle special final round logic if applicable
                 is_final_round = (round_num + 1 == num_rounds)
@@ -204,7 +206,7 @@ class AnalyticsExperiment:
         self.logger.info(f"Training finished for {server.server_type}.")
 
         self.logger.info(f"Running final analysis for {server.server_type}...")
-        server.run_analysis(round_identifier='final')
+        server.run_analysis(round_identifier='final', seed = seed)
 
         # Return the collected analysis results
         return copy.deepcopy(server.analysis_results)
