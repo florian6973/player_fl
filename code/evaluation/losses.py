@@ -6,7 +6,9 @@ class MulticlassFocalLoss(nn.Module):
         super(MulticlassFocalLoss, self).__init__()
         self.gamma = torch.tensor(gamma).to(device)
         self.reduction = reduction
-        if isinstance(alpha, (list, tuple)):
+        if isinstance(alpha, torch.Tensor):
+            self.alpha = alpha
+        elif isinstance(alpha, (list, tuple)):
             self.alpha = torch.tensor(alpha).to(device)
         else:  
             self.alpha = torch.full((num_classes,), alpha, dtype=torch.float32).to(device)

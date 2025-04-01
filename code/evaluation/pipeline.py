@@ -73,7 +73,6 @@ class Experiment:
         self.config = config
         self.root_dir = ROOT_DIR
         self.results_manager = ResultsManager(
-            root_dir=ROOT_DIR,
             dataset=self.config.dataset,
             experiment_type=self.config.experiment_type
         )
@@ -438,7 +437,7 @@ class Experiment:
         # Initialize preprocessor (handles transformations, splitting, DataLoader creation)
         # Pass dataset-specific alpha if needed for non-IID simulation during preprocessing
         alpha = DATASET_ALPHA.get(self.config.dataset)
-        preprocessor = DataPreprocessor(self.config.dataset, batch_size, alpha=alpha, num_clients=self.default_params['num_clients'])
+        preprocessor = DataPreprocessor(self.config.dataset, batch_size)
 
         # Use UnifiedDataLoader to load the raw dataset (potentially pre-split by site)
         loader = UnifiedDataLoader(root_dir=self.root_dir, dataset_name=self.config.dataset)
@@ -539,7 +538,7 @@ class Experiment:
             'EMNIST': nn.CrossEntropyLoss(),
             'CIFAR': nn.CrossEntropyLoss(),
             "FMNIST": nn.CrossEntropyLoss(),
-            # Use Focal Loss for potentially imbalanced datasets
+            # Use Focal Loss for imbalanced datasets
             "ISIC": MulticlassFocalLoss(num_classes=num_classes, alpha=loss_weights_isic, gamma=1).to(DEVICE),
             "Sentiment": nn.CrossEntropyLoss(),
             "Heart": MulticlassFocalLoss(num_classes=num_classes, alpha=loss_weights_heart, gamma=3).to(DEVICE),

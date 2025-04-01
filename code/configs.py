@@ -55,8 +55,7 @@ from functools import wraps
 
 # --- Core Directories ---
 _CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-_CODE_DIR = os.path.dirname(_CURRENT_DIR)
-_PROJECT_ROOT = os.path.dirname(_CODE_DIR)
+_PROJECT_ROOT  = os.path.dirname(_CURRENT_DIR)
 ROOT_DIR = _PROJECT_ROOT
 DATA_DIR = f'{ROOT_DIR}/data_2'       # Directory containing datasets
 DATA_PROCESSING_DIR = f'{ROOT_DIR}/code/datasets' # Directory for data preproccessing
