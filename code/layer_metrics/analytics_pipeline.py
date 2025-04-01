@@ -6,10 +6,20 @@ from helper import *
 from dataset_processing import DataPreprocessor, UnifiedDataLoader
 import models
 from losses import MulticlassFocalLoss
-from performance_logging import performance_logger
+from performance_logging import PerformanceLogger
 from analytics_server import *
 from analytics_clients import *
 
+
+performance_logger = PerformanceLogger(log_dir='code/layer_metrics/logs/python_logs')
+
+def get_client_logger(client_id, algorithm_type=None):
+    """Get client logger with optional algorithm type."""
+    return performance_logger.get_logger(f"client_{client_id}", algorithm_type)
+
+def get_server_logger(algorithm_type=None):
+    """Get server logger with optional algorithm type."""
+    return performance_logger.get_logger("server", algorithm_type)
 
 # Define which algorithms to run analytics on
 ALGORITHMS_FOR_ANALYSIS = ['local', 'fedavg'] # Example subset

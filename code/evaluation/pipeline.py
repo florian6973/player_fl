@@ -11,6 +11,17 @@ from servers import *
 from performance_logging import *
 import time
 
+performance_logger = PerformanceLogger()
+
+def get_client_logger(client_id, algorithm_type=None):
+    """Get client logger with optional algorithm type."""
+    return performance_logger.get_logger(f"client_{client_id}", algorithm_type)
+
+def get_server_logger(algorithm_type=None):
+    """Get server logger with optional algorithm type."""
+    return performance_logger.get_logger("server", algorithm_type)
+
+
 class Experiment:
     def __init__(self, config: ExperimentConfig):
         self.config = config
@@ -227,8 +238,7 @@ class Experiment:
             'fedlama':FedLAMAServer,
             'pfedla':pFedLAServer,
             'layerpfl':LayerPFLServer,
-            'layerpfl_minus_1':LayerPFLServer,
-            'layerpfl_plus_1':LayerPFLServer,
+            'layerpfl_random':LayerPFLServer,
         }
 
         server_class = server_mapping[server_type]

@@ -6,8 +6,8 @@ from configs import *
 
 
 class PerformanceLogger:
-    def __init__(self, log_dir='logs/python_logs'):
-        self.log_dir = f'{EVAL_DIR}/{log_dir}'
+    def __init__(self, log_dir='code/evaluation/logs/python_logs'):
+        self.log_dir = f'{ROOT_DIR}/{log_dir}'
         os.makedirs(log_dir, exist_ok=True)
         self.loggers = {}
         
@@ -59,13 +59,3 @@ def log_gpu_stats(logger, prefix=""):
             f"Allocated={allocated:.1f}MB, "
             f"Reserved={reserved:.1f}MB"
         )
-
-performance_logger = PerformanceLogger()
-
-def get_client_logger(client_id, algorithm_type=None):
-    """Get client logger with optional algorithm type."""
-    return performance_logger.get_logger(f"client_{client_id}", algorithm_type)
-
-def get_server_logger(algorithm_type=None):
-    """Get server logger with optional algorithm type."""
-    return performance_logger.get_logger("server", algorithm_type)

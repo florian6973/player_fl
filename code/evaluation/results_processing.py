@@ -1,5 +1,5 @@
 
-from configs import ROOT_DIR, EVAL_DIR
+from configs import ROOT_DIR, EVAL_DIR, RESULTS_DIR
 import sys
 sys.path.append(f'{ROOT_DIR}/code')
 sys.path.append(f'{EVAL_DIR}')
@@ -56,11 +56,8 @@ def get_lr_results(DATASET):
 
 
 def load_eval_results(DATASET):
-    with open(f'{ROOT_DIR}/results/evaluation/{DATASET}_evaluation.pkl', 'rb') as f :
+    with open(f'{RESULTS_DIR}/evaluation/{DATASET}_evaluation.pkl', 'rb') as f :
         results = pickle.load(f)
-    results.pop('layerpfl_plus_1', None)
-    if 'layerpfl_minus_1' in results:
-        results['layerpfl_random'] = results.pop('layerpfl_minus_1')
     return results
 
 def bootstrap_ci(data: np.ndarray, n_bootstrap: int = 1000, 

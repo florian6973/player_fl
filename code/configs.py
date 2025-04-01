@@ -49,7 +49,7 @@ from sklearn import metrics
 from transformers import BertModel, BertTokenizer, AutoTokenizer, AutoModel
 import argparse 
 from netrep.metrics import LinearMetric
-from netrep.conv_layers import convolve_metric
+from netrep import convolve_metric
 import scipy.stats
 from itertools import combinations
 from torch.linalg import svdvals # Use this for consistency
@@ -70,8 +70,7 @@ ALGORITHMS = [
     'fedlama', 
     'pfedla', 
     'layerpfl',
-    'layerpfl_minus_1',
-    'layerpfl_plus_1'
+    'layerpfl_random'
 ]
 DATASETS = [
     'FMNIST',
@@ -198,17 +197,8 @@ LAYERS_TO_FEDERATE_DICT = {
             "mimic":['token_embedding_table1','position_embedding_table1', 'attention1', 'proj1', 'fc1']
             },
 
-    "layerpfl_minus_1":{
-            'EMNIST':['layer1.', 'layer2.'],
-            'CIFAR':['layer1.', 'layer2.', 'layer3.', 'layer4.'],
-            "FMNIST":['layer1.', 'layer2.'],
-            'ISIC':['layer1.', 'layer2.', 'layer3.', 'layer4.'],
-            "Sentiment":['token_embedding_table1', 'position_embedding_table1'],
-            "Heart": ['fc1'],
-            "mimic":['token_embedding_table1','position_embedding_table1']
-            },
-
-    "layerpfl_plus_1":{
+    # Only select a subsect of these layers
+    "layerpfl_random":{
             'EMNIST':['layer1.', 'layer2.', 'layer3.', 'fc1'],
             'CIFAR':['layer1.', 'layer2.', 'layer3.', 'layer4.', 'layer5.', 'fc1'],
             "FMNIST":['layer1.', 'layer2.', 'layer3.', 'fc1'],
@@ -217,6 +207,7 @@ LAYERS_TO_FEDERATE_DICT = {
             "Heart": ['fc1', 'fc2', 'fc3'],
             "mimic":['token_embedding_table1','position_embedding_table1', 'attention1', 'proj1', 'fc1']
             },
+
             
 }
 

@@ -126,8 +126,8 @@ for dataset in "${datasets[@]}"; do
 #SBATCH --mem=60G              # Increased memory assumption for analytics
 #SBATCH --gres=gpu:1           # Analytics might need GPU for model runs/backprop
 #SBATCH --time=48:00:00        # Increased time assumption for analytics
-#SBATCH --output=${LOG_OUTPUT_DIR}/${job_name}.%j.txt   # Added %j for job ID
-#SBATCH --error=${LOG_ERROR_DIR}/${job_name}.%j.txt    # Added %j for job ID
+#SBATCH --output=${LOG_OUTPUT_DIR}/${job_name}.txt  
+#SBATCH --error=${LOG_ERROR_DIR}/${job_name}.txt  
 
 echo "Starting job ${job_name} on \$(hostname)"
 echo "SLURM Job ID: \${SLURM_JOB_ID}"

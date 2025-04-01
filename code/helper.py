@@ -27,10 +27,25 @@ def get_algorithm_config(server_type, dataset_name):
     if server_type == 'babu':
         params['layers_to_include'] = LAYERS_TO_FEDERATE_DICT[server_type][dataset_name]
     
-    if server_type in ['layerpfl', 'layerpfl_minus_1', 'layerpfl_plus_1']:
+    if server_type == 'layerpfl':
         params['layers_to_include'] = LAYERS_TO_FEDERATE_DICT[server_type][dataset_name]
-        params['reg_param'] = REG_PARAMS['layerpfl'][dataset_name]    # Optional, not currently used
-    
+        params['reg_param'] = REG_PARAMS['layerpfl'][dataset_name]  # Optional, not currently used
+
+    elif server_type == 'layerpfl_random':
+        # Randomly select a prefix of layers, ensuring it's not identical to either:
+        # - the fixed `layerpfl` configuration
+        # - the full list of layers (i.e., all layers federated)
+        fixed_layers = LAYERS_TO_FEDERATE_DICT['layerpfl'][dataset_name]
+        random_layers = LAYERS_TO_FEDERATE_DICT[server_type][dataset_name]
+        
+        while True:
+            idx = np.random.randint(len(random_layers))
+            selected_layers = random_layers[:idx+1] # 0-based indexing and we include up until the selected layer
+            if (selected_layers != fixed_layers) and (selected_layers != random_layers):
+                break
+
+        params['layers_to_include'] = selected_layers
+        
     # FedLP specific parameters
     elif server_type == 'fedlp':
         params['layer_preserving_rate'] = LAYER_PRESERVATION_RATES[dataset_name]
