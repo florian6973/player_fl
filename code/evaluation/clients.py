@@ -1166,7 +1166,7 @@ class pFedLAClient(Client):
         updates later. pFedLA typically operates on the 'global_state' slot,
         as the personalization happens via the server generating the full model state.
         """
-        super().__init__(*args, **kwargs, personal_model=False) # Explicitly force personal_model=False
+        super().__init__(*args, **kwargs)
 
         # Store the initial parameters received from the server at the start of the round.
         self.initial_params = OrderedDict()

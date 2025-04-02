@@ -614,6 +614,7 @@ class Experiment:
             'fedlama': FedLAMAServer,
             'pfedla': pFedLAServer,
             'layerpfl': LayerPFLServer,
+            'layerpfl2': LayerPFLServer,
             'layerpfl_random': LayerPFLServer, # Uses the same server class as layerpfl
         }
 

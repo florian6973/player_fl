@@ -5,53 +5,55 @@ Defines directory paths, constants, default hyperparameters,
 algorithm-specific settings (like layers to federate, regularization parameters),
 and imports common libraries used throughout the project.
 """
-
-import torch
-import torch.nn as nn
-import random
-import numpy as np
-import pandas as pd
-import sys
-import traceback
-from torch.utils.data import DataLoader, Dataset, Subset, RandomSampler
-from torchvision.transforms import transforms
-from torchvision.datasets import FashionMNIST, EMNIST, CIFAR10
 import warnings
-from PIL import Image
-from sklearn.preprocessing import StandardScaler
-import albumentations # For image augmentations
-from sklearn.model_selection import train_test_split
-import copy
-from collections import OrderedDict
-from sklearn.metrics import f1_score, matthews_corrcoef, balanced_accuracy_score
-from typing import List, Dict, Optional, Tuple, Union, Iterator, Iterable
-from dataclasses import dataclass, field
-import torch.nn.functional as F
-import pickle
-import json
-import time
-import logging
-from datetime import datetime
-from functools import wraps
+# --- Suppress Warnings ---
+# Ignore specific warnings for cleaner output
+warnings.simplefilter(action='ignore', category=FutureWarning)
+warnings.simplefilter(action='ignore', category=UserWarning)
 import os
 import gc
-from concurrent.futures import ProcessPoolExecutor, as_completed, wait
-import torch.multiprocessing as mp
-from multiprocessing import Pool
-from torch.nn.utils.rnn import pad_sequence
-from torch import Tensor
-from tqdm import tqdm # Progress bars
-from tqdm.contrib.concurrent import process_map # Progress bars for parallel processing
-from sklearn import metrics # General metrics utilities
-from transformers import BertModel, BertTokenizer, AutoTokenizer, AutoModel
+import sys
+import copy
+import time
+import json
+import random
+import logging
+import pickle
+import traceback
 import argparse
-from netrep.metrics import LinearMetric # Representation similarity metrics
-from netrep import convolve_metric # Representation similarity metrics
-import scipy.stats
-from itertools import combinations
-from torch.linalg import svdvals
+from typing import List, Dict, Optional, Tuple, Union, Iterator, Iterable
+from datetime import datetime
 from functools import wraps
-
+from collections import OrderedDict
+from dataclasses import dataclass, field
+from itertools import combinations
+from concurrent.futures import ProcessPoolExecutor, as_completed, wait
+from multiprocessing import Pool
+import numpy as np
+import pandas as pd
+import scipy.stats
+import scipy.stats as stats
+from tqdm import tqdm  # Progress bars
+from tqdm.contrib.concurrent import process_map  # Progress bars for parallel processing
+from PIL import Image
+from sklearn import metrics  # General metrics utilities
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import f1_score, matthews_corrcoef, balanced_accuracy_score
+from netrep.metrics import LinearMetric  # Representation similarity metrics
+from netrep import convolve_metric  # Representation similarity metrics
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+from torch import Tensor
+from torch.linalg import svdvals
+from torch.utils.data import DataLoader, Dataset, Subset, RandomSampler
+from torch.nn.utils.rnn import pad_sequence
+import torch.multiprocessing as mp
+from torchvision.transforms import transforms
+from torchvision.datasets import FashionMNIST, EMNIST, CIFAR10
+from transformers import BertModel, BertTokenizer, AutoTokenizer, AutoModel
+import albumentations  # For image augmentations
 
 # --- Core Directories ---
 _CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -70,11 +72,6 @@ sys.path.append(f'{DATA_PROCESSING_DIR}')
 sys.path.append(f'{EVAL_DIR}')
 sys.path.append(f'{METRIC_DIR}')
 
-# --- Suppress Warnings ---
-# Ignore specific warnings for cleaner output
-warnings.simplefilter(action='ignore', category=FutureWarning)
-warnings.simplefilter(action='ignore', category=UserWarning)
-
 # --- Global Settings ---
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu' # Set computation device
 N_WORKERS = 4 # Default number of workers for DataLoader
@@ -92,6 +89,7 @@ ALGORITHMS = [
     'fedlama',          # FedLAMA (layer-wise adaptive aggregation frequency)
     'pfedla',           # pFedLA (layer-wise personalized aggregation via hypernetwork)
     'layerpfl',         # LayerPFL (FedAvg on a fixed subset of layers)
+    'layerpfl2',
     'layerpfl_random'   # LayerPFL (FedAvg on a randomly chosen prefix subset of layers)
 ]
 
@@ -215,8 +213,17 @@ LAYERS_TO_FEDERATE_DICT = {
         "FMNIST": ['layer1.', 'layer2.', 'layer3.'],
         'ISIC': ['layer1.', 'layer2.', 'layer3.', 'layer4.', 'layer5.'],
         "Sentiment": ['token_embedding_table1', 'position_embedding_table1', 'attention1', 'proj1'],
-        "Heart": ['fc1', 'fc2'],
+        "Heart": ['fc1'],
         "mimic": ['token_embedding_table1', 'position_embedding_table1', 'attention1', 'proj1']
+    },
+    "layerpfl2": {
+        'EMNIST': ['layer1.', 'layer2.', 'layer3.', 'fc1'],
+        'CIFAR': ['layer1.', 'layer2.', 'layer3.', 'layer4.', 'layer5.', 'fc1'],
+        "FMNIST": ['layer1.', 'layer2.', 'layer3.', 'fc1'],
+        'ISIC': ['layer1.', 'layer2.', 'layer3.', 'layer4.', 'layer5.', 'fc1'],
+        "Sentiment": ['token_embedding_table1', 'position_embedding_table1', 'attention1', 'proj1', 'fc1', 'resid1'],
+        "Heart": ['fc1', 'fc2'],
+        "mimic": ['token_embedding_table1', 'position_embedding_table1', 'attention1', 'proj1', 'fc1', 'resid1']
     },
     # BABU: Federate all layers *except* the final classification head
     "babu": {
@@ -224,21 +231,22 @@ LAYERS_TO_FEDERATE_DICT = {
         'CIFAR': ['layer1.', 'layer2.', 'layer3.', 'layer4.', 'layer5.', 'fc1'], # fc2 is head
         "FMNIST": ['layer1.', 'layer2.', 'layer3.', 'fc1'], # fc2 is head
         'ISIC': ['layer1.', 'layer2.', 'layer3.', 'layer4.', 'layer5.', 'fc1'], # fc2 is head
-        "Sentiment": ['token_embedding_table1', 'position_embedding_table1', 'attention1', 'proj1', 'fc1'], # fc2 is head
+        "Sentiment": ['token_embedding_table1', 'position_embedding_table1', 'attention1', 'proj1', 'fc1',  'resid1'], # fc2 is head
         "Heart": ['fc1', 'fc2', 'fc3'], # fc4 is head
-        "mimic": ['token_embedding_table1', 'position_embedding_table1', 'attention1', 'proj1', 'fc1'] # fc2 is head
+        "mimic": ['token_embedding_table1', 'position_embedding_table1', 'attention1', 'proj1', 'fc1',  'resid1'] # fc2 is head
     },
     # LayerPFL_random: Provides the *pool* of all possible layers to federate.
     # A random prefix subset of these layers will be chosen during runtime.
-    "layerpfl_random": {
-        'EMNIST': ['layer1.', 'layer2.', 'layer3.', 'fc1'], # Full list up to head
-        'CIFAR': ['layer1.', 'layer2.', 'layer3.', 'layer4.', 'layer5.', 'fc1'], # Full list up to head
-        "FMNIST": ['layer1.', 'layer2.', 'layer3.', 'fc1'], # Full list up to head
-        'ISIC': ['layer1.', 'layer2.', 'layer3.', 'layer4.', 'layer5.', 'fc1'], # Full list up to head
-        "Sentiment": ['token_embedding_table1', 'position_embedding_table1', 'attention1', 'proj1', 'fc1'], # Full list up to head
-        "Heart": ['fc1', 'fc2', 'fc3'], # Full list up to head
-        "mimic": ['token_embedding_table1', 'position_embedding_table1', 'attention1', 'proj1', 'fc1'] # Full list up to head
-    },
+    "layerpfl_random":{
+            'EMNIST':['layer1.', 'layer2.', 'layer3.', 'fc1', 'fc2'],
+            'CIFAR':['layer1.', 'layer2.', 'layer3.', 'layer4.', 'layer5.', 'fc1', 'fc2'],
+            "FMNIST":['layer1.', 'layer2.', 'layer3.', 'fc1', 'fc2'],
+            'ISIC':['layer1.', 'layer2.', 'layer3.', 'layer4.', 'layer5.', 'fc1', 'fc2'],
+            "Sentiment":['token_embedding_table1','position_embedding_table1', 'attention1', 'proj1', 'fc1', 'resid1', 'fc2'],
+            "Heart": ['fc1', 'fc2', 'fc3', 'fc4'],
+            "mimic":['token_embedding_table1','position_embedding_table1', 'attention1', 'proj1', 'fc1', 'resid1', 'fc2']
+            },
+            
 }
 
 # --- Regularization Parameters (mu or lambda) ---

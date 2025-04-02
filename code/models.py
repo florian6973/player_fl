@@ -396,9 +396,8 @@ class HyperNetwork(nn.Module):
                 nn.Linear(hidden_dim, client_num)
             ).to(DEVICE)
     
-    def forward(self, client_id):
+    def forward(self, client_idx):
         """Generate aggregation weights for each layer for given client."""
-        client_idx =  int(str.split(client_id, 'client_')[-1]) - 1
         client_embedding = self.embeddings[client_idx]
         alpha = {}
         for layer_name in self.trainable_layers:

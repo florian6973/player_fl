@@ -9,7 +9,7 @@ Includes:
 - `analyze_experiment_results`: Top-level function to orchestrate the analysis
   and formatting of results into tables.
 """
-from configs import *
+from configs import RESULTS_DIR, ALGORITHMS, pickle, np, pd, sys, stats
 from typing import Dict, Optional, List, Tuple, Union
 
 
@@ -243,7 +243,7 @@ class ResultAnalyzer:
             first_run_key = next(iter(first_dataset_data)) # e.g., 'run_1'
             first_algo_key = next(iter(first_dataset_data[first_run_key])) # e.g., 'fedavg'
             first_scores_list = first_dataset_data[first_run_key][first_algo_key]['global']['scores']
-            first_run_final_scores_dict = first_scores_list[0] # Get scores from the first run
+            first_run_final_scores_dict = first_scores_list[0][0] # Get scores from the first run
             self.metrics = list(first_run_final_scores_dict.keys()) + ['loss'] # Add 'loss' manually
             print(f"Inferred metrics: {self.metrics}")
         except (StopIteration, KeyError, IndexError, TypeError) as e:
@@ -289,25 +289,36 @@ class ResultAnalyzer:
                         print(f"Warning: Missing global data for algo '{algo}' in run '{run_key}'. Skipping run.")
                         continue
 
-                    # Extract final score/loss for this run (assuming list contains only final value)
-                    final_score_dict = run_data['global']['scores'][-1] if run_data['global']['scores'] else None
-                    final_loss = run_data['global']['losses'][-1] if run_data['global']['losses'] else None
+                    try:
+                        # Handle the new structure: 'scores' -> List with 1 items -> List with 1 items -> Dict 
+                        # Extract final score for this run
+                        final_score_dict = None
+                        if run_data['global']['scores'] and isinstance(run_data['global']['scores'][0], list) and run_data['global']['scores'][0]:
+                            final_score_dict = run_data['global']['scores'][0][0]
+                        
+                        # Handle the new structure: 'losses' -> List with 1 items -> List with 1 items -> float
+                        # Extract final loss for this run
+                        final_loss = None
+                        if run_data['global']['losses'] and isinstance(run_data['global']['losses'][0], list) and run_data['global']['losses'][0]:
+                            final_loss = run_data['global']['losses'][0][0]
 
-                    if final_score_dict is not None:
-                        for metric_name in self.metrics[:-1]: # Exclude 'loss' here
-                            if metric_name in final_score_dict:
-                                aggregated_metrics[algo][metric_name].append(final_score_dict[metric_name])
-                            else:
-                                print(f"Warning: Metric '{metric_name}' not found in scores for algo '{algo}', run '{run_key}'.")
-                    else:
-                        print(f"Warning: Missing final scores for algo '{algo}', run '{run_key}'.")
+                        if final_score_dict is not None:
+                            for metric_name in self.metrics[:-1]: # Exclude 'loss' here
+                                if metric_name in final_score_dict:
+                                    aggregated_metrics[algo][metric_name].append(final_score_dict[metric_name])
+                                else:
+                                    print(f"Warning: Metric '{metric_name}' not found in scores for algo '{algo}', run '{run_key}'.")
+                        else:
+                            print(f"Warning: Missing final scores for algo '{algo}', run '{run_key}'.")
 
-
-                    if final_loss is not None:
-                         aggregated_metrics[algo]['loss'].append(final_loss)
-                    else:
-                         print(f"Warning: Missing final loss for algo '{algo}', run '{run_key}'.")
-
+                        if final_loss is not None:
+                            aggregated_metrics[algo]['loss'].append(final_loss)
+                        else:
+                            print(f"Warning: Missing final loss for algo '{algo}', run '{run_key}'.")
+                    
+                    except (IndexError, TypeError) as e:
+                        print(f"Error extracting scores/losses for algo '{algo}', run '{run_key}': {e}")
+                        continue
 
         # --- Step 2: Calculate statistics (median, CI) for each algorithm and metric ---
         analysis_output = {}
@@ -350,32 +361,41 @@ class ResultAnalyzer:
 
         Returns:
             Dict[str, float]: Dictionary mapping metric names to their median value
-                              across runs for the specified client and algorithm.
-                              Returns NaNs if data is missing.
+                            across runs for the specified client and algorithm.
+                            Returns NaNs if data is missing.
         """
         client_metrics_all_runs = {metric: [] for metric in self.metrics}
 
         for run_key in results_all_runs:
-             if algorithm in results_all_runs[run_key]:
-                 algo_data = results_all_runs[run_key][algorithm]
-                 if 'sites' in algo_data and client_id in algo_data['sites']:
-                     client_run_data = algo_data['sites'][client_id]
+            if algorithm in results_all_runs[run_key]:
+                algo_data = results_all_runs[run_key][algorithm]
+                if 'sites' in algo_data and client_id in algo_data['sites']:
+                    client_run_data = algo_data['sites'][client_id]
 
-                     # Extract final score/loss for this client in this run
-                     final_score_dict = client_run_data['scores'][-1] if client_run_data.get('scores') else None
-                     final_loss = client_run_data['losses'][-1] if client_run_data.get('losses') else None
+                    try:
+                        # Handle the new structure: 'scores' -> List with 1 items -> List with 1 items -> Dict
+                        # Extract final score for this client in this run
+                        final_score_dict = None
+                        if client_run_data.get('scores') and isinstance(client_run_data['scores'][0], list) and client_run_data['scores'][0]:
+                            final_score_dict = client_run_data['scores'][0][0]
+                        
+                        # Handle the new structure: 'losses' -> List with 1 items -> List with 1 items -> float
+                        # Extract final loss for this client in this run
+                        final_loss = None
+                        if client_run_data.get('losses') and isinstance(client_run_data['losses'][0], list) and client_run_data['losses'][0]:
+                            final_loss = client_run_data['losses'][0][0]
 
-                     if final_score_dict:
-                         for metric_name in self.metrics[:-1]:
-                             if metric_name in final_score_dict:
-                                 client_metrics_all_runs[metric_name].append(final_score_dict[metric_name])
-                             # else: # Optionally warn if metric missing for client
-                             #     print(f"Warning: Metric '{metric_name}' missing for {client_id}, {algorithm}, {run_key}")
-                     if final_loss is not None:
-                         client_metrics_all_runs['loss'].append(final_loss)
-                 # else: # Optionally warn if client missing
-                 #      print(f"Warning: Client '{client_id}' missing for {algorithm}, {run_key}")
-
+                        if final_score_dict:
+                            for metric_name in self.metrics[:-1]:
+                                if metric_name in final_score_dict:
+                                    client_metrics_all_runs[metric_name].append(final_score_dict[metric_name])
+                        
+                        if final_loss is not None:
+                            client_metrics_all_runs['loss'].append(final_loss)
+                    
+                    except (IndexError, TypeError) as e:
+                        print(f"Error extracting client scores/losses for {client_id}, {algorithm}, {run_key}: {e}")
+                        continue
 
         # Calculate median for each metric across runs
         median_metrics = {}
@@ -383,8 +403,7 @@ class ResultAnalyzer:
             if values:
                 median_metrics[metric] = np.median(values)
             else:
-                 # print(f"Warning: No data found for metric '{metric}' for client '{client_id}', algorithm '{algorithm}'.")
-                 median_metrics[metric] = np.nan # Use NaN if no data collected
+                median_metrics[metric] = np.nan # Use NaN if no data collected
 
         return median_metrics
 
@@ -628,7 +647,7 @@ class ResultAnalyzer:
         Args:
             datasets_order (List[str]): The desired order of dataset columns in the tables.
             analysis_results (Dict): The dictionary of DataFrames produced by `analyze_all`.
-                                     {'metrics': {metric: df}, 'fairness': {fairness_key: df}}
+                                    {'metrics': {metric: df}, 'fairness': {fairness_key: df}}
 
         Returns:
             Dict[str, Dict[str, Union[pd.DataFrame, str]]]: A dictionary where keys are descriptive names
@@ -651,6 +670,12 @@ class ResultAnalyzer:
                 if df.empty: continue # Skip empty dataframes
 
                 try:
+                    # Ensure numeric values are actually numeric
+                    for col in ['Median', 'CI_Lower', 'CI_Upper']:
+                        # Convert string representations to float if necessary
+                        if df[col].dtype == 'object':
+                            df[col] = pd.to_numeric(df[col], errors='coerce')
+                    
                     # Create pivot tables for median and CI bounds
                     pivot_median = df.pivot(index='Algorithm', columns='Dataset', values='Median')
                     pivot_ci_lower = df.pivot(index='Algorithm', columns='Dataset', values='CI_Lower')
@@ -675,16 +700,35 @@ class ResultAnalyzer:
                     # Iterate through dataset columns to format
                     for col in datasets_order: # Only format dataset columns
                         if col in pivot_final.columns:
-                             pivot_final[col] = pivot_final.apply(
-                                 # Format as "Median ± CI_HalfWidth"
-                                 lambda x: f"{x[col]:.3f} ± {ci_half_width.loc[x.name, col]:.3f}"
-                                           if pd.notna(x[col]) and pd.notna(ci_half_width.loc[x.name, col]) else "N/A", # Handle NaNs
-                                 axis=1
-                             )
+                            # Create a new column with formatted strings
+                            formatted_col = []
+                            for idx in pivot_final.index:
+                                if pd.notna(pivot_final.loc[idx, col]) and pd.notna(ci_half_width.loc[idx, col]):
+                                    try:
+                                        # Use explicit float conversion to ensure numeric values
+                                        median_val = float(pivot_final.loc[idx, col])
+                                        half_width_val = float(ci_half_width.loc[idx, col])
+                                        formatted_col.append(f"{median_val:.3f} ± {half_width_val:.3f}")
+                                    except (ValueError, TypeError):
+                                        formatted_col.append("N/A")
+                                else:
+                                    formatted_col.append("N/A")
+                            # Replace the column with the formatted values
+                            pivot_final[col] = formatted_col
 
                     # Format Mean Rank column
                     if 'Mean Rank' in pivot_final.columns:
-                        pivot_final['Mean Rank'] = pivot_final['Mean Rank'].apply(lambda x: f"{x:.2f}" if pd.notna(x) else "N/A")
+                        formatted_ranks = []
+                        for idx in pivot_final.index:
+                            if pd.notna(pivot_final.loc[idx, 'Mean Rank']):
+                                try:
+                                    rank_val = float(pivot_final.loc[idx, 'Mean Rank'])
+                                    formatted_ranks.append(f"{rank_val:.2f}")
+                                except (ValueError, TypeError):
+                                    formatted_ranks.append("N/A")
+                            else:
+                                formatted_ranks.append("N/A")
+                        pivot_final['Mean Rank'] = formatted_ranks
 
                     # --- Reorder Rows and Columns ---
                     # Reindex rows (algorithms) based on defined order, drop missing
@@ -703,16 +747,21 @@ class ResultAnalyzer:
                         'friedman': friedman_str
                     }
                 except Exception as e:
-                     print(f"Error formatting global metrics table for '{metric}': {e}")
-
+                    print(f"Error formatting global metrics table for '{metric}': {e}")
+                    import traceback
+                    traceback.print_exc()
 
         # --- Format Fairness Metric Summaries ---
         if 'fairness' in analysis_results:
-             # Process variance and pct_better separately
-             for fairness_key, df in analysis_results['fairness'].items():
+            # Process variance and pct_better separately
+            for fairness_key, df in analysis_results['fairness'].items():
                 if df.empty: continue
 
                 try:
+                    # Ensure Value column is numeric
+                    if df['Value'].dtype == 'object':
+                        df['Value'] = pd.to_numeric(df['Value'], errors='coerce')
+                    
                     # Determine if higher is better (Pct_Better) or lower is better (Variance)
                     is_variance = 'variance' in fairness_key
                     metric_name = fairness_key.replace('variance_', '').replace('pct_better_', '')
@@ -735,12 +784,33 @@ class ResultAnalyzer:
                     # --- Format Numbers ---
                     value_format = "{:.6f}" if is_variance else "{:.1f}" # Different precision
                     for col in datasets_order: # Only format dataset columns
-                         if col in pivot_final.columns:
-                             pivot_final[col] = pivot_final[col].apply(lambda x: value_format.format(x) if pd.notna(x) else "N/A")
+                        if col in pivot_final.columns:
+                            formatted_col = []
+                            for idx in pivot_final.index:
+                                if pd.notna(pivot_final.loc[idx, col]):
+                                    try:
+                                        # Explicit float conversion
+                                        val = float(pivot_final.loc[idx, col])
+                                        formatted_col.append(value_format.format(val))
+                                    except (ValueError, TypeError):
+                                        formatted_col.append("N/A")
+                                else:
+                                    formatted_col.append("N/A")
+                            pivot_final[col] = formatted_col
 
                     # Format Mean Rank column
                     if 'Mean Rank' in pivot_final.columns:
-                        pivot_final['Mean Rank'] = pivot_final['Mean Rank'].apply(lambda x: f"{x:.2f}" if pd.notna(x) else "N/A")
+                        formatted_ranks = []
+                        for idx in pivot_final.index:
+                            if pd.notna(pivot_final.loc[idx, 'Mean Rank']):
+                                try:
+                                    rank_val = float(pivot_final.loc[idx, 'Mean Rank'])
+                                    formatted_ranks.append(f"{rank_val:.2f}")
+                                except (ValueError, TypeError):
+                                    formatted_ranks.append("N/A")
+                            else:
+                                formatted_ranks.append("N/A")
+                        pivot_final['Mean Rank'] = formatted_ranks
 
                     # --- Reorder Rows and Columns ---
                     pivot_final = pivot_final.reindex(index=fairness_algorithm_order).dropna(how='all')
@@ -757,7 +827,8 @@ class ResultAnalyzer:
                     }
                 except Exception as e:
                     print(f"Error formatting fairness table for '{fairness_key}': {e}")
-
+                    import traceback
+                    traceback.print_exc()
 
         return formatted_tables
 
