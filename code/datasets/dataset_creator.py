@@ -1,10 +1,15 @@
+import os
+import sys
 _CURRENT_DIR = os.path.dirname(os.path.abspath(__file__)) # -> ./layer_pfl/code/evaluation
 _PROJECT_ROOT = os.path.dirname(_CURRENT_DIR) # -> (...)/layer_pfl/code
 sys.path.insert(0, _PROJECT_ROOT)
 sys.path.insert(0, _CURRENT_DIR)
 
 from configs import *
+from helper import set_seeds
+
 # Constants
+set_seeds(seed_value=1)
 BATCH_SIZE = 32
 print(f"Using device: {DEVICE}")
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
@@ -356,7 +361,7 @@ def main(args):
     if run_benchmark:
         try:
             benchmark_datasets = _load_benchmark_images()
-            print(f"Successfully loaded {len(benchmark_datasets)} benchmark datasets")
+            print(f"Successfully loaded benchmark datasets")
         except Exception as e:
             print(f"\n--- ERROR loading benchmark images: {e} ---")
 

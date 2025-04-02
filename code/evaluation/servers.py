@@ -1332,7 +1332,6 @@ class pFedLAServer(FLServer):
             raise RuntimeError("HyperNetwork or client models not initialized. Cannot generate client model.")
 
         client_idx = int(client_id.split('_')[-1]) - 1 # Assumes client_id format 'client_N'
-        print(client_idx)
         # 1. Get personalized aggregation weights (alpha) from HyperNetwork
         # alpha = {layer_base_name: tensor_of_weights_for_all_clients}
         alpha = self.hypernetwork(client_idx) # Pass index to HN
