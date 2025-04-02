@@ -699,19 +699,7 @@ class Experiment:
         for round_num in range(rounds):
             round_start_time = time.time()
             self.logger.info(f"--- Round {round_num + 1}/{rounds} ---")
-
-            # Check for special final round logic (e.g., head tuning in BABU)
-            is_final_round = (round_num + 1 == rounds)
-            requires_final_step = server.server_type in ['localadaptation', 'babu']
-
-            if is_final_round and requires_final_step:
-                self.logger.info(f"Performing final round step for {server.server_type}")
-                # Pass final_round=True to trigger special behavior in server's train_round
-                train_loss, val_loss, val_score = server.train_round(final_round=True)
-            else:
-                # Standard training round
-                train_loss, val_loss, val_score = server.train_round()
-
+            train_loss, val_loss, val_score = server.train_round(round_num)
             round_end_time = time.time()
             self.logger.info(f"Round {round_num + 1} completed. Train Loss: {train_loss:.4f}, Val Loss: {val_loss:.4f}, Val Acc: {val_score.get('accuracy', -1):.4f}. Time: {round_end_time - round_start_time:.2f}s")
             log_gpu_stats(self.logger, prefix=f"End of Round {round_num + 1}: ") # Log GPU stats periodically

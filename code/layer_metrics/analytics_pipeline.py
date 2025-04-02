@@ -1,6 +1,3 @@
-ROOT_DIR = '/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl'
-import sys
-sys.path.append(f'{ROOT_DIR}/code') 
 from configs import *
 from helper import *
 from dataset_processing import DataPreprocessor, UnifiedDataLoader
@@ -35,9 +32,8 @@ class AnalyticsConfig:
 
 class AnalyticsResultsManager: # Use the standard name
     """Manages loading and saving of analytics experiment results."""
-    def __init__(self, root_dir: str, dataset: str):
+    def __init__(self, dataset: str):
         self.dataset = dataset
-        self.base_dir = root_dir # Use root_dir consistent with original manager
         self.analytics_dir = os.path.join(RESULTS_DIR, 'analytics') # Specific subdir
         self.results_filename = f'{dataset}_analytics_results.pkl' # Specific filename
         self.results_path = os.path.join(self.analytics_dir, self.results_filename)
@@ -80,10 +76,9 @@ class AnalyticsExperiment:
 
     def __init__(self, config: AnalyticsConfig):
         self.config = config
-        self.root_dir = ROOT_DIR # Assuming ROOT_DIR is globally accessible
+        self.root_dir = ROOT_DIR
         # Use the specialized results manager for analytics
         self.results_manager = AnalyticsResultsManager(
-            root_dir=self.root_dir,
             dataset=self.config.dataset,
         )
         self.default_params = get_parameters_for_dataset(self.config.dataset)
@@ -146,7 +141,6 @@ class AnalyticsExperiment:
 
     def _analytics_evaluation(self, run_number: int) -> dict:
         """Performs the analysis logic for a single run across specified algorithms."""
-        # This method mirrors the structure of _final_evaluation from the original pipeline
         run_tracking = {}
         # Initialize data once for this run
         client_dataloaders = self._initialize_experiment(self.default_params['batch_size'])
@@ -185,24 +179,11 @@ class AnalyticsExperiment:
     
     def _train_and_analyze(self, server: AnalyticsServer, seed: int) -> dict:
         """Handles training and running analysis hooks for a given server."""
-        self.logger.info(f"Running initial analysis for {server.server_type}...")
-        server.run_analysis(round_identifier='initial', seed = seed)
-
         self.logger.info(f"Starting training for {server.server_type} ({server.config.rounds} rounds)...")
         num_rounds = server.config.rounds
         for round_num in range(num_rounds):
             try:
-                # Standard training round
-                _ = server.train_round()
-                if round_num == 0:
-                    self.logger.info(f"Running initial analysis for {server.server_type}...")
-                    server.run_analysis(round_identifier='initial', seed = seed)
-
-                # Handle special final round logic if applicable
-                is_final_round = (round_num + 1 == num_rounds)
-                # Check if the server's train_round accepts final_round param
-                if is_final_round and hasattr(server, 'train_round') and 'final_round' in server.train_round.__code__.co_varnames:
-                     _ = server.train_round(final_round=True)
+                _ = server.train_round(round_num)
 
                 if (round_num + 1) % 5 == 0: # Log progress less frequently
                     print(f"      Training round {round_num + 1}/{num_rounds} completed for {server.server_type}.")
@@ -214,10 +195,6 @@ class AnalyticsExperiment:
                  raise # Re-raise to indicate failure for this server_type
 
         self.logger.info(f"Training finished for {server.server_type}.")
-
-        self.logger.info(f"Running final analysis for {server.server_type}...")
-        server.run_analysis(round_identifier='final', seed = seed)
-
         # Return the collected analysis results
         return copy.deepcopy(server.analysis_results)
 
@@ -232,9 +209,8 @@ class AnalyticsExperiment:
         self.logger.debug("Data pipeline initialized.")
         return client_data_loaders
 
-    def _create_trainer_config(self, server_type: str, learning_rate: float, algorithm_params: dict = None) -> TrainerConfig:
+    def _create_trainer_config(self, learning_rate: float, algorithm_params: dict = None) -> TrainerConfig:
         """Creates the TrainerConfig based on defaults and inputs."""
-        base_requires_personal = server_type in ['pfedme', 'ditto', 'pfedla']
         rounds = self.default_params.get('rounds_analytics', self.default_params['rounds'])
 
         return TrainerConfig(
@@ -245,9 +221,9 @@ class AnalyticsExperiment:
             epochs=self.default_params['epochs_per_round'],
             rounds=rounds,
             num_clients=self.default_params['num_clients'],
-            requires_personal_model=base_requires_personal, # Based on the underlying FL algorithm
+            requires_personal_model=False,
             algorithm_params=algorithm_params,
-            num_cpus=self.config.cpus_for_analysis # Use value from ExperimentConfig
+            num_cpus=self.config.cpus_for_analysis
         )
 
     def _create_model_essentials(self, learning_rate: float):
@@ -276,7 +252,7 @@ class AnalyticsExperiment:
         algorithm_params = get_algorithm_config(server_type, self.config.dataset)
 
         # Create config (uses analytics rounds etc.)
-        config = self._create_trainer_config(server_type, lr, algorithm_params)
+        config = self._create_trainer_config(lr, algorithm_params)
         self.logger.debug(f"Creating server {server_type} with config: {config}")
 
         # Create model state

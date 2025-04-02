@@ -25,7 +25,7 @@ from pandas.api.types import is_numeric_dtype # Import for checking numeric type
 warnings.simplefilter(action='ignore', category=FutureWarning)
 warnings.simplefilter(action='ignore', category=UserWarning)
 plt.style.use('seaborn-v0_8-whitegrid') # Example style
-
+stages = ['first', 'final']
 # --- Data Loading ---
 
 def load_analytics_data(dataset: str, results_dir: str) -> dict:
@@ -71,7 +71,7 @@ def average_results_across_runs(raw_results: dict, server_type: str) -> dict:
         server_data = run_data[server_type]
         run_has_data = False # Flag to check if this run contributed any data
 
-        for stage in ['initial', 'final']:
+        for stage in ['first', 'final']:
             # Process Grad/Hess metrics
             if 'grad_hess' in server_data and stage in server_data['grad_hess']:
                 for client_id, df in server_data['grad_hess'][stage].items():
@@ -320,7 +320,7 @@ def process_metrics_for_plotting(df: pd.DataFrame) -> tuple[pd.DataFrame, int]:
 def plot_model_metrics(dataset, averaged_results, server_type, results_dir):
     """Plot the model metrics using averaged results."""
     metrics_graph = ['Gradient Importance per', 'Gradient Variance', 'SVD Sum EV']
-    stages = ['initial', 'final']
+    
 
     if not averaged_results:
         print(f"No averaged results available for {dataset}, server {server_type}.")
@@ -437,99 +437,204 @@ def process_model_similarity_data(similarity_data_dict):
     Processes the model similarity data (averaged across runs) for plotting.
     Input dict: {layer_name: mean_df_across_runs}
     Output: DataFrame where index=Layer, columns=Site, value=Avg Dissimilarity for that site.
+    
+    This version properly averages sublayers within the same layer rather than summing them.
+    - Improved to handle layer naming patterns like 'layer3.1', 'layer3.2', etc.
+    - Maps 'flatten' layers to 'fc1'
+    - Generally groups by name before any dot
     """
-    if not similarity_data_dict: return pd.DataFrame()
-
+    if not similarity_data_dict: 
+        return pd.DataFrame()
+    
     combined_data = pd.DataFrame()
-    temp_model_similarity = similarity_data_dict.copy()
-
-    # --- Layer Grouping ---
-    # This part is highly dependent on model architecture naming from hooks
-    try:
-        grouped_sim_data = defaultdict(list)
-        for original_key, df in temp_model_similarity.items():
-             # Example simple grouping: Group 'convX' and 'layerX'
-             new_key = re.sub(r'layer(\d+)', r'conv\1', str(original_key))
-             # Add more rules based on prefixes or patterns
-             if 'attention' in new_key or 'attn' in new_key:
-                  num = extract_numerical_index(new_key)
-                  prefix = 'attention' if 'attention' in new_key else 'attn'
-                  new_key = f"{prefix}{num}" if num != -1 else new_key.split('.')[0] + f"_{prefix}"
-             elif 'embedding' in new_key:
-                   num = extract_numerical_index(new_key)
-                   new_key = f"embedding{num}" if num != -1 else new_key.split('.')[0] + "_embedding"
-
-             if isinstance(df, pd.DataFrame): # Check if it's a DataFrame
-                grouped_sim_data[new_key].append(df)
-             else:
-                 print(f"Warning: Invalid data type for similarity layer '{original_key}', expected DataFrame, got {type(df)}. Skipping.")
-
-
-        final_sim_data = {}
-        for new_key, df_list in grouped_sim_data.items():
-             if df_list:
-                 try:
-                     # Filter DFs with same shape before concat/mean
-                     ref_shape = df_list[0].shape
-                     valid_dfs = [df for df in df_list if df.shape == ref_shape]
-                     if not valid_dfs:
-                         print(f"Warning: No valid DFs with shape {ref_shape} for group '{new_key}'. Using first DF.")
-                         final_sim_data[new_key] = df_list[0]
-                         continue
-                     # Average element-wise
-                     mean_df = pd.concat(valid_dfs).groupby(level=0).mean()
-                     final_sim_data[new_key] = mean_df
-                 except Exception as e:
-                      print(f"Warning: Could not average similarity DFs for group '{new_key}': {e}. Using first DF.")
-                      final_sim_data[new_key] = df_list[0]
-
-        temp_model_similarity = final_sim_data
-    except Exception as e:
-         print(f"Warning: Error during similarity layer grouping: {e}. Using original layers.")
-         temp_model_similarity = similarity_data_dict
-
-
-    # --- Calculate Average Dissimilarity per Site ---
-    for layer, df in temp_model_similarity.items():
-        if not isinstance(df, pd.DataFrame) or df.empty or df.isnull().all().all():
-            print(f"Warning: Skipping empty/invalid similarity matrix for layer '{layer}'.")
+    
+    # Group layers by their type and layer number
+    layer_groups = defaultdict(list)
+    
+    # Extract max layer number to help with grouping
+    max_num = extract_max_layer_num(list(similarity_data_dict.keys()))
+    
+    # Define mapping for various layer types
+    layer_mapping = {}
+    
+    # Create mappings for embedding layers and others based on max_num
+    for i in range(1, max_num+1):
+        layer_mapping[f'token_embedding_table{i}'] = f'embedding{i}'
+        layer_mapping[f'position_embedding_table{i}'] = f'embedding{i}'
+        layer_mapping[f'proj{i}'] = f'attention{i}'
+        layer_mapping[f'resid{i}'] = f'fc{i}'
+        
+        # Add attention sublayers
+        for sub_layer in ['query', 'key', 'value']:
+            layer_mapping[f'attention{i}.{sub_layer}'] = f'attention{i}'
+    
+    # Special mapping for flatten layers (to fc1)
+    for layer_name in similarity_data_dict.keys():
+        if 'flatten' in layer_name.lower():
+            pass #layer_mapping[layer_name] = 'fc1'
+    
+    # Add convolutional sublayers and handle dot-notation layers
+    for layer_name in similarity_data_dict.keys():
+        # First check if it's already in mapping
+        if layer_name in layer_mapping:
             continue
+            
+        # Pattern 1: layer + number + _c_ + number (conv layers)
+        conv_pattern = re.compile(r'layer(\d+)[._]c[._](\d+)')
+        match = conv_pattern.match(layer_name)
+        if match:
+            layer_num = match.group(1)
+            layer_mapping[layer_name] = f'conv_layer{layer_num}'
+            continue
+        
+        # Split on dot and use the first part for grouping
+        if '.' in layer_name:
+            base_name = layer_name.split('.')[0]
+            # Special case for fc1/fc2 with numbers
+            if base_name.startswith('fc'):
+                layer_mapping[layer_name] = base_name
+            # For ResNet-style layer3.1, etc.
+            elif re.match(r'layer\d+', base_name) or re.match(r'conv\d+', base_name):
+                layer_mapping[layer_name] = base_name
+            continue
+    
+    # Print mappings for debugging (limited to avoid excessive output)
+    mapping_examples = list(layer_mapping.items())[:5]
+    print(f"Created {len(layer_mapping)} layer mappings. Examples: {mapping_examples}...")
+    
+    # Apply the mapping and do base name grouping for unmapped layers
+    for layer_name, similarity_df in similarity_data_dict.items():
+        # Skip if not a valid DataFrame
+        if not isinstance(similarity_df, pd.DataFrame) or similarity_df.empty:
+            print(f"Warning: Skipping invalid similarity matrix for layer '{layer_name}'")
+            continue
+        
+        # Determine the group name
+        if layer_name in layer_mapping:
+            # Use predefined mapping if available
+            group_name = layer_mapping[layer_name]
+        elif '.' in layer_name:
+            # If no mapping but has a dot, use part before dot
+            group_name = layer_name.split('.')[0]
+        else:
+            # Use the whole name as is
+            group_name = layer_name
+        
+        # Add to appropriate group
+        layer_groups[group_name].append((layer_name, similarity_df))
+    
+    # Process each group - AVERAGE the similarity matrices (not sum)
+    processed_similarity = {}
+    for group_name, layer_dfs in layer_groups.items():
+        if not layer_dfs:
+            continue
+            
+        # Check if all DFs have same shape
+        shapes = set(df.shape for _, df in layer_dfs)
+        if len(shapes) > 1:
+            print(f"Warning: Inconsistent shapes in group '{group_name}'. Using first compatible set.")
+            # Get most common shape
+            common_shape = max(shapes, key=lambda s: sum(1 for _, df in layer_dfs if df.shape == s))
+            # Filter DFs with that shape
+            layer_dfs = [(name, df) for name, df in layer_dfs if df.shape == common_shape]
+            
+        if not layer_dfs:
+            continue
+            
+        # Average the similarity matrices in this group
+        dfs_to_average = [df for _, df in layer_dfs]
+        
+        # Convert all indices and columns to strings for consistent joining
+        for i, df in enumerate(dfs_to_average):
+            dfs_to_average[i] = df.copy()
+            dfs_to_average[i].index = dfs_to_average[i].index.astype(str)
+            dfs_to_average[i].columns = dfs_to_average[i].columns.astype(str)
+        
+        try:
+            # Stack all DFs and take mean by group
+            stacked_df = pd.concat(dfs_to_average)
+            # Group by index/columns and average
+            avg_df = stacked_df.groupby(level=0).mean()
+            # Convert indices back to original type if possible
+            try:
+                avg_df.index = avg_df.index.astype(int)
+                avg_df.columns = avg_df.columns.astype(int)
+            except ValueError:
+                # Keep as strings if conversion fails
+                pass
+                
+            processed_similarity[group_name] = avg_df
+        except Exception as e:
+            print(f"Error averaging similarity for group '{group_name}': {e}")
+            # Fallback to first DF
+            processed_similarity[group_name] = layer_dfs[0][1]
+    
+    # Calculate average dissimilarity per site for each grouped layer
+    for layer, df in processed_similarity.items():
         avg_dissimilarity = {}
-        for col in df.columns: # Columns should be the integer sites 0, 1,...
-             other_sites_dissimilarity = df.loc[df.index != col, col]
-             if not other_sites_dissimilarity.empty:
-                 avg_dissimilarity[col] = other_sites_dissimilarity.mean()
-             else:
-                 avg_dissimilarity[col] = 0.0
+        
+        for col in df.columns:
+            # Calculate mean dissimilarity to other sites (exclude self-comparison)
+            other_sites_dissimilarity = df.loc[df.index != col, col]
+            
+            if not other_sites_dissimilarity.empty:
+                avg_dissimilarity[col] = other_sites_dissimilarity.mean()
+            else:
+                avg_dissimilarity[col] = 0.0
+                
         combined_data[layer] = pd.Series(avg_dissimilarity)
-
-    if combined_data.empty:
-        print("Warning: Processed similarity data is empty.")
-        return combined_data
-
-    # --- Reorder Layers ---
-    try:
-        layers_in_model = list(combined_data.columns)
-        layer_order_prefixes = ['embedding', 'conv', 'layer', 'attention', 'attn',  'proj', 'resid', 'fc', 'linear', 'output', 'classifier']
-        layer_dict = {prefix: [] for prefix in layer_order_prefixes}
-        other_layers = []
-        for layer in layers_in_model:
-            found = False
+    
+    # Order layers in a logical sequence
+    if not combined_data.empty:
+        try:
+            # Define layer order prefixes with a specific order
+            layer_order_prefixes = ['embedding', 'conv', 'layer', 'attention', 'attn', 
+                                    'flatten', 'proj', 'resid', 'fc', 'linear', 'output', 'classifier']
+            
+            # Categorize layers by prefix
+            layer_dict = {prefix: [] for prefix in layer_order_prefixes}
+            other_layers = []
+            
+            # Sort layers into their categories
+            for layer in combined_data.columns:
+                found = False
+                for prefix in layer_order_prefixes:
+                    if str(layer).startswith(prefix):
+                        layer_dict[prefix].append(layer)
+                        found = True
+                        break
+                        
+                if not found:
+                    other_layers.append(layer)
+            
+            # Sort layers within each category - try to extract numbers for proper ordering
+            for prefix in layer_dict:
+                try:
+                    # Sort numerically if possible (extract digits after the prefix)
+                    layer_dict[prefix] = sorted(
+                        layer_dict[prefix], 
+                        key=lambda x: int(re.search(r'\d+', str(x)).group()) if re.search(r'\d+', str(x)) else float('inf')
+                    )
+                except Exception as e:
+                    print(f"Error sorting layers for prefix '{prefix}': {e}")
+                    # Fall back to lexicographical sort
+                    layer_dict[prefix] = sorted(layer_dict[prefix])
+            
+            # Build the final ordered list
+            custom_order = []
             for prefix in layer_order_prefixes:
-                if str(layer).startswith(prefix):
-                    layer_dict[prefix].append(layer); found = True; break
-            if not found: other_layers.append(layer)
-        for prefix in layer_dict:
-             try: layer_dict[prefix] = sorted(layer_dict[prefix], key=lambda x: int(re.search(r'\d+', str(x)).group()) if re.search(r'\d+', str(x)) else float('inf'))
-             except: layer_dict[prefix] = sorted(layer_dict[prefix])
-        custom_order = []
-        for prefix in layer_order_prefixes: custom_order.extend(layer_dict[prefix])
-        custom_order.extend(sorted(other_layers))
-        if set(custom_order) == set(layers_in_model): combined_data = combined_data[custom_order]
-        else: print("Warning: Custom similarity layer order mismatch.")
-    except Exception as e:
-         print(f"Warning: Error during similarity layer reordering: {e}.")
-
+                custom_order.extend(layer_dict[prefix])
+            custom_order.extend(sorted(other_layers))
+            
+            # Reorder the columns if all layers are accounted for
+            if set(custom_order) == set(combined_data.columns):
+                combined_data = combined_data[custom_order]
+            else:
+                print("Warning: Custom similarity layer order mismatch.")
+                
+        except Exception as e:
+            print(f"Warning: Error during similarity layer reordering: {e}")
+    
     return combined_data
 
 
@@ -580,7 +685,6 @@ def plot_similarity_graph(df, stage, dataset, server_type, ax=None):
         ax.set_xticklabels([]) # Hide x-tick labels
         ax.tick_params(axis='y', labelsize=22)
 
-        # OLD STYLE: Legend placement (including Sentiment special case)
         # Legend is now handled by the calling function for composite plot
         if standalone_fig:
             if dataset == 'Sentiment':
@@ -593,7 +697,6 @@ def plot_similarity_graph(df, stage, dataset, server_type, ax=None):
 
     # Only apply layout adjustments if it's a standalone figure
     if standalone_fig:
-        # OLD STYLE: Title (optional, can be removed if desired)
         # fig.suptitle(f"{dataset} - {server_type.upper()} Similarity", fontsize=24) # Optional main title
         plt.tight_layout()
         if dataset == 'Sentiment':
@@ -614,19 +717,13 @@ def save_plot_sim(fig, dataset, stage, server_type, results_dir):
         print(f"Saved similarity plot: {filename}")
     except Exception as e:
         print(f"Error saving similarity plot {filename}: {e}")
-    # IMPORTANT: Only close the figure if we intend to,
-    # usually after it's fully processed (e.g., end of the calling function)
-    # plt.close(fig) # Move closing responsibility to the caller if needed
 
 
-# MODIFIED plot_model_similarity to generate composite plot
-# MODIFIED plot_model_similarity to generate composite plot
+
 def plot_model_similarity(dataset, averaged_results, server_type, results_dir):
     """
     Plot and save model similarity metrics individually AND as a composite plot.
     """
-    stages = ['initial', 'final']
-
     if not averaged_results:
          print(f"No averaged results for {dataset}, server {server_type}.")
          return
@@ -713,7 +810,6 @@ def plot_model_similarity(dataset, averaged_results, server_type, results_dir):
     except Exception as e:
         print(f"Error saving composite similarity plot {composite_filename}: {e}")
 
-    plt.close(composite_fig)
 
 
 def plot_graph(metric, stage, metrics_data_for_stage, dataset):
@@ -813,7 +909,7 @@ def process_results(dataset, results_dir, server_type):
     plot_model_metrics(dataset, averaged_data, server_type, results_dir)
 
     # Plot Similarity Metrics (if applicable and data exists)
-    if server_type == 'local' and averaged_data.get('initial', {}).get('similarity') or averaged_data.get('final', {}).get('similarity'):
+    if server_type == 'local' and averaged_data.get('first', {}).get('similarity') or averaged_data.get('final', {}).get('similarity'):
         print(f"\n--- Plotting Similarity Metrics for {server_type.upper()} ---")
         plot_model_similarity(dataset, averaged_data, server_type, results_dir)
     else:

@@ -71,7 +71,6 @@ def _model_weight_importance(param: Tensor, gradient: Tensor, data: Optional[Tup
     grad_cpu = gradient.detach().cpu()
 
     if emb_table:
-        # Mimic old code's averaging for embedding tables
         token_indices, mask = data
         token_indices_cpu = token_indices.cpu()
         # Check if indices are within bounds
@@ -115,9 +114,6 @@ def _hessian_metrics(param: Tensor, hvp_seed: int, data: Optional[Tuple[Tensor, 
     """
     Calculate Hessian-related metrics using the existing gradient on the parameter.
     Assumes the gradient was computed with create_graph=True.
-    FIX: Mimics old_code's HVP calculation with Generator seeding.
-         FIX: Replaces flawed per-token SVD for embeddings with SVD on the full embedding HVP matrix.
-         Handles convolutions based on param dim.
     """
     metrics = {
         'SVD Sum EV': np.nan, 'EV Skewness': np.nan, '% EV small': np.nan,
@@ -128,13 +124,12 @@ def _hessian_metrics(param: Tensor, hvp_seed: int, data: Optional[Tuple[Tensor, 
     }
 
     if not param.requires_grad or param.grad is None or not param.grad.requires_grad:
-        # ... (warning print remains the same) ...
         return metrics
 
     first_grads = param.grad # This holds the gradient dL/dw
 
     try:
-        # --- Generate random vector 'v' using Generator (like old code) ---
+        # --- Generate random vector 'v' using Generator ---
         generator = torch.Generator(device=param.device)
         generator.manual_seed(hvp_seed)
         v = torch.randn(param.size(), generator=generator, device=param.device, dtype=param.dtype)
@@ -156,7 +151,6 @@ def _hessian_metrics(param: Tensor, hvp_seed: int, data: Optional[Tuple[Tensor, 
             return metrics
 
         # --- Prepare Processed Versions for Importance Metric ---
-        # We still might want averaged versions for the importance metric if emb_table
         Hv_for_importance = Hv.detach().clone()
         param_for_importance = param.detach().clone()
         is_conv = param_for_importance.dim() == 4
@@ -191,7 +185,7 @@ def _hessian_metrics(param: Tensor, hvp_seed: int, data: Optional[Tuple[Tensor, 
         original_hv_detached = Hv.detach() # Use original HVP for SVD logic
 
         if is_conv:
-            # --- Convolutional Logic (Remains the same) ---
+            # --- Convolutional Logic  ---
             c_out, c_in, k, k = original_hv_detached.shape
             num_channels_processed = 0
             temp_svd_sum_e = 0.0
@@ -210,7 +204,6 @@ def _hessian_metrics(param: Tensor, hvp_seed: int, data: Optional[Tuple[Tensor, 
                      svd_e = (svd_e_all / num_channels_processed).numpy()
 
         elif is_emb:
-            # --- FIXED Embedding Logic: SVD on the full HVP matrix ---
             # original_hv_detached has shape (VocabSize, EmbDim)
             print(f"Calculating SVD for Embedding layer HVP matrix (shape: {original_hv_detached.shape})")
             if original_hv_detached.numel() > 0 and min(original_hv_detached.shape) > 0:
@@ -245,7 +238,7 @@ def _hessian_metrics(param: Tensor, hvp_seed: int, data: Optional[Tuple[Tensor, 
                 if min_positive_ev > 1e-12:
                     metrics['Condition Number'] = metrics['Operator norm'] / min_positive_ev
                 else:
-                     metrics['Condition Number'] = np.inf # Or np.nan if preferred
+                     metrics['Condition Number'] = np.inf
 
                 try:
                     metrics['EV Skewness'] = scipy.stats.skew(svd_e)
@@ -257,8 +250,6 @@ def _hessian_metrics(param: Tensor, hvp_seed: int, data: Optional[Tuple[Tensor, 
             else:
                  print(f"Warning: All SVD eigenvalues are zero or non-finite after cleaning for param shape {param.shape}. Setting SVD metrics to NaN.")
 
-
-    # ... (Error handling remains the same) ...
     except Exception as e:
          print(f"Error during Hessian metrics calculation for param shape {param.shape}: {e}")
          traceback.print_exc()
@@ -268,10 +259,9 @@ def _hessian_metrics(param: Tensor, hvp_seed: int, data: Optional[Tuple[Tensor, 
 
 
 # --- MODIFIED Analyse Layer ---
-def _analyse_layer(name: str, param: Tensor, hvp_seed: int, data: Optional[Tuple[Tensor, Tensor]] = None, emb_table: bool = False) -> Optional[Dict[str, Union[float, np.ndarray]]]:
+def _analyse_layer(param: Tensor, hvp_seed: int, data: Optional[Tuple[Tensor, Tensor]] = None, emb_table: bool = False) -> Optional[Dict[str, Union[float, np.ndarray]]]:
     """
     Analyse a single layer's weights and gradients, including Hessian metrics.
-    FIX: Passes hvp_seed, data, and emb_table flag to _hessian_metrics.
     """
     if param.grad is None:
         return None
@@ -288,8 +278,6 @@ def _analyse_layer(name: str, param: Tensor, hvp_seed: int, data: Optional[Tuple
 
 # --- MODIFIED Calculate Local Layer Metrics ---
 def calculate_local_layer_metrics(model: nn.Module,
-                                  data_batch: Union[Tensor, Tuple], # Data batch used for forward/backward pass
-                                  criterion: nn.Module,
                                   device: str,
                                   hvp_seed: int, # Pass the specific seed for HVP calculation
                                   attention_data: Optional[Tuple[Tensor, Tensor]] = None # Explicitly pass token_indices/mask if needed
@@ -297,9 +285,6 @@ def calculate_local_layer_metrics(model: nn.Module,
     """
     Calculates weight stats, gradient importance, and Hessian metrics
     for each layer using a single data batch.
-    FIX: Passes hvp_seed down. Handles embedding/conv layers consistent with old code.
-         Assumes data_batch IS the one used for gradients.
-         Uses attention_data for embedding table processing.
     """
     layer_data_dict = {}
 
@@ -307,19 +292,6 @@ def calculate_local_layer_metrics(model: nn.Module,
         # --- Forward/Backward Pass (ASSUMED TO BE DONE *BEFORE* CALLING THIS FUNCTION) ---
         # This function now *analyzes* the gradients already present on the model parameters.
         # The gradients must have been computed with create_graph=True externally.
-        # Example external call:
-        # model.train()
-        # features, labels = data_batch
-        # features = move_to_device(features, device)
-        # labels = move_to_device(labels, device)
-        # model.zero_grad()
-        # outputs = model(features)
-        # loss = criterion(outputs, labels)
-        # loss.backward(create_graph=True, retain_graph=True) # CRITICAL
-        # metrics_df = calculate_local_layer_metrics(model, data_batch, criterion, device, hvp_seed, attention_data)
-        # model.zero_grad(set_to_none=True) # Cleanup gradients after analysis
-
-        # We need the model on the correct device for analysis, but don't recompute gradients
         with ModelDeviceManager(model, device, eval_mode=False) as model_on_device: # Keep in train mode for grads
             named_params = dict(model_on_device.named_parameters())
 
@@ -331,7 +303,7 @@ def calculate_local_layer_metrics(model: nn.Module,
                 emb_table = False
                 layer_data_for_hessian = None # Specific data needed for Hessian/Importance
 
-                # Simple check for embedding table names (adapt if your names differ)
+                # Simple check for embedding table names
                 if 'embedding' in name.lower() and param.dim() == 2:
                      emb_table = True
                      layer_data_for_hessian = attention_data # Pass tokens/mask
@@ -344,7 +316,6 @@ def calculate_local_layer_metrics(model: nn.Module,
                 # --- Call Analyse Layer ---
                 # Pass the full parameter always. _analyse_layer and _hessian_metrics handle dims.
                 layer_metrics = _analyse_layer(
-                    name=simple_name, # Use simplified name for dict key
                     param=param,
                     hvp_seed=hvp_seed,
                     data=layer_data_for_hessian,
@@ -353,10 +324,8 @@ def calculate_local_layer_metrics(model: nn.Module,
 
                 if layer_metrics:
                     # Store results using the simplified layer name
-                    # Handle potential duplicates? For now, overwrite or use unique names if needed.
                     layer_data_dict[simple_name] = layer_metrics
 
-            # No need to zero grad here, should be done externally after this function returns
 
     except Exception as e:
         print(f"Error during local layer metrics calculation: {e}")
@@ -382,8 +351,6 @@ def calculate_local_layer_metrics(model: nn.Module,
     for layer, metrics in valid_layer_data.items():
         if 'SVD Eigenvalues' in metrics:
             del metrics['SVD Eigenvalues']
-        if 'Gram Eigenvalues' in metrics: # If you were to calculate Gram EVs
-             del metrics['Gram Eigenvalues']
 
     return pd.DataFrame.from_dict(valid_layer_data, orient='index')
 
@@ -690,7 +657,7 @@ def calculate_activation_similarity(activations_dict: Dict[str, List[Tuple[str, 
                     print("Falling back to normal layer processing")
                     acts_flat = [act.reshape(act.shape[0], -1) for act in layer_activations]
                     _, result_matrix = metric.pairwise_distances(acts_flat, acts_flat, processes=cpus)
-                    adjustment = 0.5  # Use the adjustment from FC layers
+                    adjustment = 0.0  # Use the adjustment from FC layers
             
             elif is_embedding_layer and len(act_shape) == 3 and mask is not None:
                 # Handle 3D embedding with mask - like transformer layers
@@ -727,14 +694,14 @@ def calculate_activation_similarity(activations_dict: Dict[str, List[Tuple[str, 
                     print("Falling back to flattened processing for 3D embedding")
                     acts_flat = [act.reshape(act.shape[0], -1) for act in layer_activations]
                     _, result_matrix = metric.pairwise_distances(acts_flat, acts_flat, processes=cpus)
-                    adjustment = 0.5  # Use the adjustment from FC layers
+                    adjustment = 0.0  # Use the adjustment from FC layers
                 
             elif is_embedding_layer and len(act_shape) == 2:
                 # Handle 2D embedding without mask - process like any other 2D activation
                 print(f"Processing {layer_name} as 2D embedding layer")
                 # No need to reshape if already 2D (samples, features)
                 _, result_matrix = metric.pairwise_distances(layer_activations, layer_activations, processes=cpus)
-                adjustment = 0.5  # Same as FC layers
+                adjustment = 0.0  # Same as FC layers
             
             else:  # Default for FC layers or others
                 # Reshape to (samples, features)
@@ -744,7 +711,7 @@ def calculate_activation_similarity(activations_dict: Dict[str, List[Tuple[str, 
                 _, result_matrix = metric.pairwise_distances(acts_flat, acts_flat, processes=cpus)
                 
                 # Add adjustment as in old code
-                adjustment = 0.5
+                adjustment = 0.0
 
             # Apply adjustment factor if non-zero
             if adjustment != 0.0:

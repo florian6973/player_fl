@@ -112,7 +112,6 @@ class AnalyticsClient(Client):
 
     def _get_random_data_sample(self, seed: int) -> Optional[Tuple[Union[Tensor, Tuple], Tensor]]:
         """
-        FIX: Sample a random batch using RandomSampler, mimicking old code's _random_data_sample.
         Uses the provided seed for reproducibility of the sample.
         """
         if self.data.train_loader is None or self.data.train_loader.dataset is None or len(self.data.train_loader.dataset) == 0:
@@ -148,8 +147,6 @@ class AnalyticsClient(Client):
     def run_local_metrics_calculation(self, seed: int) -> pd.DataFrame:
         """
         Performs local model analysis (weights, gradients, Hessian).
-        FIX: Uses _get_random_data_sample and calculates gradients internally before analysis.
-             Passes seed specifically for HVP calculation.
         """
         print(f"Client {self.data.site_id}: Running local metrics calculation (seed={seed})...")
         state = self.get_client_state(personal=self.requires_personal_model) # Use the correct model state
@@ -200,8 +197,6 @@ class AnalyticsClient(Client):
                 # --- Now call the analysis function with the gradients computed ---
                 metrics_df = calculate_local_layer_metrics(
                     model=model_on_device, # Pass the model with grads
-                    data_batch=data_batch, # Pass batch info (might not be needed by new func)
-                    criterion=criterion,   # Pass criterion (might not be needed by new func)
                     device=self.device,    # Pass device
                     hvp_seed=seed,         # Pass the seed specifically for HVP random vector 'v'
                     attention_data=attention_data # Pass token/mask data if available

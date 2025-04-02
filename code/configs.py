@@ -126,7 +126,8 @@ DEFAULT_PARAMS = {
         'epochs_per_round': 1,                      # Local epochs per communication round
         'rounds': 100,                              # Total communication rounds
         'runs': 20,                                 # Number of independent runs for final evaluation
-        'runs_lr': 3                                # Number of independent runs for LR tuning
+        'runs_lr': 3,                               # Number of independent runs for LR tuning
+        'runs_layers':3                             # Number of independent runs for layer analytics
     },
     'EMNIST': {
         'learning_rates_try': [5e-3, 1e-3, 5e-4, 1e-4],
@@ -138,7 +139,8 @@ DEFAULT_PARAMS = {
         'epochs_per_round': 1,
         'rounds': 75,
         'runs': 10,
-        'runs_lr': 3
+        'runs_lr': 3,
+        'runs_layers':3   
     },
     'CIFAR': {
         'learning_rates_try': [5e-3, 1e-3, 5e-4],
@@ -150,7 +152,8 @@ DEFAULT_PARAMS = {
         'epochs_per_round': 1,
         'rounds': 100,
         'runs': 10,
-        'runs_lr': 3
+        'runs_lr': 3,
+        'runs_layers':1   
     },
     'ISIC': {
         'learning_rates_try': [5e-3, 1e-3, 5e-4, 1e-4],
@@ -162,7 +165,8 @@ DEFAULT_PARAMS = {
         'epochs_per_round': 1,
         'rounds': 60,
         'runs': 3,
-        'runs_lr': 1
+        'runs_lr': 1,
+        'runs_layers':1   
     },
     'Sentiment': {
         'learning_rates_try': [1e-3, 5e-4, 1e-4, 8e-5],
@@ -174,7 +178,8 @@ DEFAULT_PARAMS = {
         'epochs_per_round': 1,
         'rounds': 50,
         'runs': 10,
-        'runs_lr': 3
+        'runs_lr': 3,
+        'runs_layers':3   
     },
     'Heart': {
         'learning_rates_try': [5e-1, 1e-1, 5e-2, 1e-2],
@@ -186,7 +191,8 @@ DEFAULT_PARAMS = {
         'epochs_per_round': 1,
         'rounds': 20,
         'runs': 50,
-        'runs_lr': 5
+        'runs_lr': 5,
+        'runs_layers':5   
     },
     'mimic': {
         'learning_rates_try': [1e-3, 5e-4, 1e-4, 8e-5],
@@ -198,7 +204,8 @@ DEFAULT_PARAMS = {
         'epochs_per_round': 1,
         'rounds': 25,
         'runs': 10,
-        'runs_lr': 3
+        'runs_lr': 3,
+        'runs_layers':3   
     }
 }
 

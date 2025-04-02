@@ -5,8 +5,6 @@ DEFAULT_DATASETS=("Heart" "FMNIST" "EMNIST" "CIFAR" "Sentiment" "ISIC" "mimic")
 DEFAULT_DIR='/gpfs/commons/groups/gursoy_lab/aelhussein/layer_pfl'
 DEFAULT_ENV_PATH='/gpfs/commons/home/aelhussein/anaconda3/bin/activate'
 DEFAULT_ENV_NAME='cuda_env_ne1'
-DEFAULT_NUM_RUNS="" # Let Python script handle its default if not specified
-DEFAULT_CALC_HESSIAN=false # Default to not calculating Hessian
 
 # --- Function to display usage ---
 show_usage() {
@@ -15,9 +13,6 @@ show_usage() {
     echo ""
     echo "Options:"
     echo "  --datasets=DATASET_LIST   Comma-separated list of datasets (default: all defined)"
-    echo "  --runs=NUM_RUNS           Number of runs per dataset (default: uses python script default)"
-    echo "  --hessian                 Enable Hessian calculation (default: disabled)"
-    echo "  --dir=ROOT_DIR            Root directory (default: $DEFAULT_DIR)"
     echo "  --env-path=ENV_PATH       Environment activation path (default: $DEFAULT_ENV_PATH)"
     echo "  --env-name=ENV_NAME       Environment name (default: $DEFAULT_ENV_NAME)"
     echo "  --help                    Show this help message"
@@ -25,8 +20,6 @@ show_usage() {
 
 # --- Parse named arguments ---
 datasets=() # Initialize as empty array
-num_runs="${DEFAULT_NUM_RUNS}"
-calc_hessian="${DEFAULT_CALC_HESSIAN}"
 DIR="${DEFAULT_DIR}"
 ENV_PATH="${DEFAULT_ENV_PATH}"
 ENV_NAME="${DEFAULT_ENV_NAME}"
@@ -35,15 +28,6 @@ while [ $# -gt 0 ]; do
     case "$1" in
         --datasets=*)
             IFS=',' read -ra datasets <<< "${1#*=}"
-            ;;
-        --runs=*)
-            num_runs="${1#*=}"
-            ;;
-        --hessian) # Flag argument
-            calc_hessian=true
-            ;;
-        --dir=*)
-            DIR="${1#*=}"
             ;;
         --env-path=*)
             ENV_PATH="${1#*=}"
@@ -83,8 +67,6 @@ mkdir -p "${LOG_OUTPUT_DIR}" "${LOG_ERROR_DIR}" "${PYTHON_LOG_DIR}"
 # --- Echo configuration ---
 echo "Running Analytics Pipeline with configuration:"
 echo "Datasets: ${datasets[*]}"
-echo "Runs per dataset: ${num_runs:-python default}" # Indicate if using Python default
-echo "Calculate Hessian: ${calc_hessian}"
 echo "Directory: $DIR"
 echo "Environment path: $ENV_PATH"
 echo "Environment name: $ENV_NAME"
@@ -97,19 +79,6 @@ for dataset in "${datasets[@]}"; do
 
     # Construct the python command with conditional arguments
     python_command="python ${PYTHON_SCRIPT_PATH} -d ${dataset}"
-
-    # Add --runs argument ONLY if num_runs was provided to this script
-    if [[ -n "${num_runs}" ]]; then
-        python_command+=" -r ${num_runs}"
-    fi
-
-    # Add --hessian flag ONLY if requested
-    if [[ "${calc_hessian}" == true ]]; then
-        python_command+=" --hessian"
-    fi
-
-    # (Optional) You could also pass the results directory if needed:
-    # python_command+=" --results_dir ${DIR}/results" # Example
 
     echo "Constructed command for ${dataset}: ${python_command}"
 

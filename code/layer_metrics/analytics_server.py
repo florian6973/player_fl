@@ -42,11 +42,10 @@ class AnalyticsServer(Server):
         )
 
     # --- MODIFIED Probe Data Preparation ---
-    def _prepare_probe_data(self, seed: int = 42): # Add seed for reproducibility
+    def _prepare_probe_data(self, seed: int = 42):
         """
         Creates a consistent data batch for activation similarity analysis by
         sampling from each client's training data using RandomSampler and fractional sampling.
-        FIX: Matches old code's _prepare_data_multiple_sites logic.
         """
         if self.probe_data_batch is not None:
             print("Server: Probe data batch already prepared.")
@@ -81,11 +80,6 @@ class AnalyticsServer(Server):
                 # --- Use RandomSampler like old code ---
                 sampler = RandomSampler(client.data.train_loader.dataset, replacement=True, num_samples=client.data.train_loader.batch_size)
                 # Use a consistent generator for the sampler across clients for this specific probe data prep
-                # Note: This makes the *selection* of the batch reproducible if loaders are deterministic
-                # However, the old code didn't explicitly seed the RandomSampler *per client* like this.
-                # It relied on the global seed affecting `next(iter(random_loader))`.
-                # Let's stick closer to the original: Create loader then get next batch.
-                # We need a seeded way to get *one* batch per client randomly.
                 g = torch.Generator()
                 g.manual_seed(seed + int(client.data.site_id.split('_')[-1])) # Seed per client offset by site_id
 
@@ -125,7 +119,6 @@ class AnalyticsServer(Server):
 
                 all_features_list.append(sampled_features)
                 all_labels_list.append(sampled_labels)
-                # print(f" взяли {num_samples_to_take} образцов с клиента {client_id}") # DEBUG: Took samples from client
 
             except StopIteration:
                 print(f"Warning: Client {client_id} random_loader failed (StopIteration) during probe data prep.")
@@ -157,7 +150,15 @@ class AnalyticsServer(Server):
 
         self.probe_data_batch = (combined_features, combined_labels)
         print(f"Server: Probe data batch created with {len(combined_labels)} samples from {len(all_labels_list)} clients.")
-
+    
+    def layer_metrics_hook(self, round_num: int):
+        is_first_round = (round_num == 0)
+        is_last_round = (round_num == self.config.rounds - 1) 
+        if is_first_round or is_last_round:
+            round_identifier = 'first' if is_first_round else 'final'
+            seed = round_num
+            self.run_analysis(round_identifier=round_identifier, seed=seed)
+        return
 
     def run_analysis(self, round_identifier: str, seed: int): # Require seed
         """
@@ -173,7 +174,7 @@ class AnalyticsServer(Server):
 
         # --- 1. Prepare Probe Data (using seed) ---
         # Only prepares if self.probe_data_batch is None
-        self._prepare_probe_data(seed=seed) # Pass seed for reproducibility
+        self._prepare_probe_data(seed=seed)
 
         # --- 2. Local Metrics Calculation (Hessian etc.) ---
         print(f"Server: Requesting local metrics from {len(self.clients)} clients...")
@@ -246,17 +247,6 @@ class AnalyticsServer(Server):
         print(f"Server: Saving analysis results to {filepath}...")
         try:
             os.makedirs(os.path.dirname(filepath), exist_ok=True)
-            # Convert DataFrames to dicts for potentially better pickle compatibility across envs? Optional.
-            # results_to_save = copy.deepcopy(self.analysis_results)
-            # for round_id, client_metrics in results_to_save['grad_hess'].items():
-            #     for client_id, df in client_metrics.items():
-            #         if isinstance(df, pd.DataFrame):
-            #             results_to_save['grad_hess'][round_id][client_id] = df.to_dict(orient='index')
-            # for round_id, layer_sim in results_to_save['similarity'].items():
-            #      for layer_name, df in layer_sim.items():
-            #           if isinstance(df, pd.DataFrame):
-            #                results_to_save['similarity'][round_id][layer_name] = df.to_dict(orient='index')
-
             # Save the original structure (with DataFrames)
             with open(filepath, 'wb') as f:
                  pickle.dump(self.analysis_results, f)

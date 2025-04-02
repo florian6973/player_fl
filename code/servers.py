@@ -158,7 +158,7 @@ class Server:
             score_dict[metric_name] += value * weight
         return score_dict
 
-    def train_round(self) -> Tuple[float, float, Dict[str, float]]:
+    def train_round(self, round_num: Optional[int] = None) -> Tuple[float, float, Dict[str, float]]:
         """
         Executes one full communication round of federated learning.
 
@@ -198,10 +198,11 @@ class Server:
              agg_val_score = self._aggregate_scores(agg_val_score, client_val_score, weight)
              # print(f"  Client {client_id} finished. Val Loss: {client_val_loss:.4f}, Val Acc: {client_val_score.get('accuracy', -1):.4f}")
 
-
+        
         # --- Server Aggregation and Distribution Phase ---
         # 4. Aggregate models from clients (specific logic in subclasses)
         # print("Aggregating client models...")
+        self.layer_metrics_hook(round_num) # This is only implemented for the Analytics server class in layer_metrics/
         self.aggregate_models()
         # 5. Distribute the updated global model (specific logic in subclasses)
         # print("Distributing updated global model...")
@@ -261,6 +262,14 @@ class Server:
         return agg_test_loss, agg_test_score
 
     # --- Methods to be implemented by subclasses ---
+
+    def layer_metrics_hook(self, round_num: Optional[int] = None):
+        """
+        Placeholder for layer analysis 
+
+        Subclass Analytics server overrides this method
+        """
+        return # Base implementation does nothing
 
     def aggregate_models(self):
         """
@@ -471,7 +480,7 @@ class DittoServer(FLServer):
             personal_model=True # Ditto requires personal models
         )
 
-    def train_round(self) -> Tuple[float, float, Dict[str, float]]:
+    def train_round(self, round_num: Optional[int] = None) -> Tuple[float, float, Dict[str, float]]:
         """
         Executes one communication round for Ditto.
 
@@ -502,6 +511,7 @@ class DittoServer(FLServer):
             agg_global_val_score = self._aggregate_scores(agg_global_val_score, client_global_val_score, weight)
 
         # Aggregate client global models into the server's global model (FedAvg)
+        self.layer_metrics_hook() # This is only implemented for the Analytics server class in layer_metrics/
         self.aggregate_models() # Uses FLServer's FedAvg aggregation
         # Distribute the updated server global model to clients' global state
         self.distribute_global_model() # Uses FLServer's distribution
@@ -568,7 +578,7 @@ class LocalAdaptationServer(FLServer):
         )
 
     # Define train_round with optional final_round parameter
-    def train_round(self, final_round: bool = False) -> Tuple[float, float, Dict[str, float]]:
+    def train_round(self, round_num: Optional[int] = None) -> Tuple[float, float, Dict[str, float]]:
         """
         Executes one communication round, with special handling for the final round.
 
@@ -590,7 +600,7 @@ class LocalAdaptationServer(FLServer):
 
         # Perform the standard FedAvg-like round first
         train_loss, val_loss, val_score = super().train_round() # Aggregation/distribution happens here
-
+        final_round = (round_num == self.config.rounds - 1)
         if final_round:
             print("LocalAdaptationServer: Starting final adaptation phase on clients...")
             agg_adapt_train_loss = 0.0
@@ -774,7 +784,7 @@ class BABUServer(LayerServer):
         )
 
     # Define train_round with optional final_round parameter
-    def train_round(self, final_round: bool = False) -> Tuple[float, float, Dict[str, float]]:
+    def train_round(self, round_num: Optional[int] = None) -> Tuple[float, float, Dict[str, float]]:
         """
         Executes one communication round for BABU.
 
@@ -792,7 +802,7 @@ class BABUServer(LayerServer):
         """
         # Perform the standard layer-wise round first (aggregates/distributes body)
         train_loss, val_loss, val_score = super().train_round() # Uses LayerServer logic
-
+        final_round = (round_num == self.config.rounds - 1)
         if final_round:
             print("BABUServer: Starting final head tuning phase on clients...")
             agg_head_train_loss = 0.0
@@ -1511,7 +1521,7 @@ class pFedLAServer(FLServer):
         # print(f"Server-side model copy for {client_id} updated.")
 
 
-    def train_round(self) -> Tuple[float, float, Dict[str, float]]:
+    def train_round(self, round_num: Optional[int] = None) -> Tuple[float, float, Dict[str, float]]:
         """
         Executes one communication round for pFedLA.
 
