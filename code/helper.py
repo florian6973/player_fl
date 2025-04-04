@@ -74,7 +74,7 @@ def get_algorithm_config(server_type: str, dataset_name: str) -> Dict:
         # BABU federates all layers except the final classification head.
         params['layers_to_include'] = LAYERS_TO_FEDERATE_DICT[server_type][dataset_name]
 
-    if server_type == 'layerpfl':
+    if server_type in ['layerpfl', 'layerpfl2']:
         # LayerPFL federates a predefined, fixed subset of layers based on layer metrics.
         params['layers_to_include'] = LAYERS_TO_FEDERATE_DICT[server_type][dataset_name]
         # Note: Regularization parameter is defined but not used in the standard LayerPFL setup.

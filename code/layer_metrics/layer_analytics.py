@@ -304,7 +304,7 @@ def calculate_local_layer_metrics(model: nn.Module,
                 layer_data_for_hessian = None # Specific data needed for Hessian/Importance
 
                 # Simple check for embedding table names
-                if 'embedding' in name.lower() and param.dim() == 2:
+                if 'token_embedding' in name.lower():
                      emb_table = True
                      layer_data_for_hessian = attention_data # Pass tokens/mask
                      # print(f"Analyzing Embedding Layer: {name}")
@@ -485,7 +485,7 @@ def calculate_activation_similarity(activations_dict: Dict[str, List[Tuple[str, 
         return {}
     
     # Skip the last layer which is just the prediction (no longer a represenation)
-    layer_names = [name for name, _ in layer_names_with_acts[:-1]]
+    layer_names = [name for name, _ in layer_names_with_acts]
     
     # More robust mask extraction with multiple fallbacks
     mask = None
@@ -493,23 +493,14 @@ def calculate_activation_similarity(activations_dict: Dict[str, List[Tuple[str, 
     
     # Try to extract mask from probe_data_batch using various methods
     if probe_data_batch is not None:
-        # Method 1: Extract from tuple where first element is (data, mask)
-        if isinstance(probe_data_batch, tuple) and len(probe_data_batch) >= 1:
-            if isinstance(probe_data_batch[0], tuple) and len(probe_data_batch[0]) >= 2:
-                potential_mask = probe_data_batch[0][1]  # Second element of features tuple
-                if isinstance(potential_mask, torch.Tensor):
-                    mask = potential_mask.cpu().numpy()
-                    is_attention_model = True
-                    print("Detected attention mask (method 1)")
-        
-        # Method 2: Extract from probe_data_batch as (data, mask) tuple
-        if mask is None and isinstance(probe_data_batch, tuple) and len(probe_data_batch) >= 2:
-            potential_mask = probe_data_batch[1]  # Second element of the main tuple
+    # Extract from tuple where first element is (data, mask)
+        if isinstance(probe_data_batch[0], tuple) and len(probe_data_batch[0]) >= 2:
+            potential_mask = probe_data_batch[0][1]  # Second element of features tuple
             if isinstance(potential_mask, torch.Tensor):
                 mask = potential_mask.cpu().numpy()
                 is_attention_model = True
-                print("Detected attention mask (method 2)")
-    
+                print("Detected attention mask")
+        
     # Convert mask to boolean if needed
     if mask is not None and mask.dtype != bool:
         mask = mask.astype(bool)

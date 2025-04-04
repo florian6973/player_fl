@@ -64,9 +64,9 @@ class AnalyticsServer(Server):
         # Determine samples per site based on actual clients and configured batch size
         # Mimic: samples = len(batch_label) // self.num_sites
         # We use the configured batch_size as a proxy for the batch length
-        samples_per_site = self.batch_size_config // num_active_clients if num_active_clients > 0 else 0
+        samples_per_site = 32 // num_active_clients if num_active_clients > 0 else 0
         if samples_per_site == 0:
-            print(f"Warning: Calculated samples_per_site is 0 (batch_size={self.batch_size_config}, clients={num_active_clients}). Setting to 1.")
+            print(f"Warning: Calculated samples_per_site is 0 (batch_size={32}, clients={num_active_clients}). Setting to 1.")
             samples_per_site = 1
 
         print(f"Server: Aiming for {samples_per_site} samples per client for probe data.")
@@ -77,7 +77,6 @@ class AnalyticsServer(Server):
                  continue
 
             try:
-                # --- Use RandomSampler like old code ---
                 sampler = RandomSampler(client.data.train_loader.dataset, replacement=True, num_samples=client.data.train_loader.batch_size)
                 # Use a consistent generator for the sampler across clients for this specific probe data prep
                 g = torch.Generator()
@@ -85,7 +84,7 @@ class AnalyticsServer(Server):
 
                 random_loader = DataLoader(
                     dataset=client.data.train_loader.dataset,
-                    batch_size=client.data.train_loader.batch_size,
+                    batch_size=32, # Limit batch size for probing due to memory
                     sampler=RandomSampler(client.data.train_loader.dataset, replacement=True, generator=g), # Seeded sampler
                     collate_fn=client.data.train_loader.collate_fn,
                     num_workers=0,
@@ -106,7 +105,7 @@ class AnalyticsServer(Server):
                     continue
 
                 # Slice the features and labels
-                if feature_type == tuple:
+                if feature_type in (tuple, list):
                     # Handle tuple features (e.g., input_ids, attention_mask)
                     sampled_features = tuple(f[:num_samples_to_take].cpu() for f in batch_features) # Move to CPU
                 elif feature_type == torch.Tensor:
@@ -135,7 +134,7 @@ class AnalyticsServer(Server):
         # Combine samples into a single batch (on CPU)
         combined_labels = torch.cat(all_labels_list, dim=0)
 
-        if feature_type == tuple:
+        if feature_type in (tuple, list):
             num_feature_elements = len(all_features_list[0])
             combined_features_tuple = []
             for i in range(num_feature_elements):
@@ -163,7 +162,6 @@ class AnalyticsServer(Server):
     def run_analysis(self, round_identifier: str, seed: int): # Require seed
         """
         Runs the analysis pipeline for a given round/identifier.
-        FIX: Passes seed to clients, prepares probe data with seed.
         """
         print(f"--- Server: Starting Analysis for '{round_identifier}' (seed={seed}) ---")
         start_time = time.time()
@@ -221,22 +219,23 @@ class AnalyticsServer(Server):
                     traceback.print_exc()
                     all_client_activations[client_id] = []
 
-            print("Server: Calculating activation similarity...")
+            #print("Server: Calculating activation similarity...")
             # Filter dict for clients that actually provided activations
-            valid_activations = {cid: act for cid, act in all_client_activations.items() if act}
+            #valid_activations = {cid: act for cid, act in all_client_activations.items() if act}
 
-            if len(valid_activations) >= 2:
-                # Pass the probe batch ONLY for potential mask extraction inside calculate_activation_similarity
-                similarity_results = calculate_activation_similarity(
-                    activations_dict=valid_activations,
-                    probe_data_batch=self.probe_data_batch,
-                    cpus=self.num_cpus_analysis
-                    )
-                self.analysis_results['similarity'][round_identifier] = similarity_results
-                print("Server: Activation similarity calculated.")
-            else:
-                print(f"Server: Skipping similarity calculation - only {len(valid_activations)} clients provided valid activations.")
-                self.analysis_results['similarity'][round_identifier] = {} # Store empty dict
+            # if len(valid_activations) >= 2:
+            #     # Pass the probe batch ONLY for potential mask extraction inside calculate_activation_similarity
+            #     similarity_results = calculate_activation_similarity(
+            #         activations_dict=valid_activations,
+            #         probe_data_batch=self.probe_data_batch,
+            #         cpus=self.num_cpus_analysis
+            #         )
+            #     self.analysis_results['similarity'][round_identifier] = similarity_results
+            #     print("Server: Activation similarity calculated.")
+            # else:
+            #     print(f"Server: Skipping similarity calculation - only {len(valid_activations)} clients provided valid activations.")
+            #     self.analysis_results['similarity'][round_identifier] = {} # Store empty dict
+            self.analysis_results['similarity'][round_identifier] = {} # Store empty dict to speed up
 
         end_time = time.time()
         print(f"--- Server: Analysis for '{round_identifier}' finished ({end_time - start_time:.2f} sec) ---")

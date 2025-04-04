@@ -93,6 +93,7 @@ ALGORITHMS = [
     'layerpfl_random'   # LayerPFL (FedAvg on a randomly chosen prefix subset of layers)
 ]
 
+
 # --- Supported Datasets ---
 DATASETS = [
     'FMNIST',    # FashionMNIST

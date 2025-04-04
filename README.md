@@ -1,36 +1,78 @@
-# PLayer-FL
+# PLayer-FL: Principled Layer-wise Personalized Federated Learning
 
-This repository contains code for the paper PLayer-FL: A principled approach to personalized layer-wise cross-silo Federated Learning.
+This repository contains the official implementation for the paper **"PLayer-FL: A principled approach to personalized layer-wise cross-silo Federated Learning"**
 
-## Folder Structure
+PLayer-FL introduces a novel approach to personalize federated learning models by adapting specific layers based on client data characteristics. This codebase provides the implementation for PLayer-FL, several baseline federated learning algorithms, and tools for layer-wise analysis.
 
-### `datasets/`
-- **`dataset_creator.py`**  
-  Run this script first to generate the datasets used in the paper.
 
-- **`dataset_processing.py`**  
-  Used internally during the pipeline (not intended to be run directly by the user).
+## Repository Structure
+```
+├── code/                         # Main codebase
+│   ├── clients.py                # Client-side implementations for all FL algorithms
+│   ├── configs.py                # Global configuration and hyperparameters
+│   ├── datasets/                 # Dataset processing and creation
+│   │   ├── dataset_creator.py    # Script to generate datasets used in the paper
+│   │   └── dataset_processing.py # Dataset loading and preprocessing utilities
+│   ├── evaluation/               # Evaluation framework
+│   │   ├── losses.py             # Custom loss functions
+│   │   ├── optimizers.py         # Custom optimizers for specific algorithms
+│   │   ├── performance_logging.py # Logging utilities
+│   │   ├── pipeline.py           # Experiment execution pipeline
+│   │   ├── results_processing.py # Results analysis and visualization
+│   │   └── run.py                # Main entry point for running evaluations
+│   ├── helper.py                 # Utility functions
+│   ├── layer_metrics/            # Tools for analyzing layer-wise behavior
+│   │   ├── analytics_clients.py  # Client implementations for metrics
+│   │   ├── analytics_pipeline.py # Pipeline for running analytics
+│   │   ├── analytics_results_processing.py # Process analytics results
+│   │   ├── analytics_run.py      # Entry point for running metrics analysis
+│   │   ├── analytics_server.py   # Server for analytics collection
+│   │   └── layer_analytics.py    # Core layer analysis metrics
+│   ├── models.py                 # Neural network architectures
+│   └── servers.py                # Server-side implementations for all FL algorithms
+└── results/                      # Directory for experiment results
+    ├── analytics/                # Layer metrics results
+    ├── evaluation/               # Algorithm evaluation results
+    └── lr_tuning/                # Learning rate tuning results
+```
 
-### `layer_metrics/`
-Contains scripts to generate the layer metric figures presented in the paper.
+## Implemented Algorithms
+PLayer-FL includes implementations of various federated learning algorithms:
+- Local: Local training without federation
+- FedAvg: Standard Federated Averaging
+- FedProx: Federated Proximal optimization with regularization
+- pFedMe: Personalized FL with model optimization
+- Ditto: Dual-model personalization approach
+- LocalAdaptation: Fine-tuning after federation
+- BABU: Body Aggregation, Batch Updating (federated body, local head)
+- FedLP: Layer-wise probabilistic model aggregation
+- FedLAMA: Layer-wise adaptive model aggregation
+- pFedLA: Personalized layer-wise aggregation via hypernetwork
+- LayerPFL: Our approach with principled layer selection
+- LayerPFL_random: Random layer subset selection variant
 
-### `evaluation/`
-Includes scripts to run evaluations on baseline algorithms and **PLayer-FL**.
+## Setup and Installation
+### 1. Dependencies
+*   Python 3.8+ recommended.
+*   Create and activate a virtual environment (e.g., using `conda` or `venv`).
+*   Install required packages:
+    ```bash
+    pip install -r requirements.txt
+    ```
 
-## Dataset Setup
-
-The project requires several datasets that need to be downloaded and placed in a `data` folder. Below are the required datasets and their sources:
+### 2. Dataset Setup
+The project requires several datasets that need to be downloaded and placed in a `data` folder. Below are the required datasets and their sources.
 
 ### Directory Structure
 ```
 data/
-├── FMNIST/       # Automatically populated
-├── EMNIST/       # Automatically populated
-├── CIFAR10/       # Automatically populated
-├── Heart/         # FLamby heart disease data
-├── ISIC/      # FLamby ISIC data
-├── mimic_iii/         # MIMIC-III data
-└── Sentiment/      # Sentiment140 data
+├── FMNIST/       # Fashion-MNIST (downloaded automatically)
+├── EMNIST/       # Extended MNIST (downloaded automatically)
+├── CIFAR10/      # CIFAR-10 (downloaded automatically)
+├── Heart/        # FLamby heart disease data
+├── ISIC/         # ISIC skin lesion dataset
+├── mimic_iii/    # MIMIC-III clinical notes
+└── Sentiment/    # Twitter Sentiment140 dataset
 ```
 
 ### Standard ML Datasets (via PyTorch)
@@ -93,74 +135,113 @@ data/
 
 ---
 
-
-### Access Requirements
+#### Access Requirements
 - MIMIC-III requires PhysioNet credentialed access
 - Other datasets are publicly available
 
-### Dataset creation
-To create the datasets used in the study now run:
+### 3. Dataset preprocessing
+After downloading the required datasets, run:
 
 ```bash
-python create_datasets.py [OPTIONS]
+bash ./code/datasets/submit_dataset_creation.sh [OPTIONS]
 ```
+Available Options:
+--`datasets`: Comma-separated list of datasets to process (default: isic,sentiment,mimic,benchmark)
+--`process-all`: Flag to process all datasets regardless of individual selection
+--`dir`: Root directory (defaults to project location)
+--`env-path`: Environment activation path
+--`env-name`: Environment name
+--`memory`: Memory allocation for job (default: 64G)
+--`time`: Time allocation for job (default: 48:00:00)
+--`help`: Show help message
 
-Available Options
-- The default option will create all the datasets
-- `--benchmark`: Download and load benchmark image datasets (EMNIST, CIFAR10, FashionMNIST)
-- `--isic`: Process the ISIC skin lesion dataset
-- `--sentiment`: Process the Twitter sentiment dataset (will unzip sentiment.zip if available)
-- `--mimic`: Process the MIMIC-III clinical notes dataset
+
+This script creates a SLURM submission that handles the dataset creation process, with appropriate resource allocations for these computationally intensive tasks.
 
 
-### Data Processing
-For detailed dataset descriptions and preprocessing steps, refer to our paper's methodology section.
+## Running Epxeriments
+The codebase supports two main types of experiments: Model Evaluation and Layer Metrics.
 
-## Processes
-There are two main processes available:
+### Layer Metrics Analysis
 
-### 1. Layer Metrics
-
-Located in the `layer_metrics` directory, this codebase reproduces the figures presented in the paper (gradient variance, sample representation, etc.).
-
-#### Running Layer Metrics
+This pipeline runs specific algorithms (currently 'local' and 'fedavg' as per analytics_pipeline.py) and collects detailed layer-wise metrics (gradient norms, Hessian-vector products, activation similarity) during the initial and final rounds of training.
 
 Run using the provided SLURM script:
-
 ```bash
-sbatch script_metrics DIRECTORY DATASETS FED
+bash ./code/layer_metrics/submit_layer_metrics.sh [OPTIONS]
+```
+--`datasets`: Comma-separated list of datasets (default: Heart,FMNIST,EMNIST,CIFAR,Sentiment,ISIC,mimic)
+--`env-path`: Environment activation path
+--`env-name`: Environment name
+--`help`: Show help message
+
+Results (raw metrics per client, per layer, per run) are saved in `results/analytics/<DATASET_NAME>_analytics_results.pkl.`
+
+
+#### Results processing
+ Use the `code/layer_metrics/analytics_results_processing.py` script to generate plots (gradient importance, variance, Hessian SVD sum, activation similarity) from the .pkl files in results/analytics/.
+
+ ```python
+# Example
+python code/layer_metrics/analytics_results_processing.py --dataset FMNIST --server_type local
+python code/layer_metrics/analytics_results_processing.py --dataset FMNIST --server_type fedavg
 ```
 
-This executes:
-```bash
-python $DIR/code/layer_metrics/layer_pfl_metrics.py --datasets=$DATASETS --federated=$FED
-```
+### Model Evaluations
 
-#### Default Parameters
-- **Datasets**: Heart, FMNIST, EMNIST, Sentiment, mimic, CIFAR, ISIC
-- **Federated Mode**: False
+This pipeline trains and evaluates the performance of PLayer-FL and baseline algorithms. It involves two steps:
+1. Learning Rate Tuning
+2. Evaluation
 
-### 2. Model Evaluations
-
-To reproduce the model evaluation results presented in the paper, use `submit_jobs.sh`. This script coordinates both learning rate tuning and final model evaluation.
+Both are run using the same bash script `submit_evaluation.sh`. As evaluation automatically selects the best learning rate, learning rate tuning for a dataset must be completed prior to running evalutation
 
 #### Running Model Evaluations
 
 ```bash
-bash code/submit_jobs.sh --datasets=DATASETS --exp-types=EXPERIMENT_TYPE --dir=/custom/path
+bash ./code/evaluation/submit_evaluation.sh [OPTIONS]
 ```
+Available Options
+--`datasets`: Comma-separated list of datasets to process (default: Heart,FMNIST,EMNIST,CIFAR,Sentiment,ISIC,mimic)
+--`exp-types`: Comma-separated list of experiment types (default: evaluation, alternative: learning_rate)
+--`dir`: Root directory
+--`env-path`: Environment activation path
+--`env-name`: Environment name
+--`help`: Show help message
 
-Where:
-- `EXPERIMENT_TYPE` can be either `evaluation` or `learning_rate`
-- For final model evaluation, the best learning rate hyperparameter is selected automatically. This means learning_rate tuning must be done before running evaluation
+Results are saved in `results/lr_tuning/<DATASET_NAME>_lr_tuning.pkl` and `results/evaluation/<DATASET_NAME>_evaluation.pkl`, respectively.
 
-#### Configuration
-- Model configurations can be modified in `configs.py`
+#### Results Processing
+Use the `code/evaluation/results_processing.py` script to generate summary tables (median performance with CIs, fairness metrics) from the .pkl files in results/evaluation/.
+```python
+# Example 
+python code/evaluation/results_processing.py
+```
+This will generate tables and figures summarizing the performance of different algorithms across datasets.
 
-## Directory Structure
+## Configuration
 
-- `results/`: Contains all output results with subdirectories for `learning_rate` and `evaluation`
-- `code/evalation/logs/`: Contains execution logs
-- `code/layer_metrics/`: Contains code for layer-wise analysis
-- `code/`: Main codebase
+The main configuration file is `code/configs.py`. It defines:
 
+- Default hyperparameters (learning rates, rounds, epochs, batch sizes) per dataset.
+- Paths to data and results directories.
+- Lists of supported algorithms and datasets.
+- Algorithm-specific parameters:
+  - Layers to federate (LAYERS_TO_FEDERATE_DICT) for LayerPFL, BABU.
+  - Regularization parameters (REG_PARAMS) for FedProx, pFedMe, Ditto.
+  - Layer preservation rate (LAYER_PRESERVATION_RATES) for FedLP.
+  - FedLAMA parameters (LAMA_RATES).
+  - pFedLA HyperNetwork parameters (HYPERNETWORK_PARAMS).
+
+Modify this file to change experiment settings, add new datasets, or adjust algorithm parameters.
+
+
+## Citation
+If you use this code in your research, please cite the PLayer-FL paper:
+```
+@article{elhussein2025player,
+  title={PLayer-FL: A Principled Approach to Personalized Layer-wise Cross-Silo Federated Learning},
+  author={Elhussein, Ahmed and G{\"u}rsoy, Gamze},
+  journal={arXiv preprint arXiv:2502.08829},
+  year={2025}
+}
+```

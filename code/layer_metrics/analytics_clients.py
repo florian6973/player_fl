@@ -115,22 +115,32 @@ class AnalyticsClient(Client):
         Uses the provided seed for reproducibility of the sample.
         """
         if self.data.train_loader is None or self.data.train_loader.dataset is None or len(self.data.train_loader.dataset) == 0:
-             print(f"Warning: Client {self.data.site_id} train_loader or dataset is empty/None.")
-             return None
+            print(f"Warning: Client {self.data.site_id} train_loader or dataset is empty/None.")
+            return None
         try:
-            # Create a new RandomSampler with the specific seed for this run
-            sampler = RandomSampler(self.data.train_loader.dataset, replacement=True, num_samples=self.data.train_loader.batch_size)
+            # Create a generator with the specified seed
+            g = torch.Generator()
+            g.manual_seed(seed)
+            
+            # Create a new RandomSampler with the generator
+            sampler = RandomSampler(
+                self.data.train_loader.dataset, 
+                replacement=True, 
+                num_samples=self.data.train_loader.batch_size,
+                generator=g
+            )
+            
             # Temporarily create a new DataLoader with this sampler
-            # Preserve original loader settings like batch_size, collate_fn etc. if possible
             random_loader = DataLoader(
                 dataset=self.data.train_loader.dataset,
                 batch_size=self.data.train_loader.batch_size,
                 sampler=sampler,
                 collate_fn=self.data.train_loader.collate_fn,
-                num_workers=0, # Use 0 workers for seeded sampling consistency maybe?
-                pin_memory=self.data.train_loader.pin_memory
-                # Add other relevant DataLoader args if needed
+                num_workers=0,  # Use 0 workers for seeded sampling consistency
+                pin_memory=self.data.train_loader.pin_memory,
+                generator=g  # Also set the generator for the DataLoader
             )
+            
             data_batch = next(iter(random_loader))
             del random_loader # Clean up temporary loader
             del sampler
@@ -157,13 +167,13 @@ class AnalyticsClient(Client):
         model_to_analyze = state.model
         criterion = state.criterion
 
-        # --- FIX: Sample data using the seeded random sampler ---
+        # --- Sample data using the seeded random sampler ---
         data_batch = self._get_random_data_sample(seed)
         if data_batch is None:
             print(f"Client {self.data.site_id}: Failed to get data batch. Cannot calculate metrics.")
             return pd.DataFrame()
 
-        # --- FIX: Perform forward/backward pass HERE to get grads for analysis ---
+        # --- Perform forward/backward pass HERE to get grads for analysis ---
         metrics_df = pd.DataFrame() # Initialize empty DataFrame
         attention_data = None # For embedding layers
         try:
