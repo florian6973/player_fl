@@ -146,14 +146,14 @@ After downloading the required datasets, run:
 bash ./code/datasets/submit_dataset_creation.sh [OPTIONS]
 ```
 Available Options:
---`datasets`: Comma-separated list of datasets to process (default: isic,sentiment,mimic,benchmark)
---`process-all`: Flag to process all datasets regardless of individual selection
---`dir`: Root directory (defaults to project location)
---`env-path`: Environment activation path
---`env-name`: Environment name
---`memory`: Memory allocation for job (default: 64G)
---`time`: Time allocation for job (default: 48:00:00)
---`help`: Show help message
+- `datasets`: Comma-separated list of datasets to process (default: isic,sentiment,mimic,benchmark)
+- `process-all`: Flag to process all datasets regardless of individual selection
+- `dir`: Root directory (defaults to project location)
+- `env-path`: Environment activation path
+- `env-name`: Environment name
+- `memory`: Memory allocation for job (default: 64G)
+- `time`: Time allocation for job (default: 48:00:00)
+- `help`: Show help message
 
 
 This script creates a SLURM submission that handles the dataset creation process, with appropriate resource allocations for these computationally intensive tasks.
@@ -170,10 +170,10 @@ Run using the provided SLURM script:
 ```bash
 bash ./code/layer_metrics/submit_layer_metrics.sh [OPTIONS]
 ```
---`datasets`: Comma-separated list of datasets (default: Heart,FMNIST,EMNIST,CIFAR,Sentiment,ISIC,mimic)
---`env-path`: Environment activation path
---`env-name`: Environment name
---`help`: Show help message
+- `datasets`: Comma-separated list of datasets (default: Heart,FMNIST,EMNIST,CIFAR,Sentiment,ISIC,mimic)
+- `env-path`: Environment activation path
+- `env-name`: Environment name
+- `help`: Show help message
 
 Results (raw metrics per client, per layer, per run) are saved in `results/analytics/<DATASET_NAME>_analytics_results.pkl.`
 
@@ -201,12 +201,12 @@ Both are run using the same bash script `submit_evaluation.sh`. As evaluation au
 bash ./code/evaluation/submit_evaluation.sh [OPTIONS]
 ```
 Available Options
---`datasets`: Comma-separated list of datasets to process (default: Heart,FMNIST,EMNIST,CIFAR,Sentiment,ISIC,mimic)
---`exp-types`: Comma-separated list of experiment types (default: evaluation, alternative: learning_rate)
---`dir`: Root directory
---`env-path`: Environment activation path
---`env-name`: Environment name
---`help`: Show help message
+- `datasets`: Comma-separated list of datasets to process (default: Heart,FMNIST,EMNIST,CIFAR,Sentiment,ISIC,mimic)
+- `exp-types`: Comma-separated list of experiment types (default: evaluation, alternative: learning_rate)
+- `dir`: Root directory
+- `env-path`: Environment activation path
+- `env-name`: Environment name
+- `help`: Show help message
 
 Results are saved in `results/lr_tuning/<DATASET_NAME>_lr_tuning.pkl` and `results/evaluation/<DATASET_NAME>_evaluation.pkl`, respectively.
 
