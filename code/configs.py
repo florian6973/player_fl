@@ -63,7 +63,7 @@ DATA_DIR = f'{ROOT_DIR}/data_2'       # Directory containing datasets
 DATA_PROCESSING_DIR = f'{ROOT_DIR}/code/datasets' # Directory for data preproccessing
 EVAL_DIR = f'{ROOT_DIR}/code/evaluation' # Directory for evaluation scripts/results
 METRIC_DIR = f'{ROOT_DIR}/code/layer_metrics' # Directory for layer-specific metric code
-RESULTS_DIR = f'{ROOT_DIR}/results_2' # Directory to save experiment results
+RESULTS_DIR = f'{ROOT_DIR}/results_3' # Directory to save experiment results
 
 # --- Add project directories to Python path ---
 # Allows importing modules from these directories
@@ -88,11 +88,9 @@ ALGORITHMS = [
     'fedlp',            # FedLP (layer-wise probabilistic aggregation)
     'fedlama',          # FedLAMA (layer-wise adaptive aggregation frequency)
     'pfedla',           # pFedLA (layer-wise personalized aggregation via hypernetwork)
-    'layerpfl',         # LayerPFL (FedAvg on a fixed subset of layers)
-    'layerpfl2',
-    'layerpfl_random'   # LayerPFL (FedAvg on a randomly chosen prefix subset of layers)
+    'playerfl',         # PLayerFL (FedAvg on a fixed subset of layers)
+    'playerfl_random'   # PLayerFL (FedAvg on a randomly chosen prefix subset of layers)
 ]
-
 
 # --- Supported Datasets ---
 DATASETS = [
@@ -165,7 +163,7 @@ DEFAULT_PARAMS = {
         'batch_size': 128,
         'epochs_per_round': 1,
         'rounds': 60,
-        'runs': 3,
+        'runs': 5,
         'runs_lr': 1,
         'runs_layers':1   
     },
@@ -192,7 +190,7 @@ DEFAULT_PARAMS = {
         'epochs_per_round': 1,
         'rounds': 20,
         'runs': 50,
-        'runs_lr': 5,
+        'runs_lr': 10,
         'runs_layers':5   
     },
     'mimic': {
@@ -215,37 +213,28 @@ DEFAULT_PARAMS = {
 # in different layer-wise algorithms.
 LAYERS_TO_FEDERATE_DICT = {
     # LayerPFL: Federate a fixed subset based on layer metrics
-    "layerpfl": {
-        'EMNIST': ['layer1.', 'layer2.', 'layer3.'],
+    "playerfl": {
+        'EMNIST': ['layer1.', 'layer2.', 'layer3.', 'fc1'],
         'CIFAR': ['layer1.', 'layer2.', 'layer3.', 'layer4.', 'layer5.'],
         "FMNIST": ['layer1.', 'layer2.', 'layer3.'],
-        'ISIC': ['layer1.', 'layer2.', 'layer3.', 'layer4.', 'layer5.'],
-        "Sentiment": ['token_embedding_table1', 'position_embedding_table1', 'attention1', 'proj1'],
+        'ISIC': ['layer1.', 'layer2.', 'layer3.', 'layer4.', 'layer5.', 'fc1'],
+        "Sentiment": ['token_embedding_table1', 'position_embedding_table1', 'attention1', 'proj1', 'fc1', 'resid1'],
         "Heart": ['fc1'],
         "mimic": ['token_embedding_table1', 'position_embedding_table1', 'attention1', 'proj1']
     },
-    "layerpfl2": {
-        'EMNIST': ['layer1.', 'layer2.', 'layer3.', 'fc1'],
-        'CIFAR': ['layer1.', 'layer2.', 'layer3.', 'layer4.', 'layer5.', 'fc1'],
-        "FMNIST": ['layer1.', 'layer2.', 'layer3.', 'fc1'],
-        'ISIC': ['layer1.', 'layer2.', 'layer3.', 'layer4.', 'layer5.', 'fc1'],
-        "Sentiment": ['token_embedding_table1', 'position_embedding_table1', 'attention1', 'proj1', 'fc1', 'resid1'],
-        "Heart": ['fc1', 'fc2'],
-        "mimic": ['token_embedding_table1', 'position_embedding_table1', 'attention1', 'proj1', 'fc1', 'resid1']
-    },
-    # BABU: Federate all layers *except* the final classification head
+    # BABU: Federate all layers *except* the head
     "babu": {
-        'EMNIST': ['layer1.', 'layer2.', 'layer3.', 'fc1'], # fc2 is head
-        'CIFAR': ['layer1.', 'layer2.', 'layer3.', 'layer4.', 'layer5.', 'fc1'], # fc2 is head
-        "FMNIST": ['layer1.', 'layer2.', 'layer3.', 'fc1'], # fc2 is head
-        'ISIC': ['layer1.', 'layer2.', 'layer3.', 'layer4.', 'layer5.', 'fc1'], # fc2 is head
-        "Sentiment": ['token_embedding_table1', 'position_embedding_table1', 'attention1', 'proj1', 'fc1',  'resid1'], # fc2 is head
-        "Heart": ['fc1', 'fc2', 'fc3'], # fc4 is head
-        "mimic": ['token_embedding_table1', 'position_embedding_table1', 'attention1', 'proj1', 'fc1',  'resid1'] # fc2 is head
+        'EMNIST': ['layer1.', 'layer2.', 'layer3.'], 
+        'CIFAR': ['layer1.', 'layer2.', 'layer3.', 'layer4.', 'layer5.'], 
+        "FMNIST": ['layer1.', 'layer2.', 'layer3.'], 
+        'ISIC': ['layer1.', 'layer2.', 'layer3.', 'layer4.', 'layer5.'],
+        "Sentiment": ['token_embedding_table1', 'position_embedding_table1', 'attention1', 'proj1', 'fc1',  'resid1'], 
+        "Heart": ['fc1', 'fc2', 'fc3'],
+        "mimic": ['token_embedding_table1', 'position_embedding_table1', 'attention1', 'proj1', 'fc1',  'resid1']
     },
     # LayerPFL_random: Provides the *pool* of all possible layers to federate.
     # A random prefix subset of these layers will be chosen during runtime.
-    "layerpfl_random":{
+    "playerfl_random":{
             'EMNIST':['layer1.', 'layer2.', 'layer3.', 'fc1', 'fc2'],
             'CIFAR':['layer1.', 'layer2.', 'layer3.', 'layer4.', 'layer5.', 'fc1', 'fc2'],
             "FMNIST":['layer1.', 'layer2.', 'layer3.', 'fc1', 'fc2'],

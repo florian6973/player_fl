@@ -371,13 +371,13 @@ class HeartDataset(BaseDataset):
             
             # Set the pre-computed values for columns that should be scaled
             scale_values = {
-                'age': (53.0972973, 7.02459463e+01),
-                'chest_pain_type': (3.22702703, 8.16756772e-01),
-                'resting_bp': (132.75405405, 3.45293057e+02),
-                'cholesterol': (220.13648649, 4.88330934e+03),
-                'ecg': (0.63513514, 5.92069868e-01),
-                'max_hr': (138.74459459, 5.29172208e+02),
-                'exercise_ST_depression': (0.89432432, 1.11317517e+00)
+                'age': (53.0872973, 7.01459463e+01),
+                'chest_pain_type': (3.23702703, 8.17756772e-01),
+                'resting_bp': (132.74405405, 3.45493057e+02),
+                'cholesterol': (220.23648649, 4.88430934e+03),
+                'ecg': (0.64513514, 5.92069868e-01),
+                'max_hr': (138.75459459, 5.29172208e+02),
+                'exercise_ST_depression': (0.89532432, 1.11317517e+00)
             }
             
             # Update means and variances for scaled columns

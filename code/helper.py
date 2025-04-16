@@ -74,17 +74,17 @@ def get_algorithm_config(server_type: str, dataset_name: str) -> Dict:
         # BABU federates all layers except the final classification head.
         params['layers_to_include'] = LAYERS_TO_FEDERATE_DICT[server_type][dataset_name]
 
-    if server_type in ['layerpfl', 'layerpfl2']:
+    if server_type in ['playerfl']:
         # LayerPFL federates a predefined, fixed subset of layers based on layer metrics.
         params['layers_to_include'] = LAYERS_TO_FEDERATE_DICT[server_type][dataset_name]
         # Note: Regularization parameter is defined but not used in the standard LayerPFL setup.
-        params['reg_param'] = REG_PARAMS.get('layerpfl', {}).get(dataset_name)
+        params['reg_param'] = REG_PARAMS.get('playerfl', {}).get(dataset_name)
 
-    elif server_type == 'layerpfl_random':
+    elif server_type == 'playerfl_random':
         # LayerPFL_random selects a random prefix of the available layers for federation.
         # It ensures the selected subset is different from the fixed 'layerpfl' set
-        # and also not the entire set of layers defined for 'layerpfl_random'.
-        fixed_layers = LAYERS_TO_FEDERATE_DICT['layerpfl'][dataset_name]
+        # and also not the entire set of layers defined for 'playerfl_random'.
+        fixed_layers = LAYERS_TO_FEDERATE_DICT['playerfl'][dataset_name]
         all_possible_layers = LAYERS_TO_FEDERATE_DICT[server_type][dataset_name] # The pool to choose from
 
         # Keep selecting a random prefix until it's valid
@@ -101,7 +101,7 @@ def get_algorithm_config(server_type: str, dataset_name: str) -> Dict:
             if len(all_possible_layers) <= 1 or all_possible_layers == fixed_layers:
                  # Fallback or warning: Use the fixed set or the full set if no valid random subset found
                  selected_layers = fixed_layers if fixed_layers else all_possible_layers
-                 print(f"Warning: Could not find a distinct random subset for layerpfl_random on {dataset_name}. Using fallback.")
+                 print(f"Warning: Could not find a distinct random subset for playerfl_random on {dataset_name}. Using fallback.")
                  break
         params['layers_to_include'] = selected_layers
 

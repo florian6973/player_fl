@@ -394,7 +394,8 @@ def plot_model_metrics(dataset, averaged_results, server_type, results_dir):
             if stage_idx == 0:
                  naming_dict = {'Gradient Importance per': 'Cumul. Importance',
                                 'Gradient Variance': 'Grad Variance',
-                                'SVD Sum EV': 'Sum SVD(H*v)'}
+                                'SVD Sum EV': 'Sum SVD(H*v)',
+                                }
                  ax.set_ylabel(naming_dict.get(metric, metric), fontsize=14)
 
     if handles_dict:
@@ -419,7 +420,8 @@ def save_plot(fig, dataset, stage, metric, server_type, results_dir):
     """ Save plot in results individually, adding server_type."""
     naming_dict = {'Gradient Importance per':'Layer_importance',
                    'Gradient Variance':'Gradient_Variance',
-                   'SVD Sum EV':'Hessian_EV_sum'}
+                   'SVD Sum EV':'Hessian_EV_sum',
+                   }
     m_title = naming_dict.get(metric, metric.replace(' ', '_').replace('/', '_')) # Sanitize name
     plot_dir = os.path.join(results_dir, 'plots', dataset, server_type) # Organize plots
     os.makedirs(plot_dir, exist_ok=True)

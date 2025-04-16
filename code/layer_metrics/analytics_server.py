@@ -219,23 +219,22 @@ class AnalyticsServer(Server):
                     traceback.print_exc()
                     all_client_activations[client_id] = []
 
-            #print("Server: Calculating activation similarity...")
+            print("Server: Calculating activation similarity...")
             # Filter dict for clients that actually provided activations
-            #valid_activations = {cid: act for cid, act in all_client_activations.items() if act}
+            valid_activations = {cid: act for cid, act in all_client_activations.items() if act}
 
-            # if len(valid_activations) >= 2:
-            #     # Pass the probe batch ONLY for potential mask extraction inside calculate_activation_similarity
-            #     similarity_results = calculate_activation_similarity(
-            #         activations_dict=valid_activations,
-            #         probe_data_batch=self.probe_data_batch,
-            #         cpus=self.num_cpus_analysis
-            #         )
-            #     self.analysis_results['similarity'][round_identifier] = similarity_results
-            #     print("Server: Activation similarity calculated.")
-            # else:
-            #     print(f"Server: Skipping similarity calculation - only {len(valid_activations)} clients provided valid activations.")
-            #     self.analysis_results['similarity'][round_identifier] = {} # Store empty dict
-            self.analysis_results['similarity'][round_identifier] = {} # Store empty dict to speed up
+            if len(valid_activations) >= 2:
+                # Pass the probe batch ONLY for potential mask extraction inside calculate_activation_similarity
+                similarity_results = calculate_activation_similarity(
+                    activations_dict=valid_activations,
+                    probe_data_batch=self.probe_data_batch,
+                    cpus=self.num_cpus_analysis
+                    )
+                self.analysis_results['similarity'][round_identifier] = similarity_results
+                print("Server: Activation similarity calculated.")
+            else:
+                print(f"Server: Skipping similarity calculation - only {len(valid_activations)} clients provided valid activations.")
+                self.analysis_results['similarity'][round_identifier] = {} # Store empty dict
 
         end_time = time.time()
         print(f"--- Server: Analysis for '{round_identifier}' finished ({end_time - start_time:.2f} sec) ---")

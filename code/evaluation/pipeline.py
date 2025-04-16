@@ -613,9 +613,8 @@ class Experiment:
             'fedlp': FedLPServer,
             'fedlama': FedLAMAServer,
             'pfedla': pFedLAServer,
-            'layerpfl': LayerPFLServer,
-            'layerpfl2': LayerPFLServer,
-            'layerpfl_random': LayerPFLServer, # Uses the same server class as layerpfl
+            'playerfl': LayerPFLServer,
+            'playerfl_random': LayerPFLServer, # Uses the same server class as layerpfl
         }
 
         server_class = server_mapping.get(server_type)
