@@ -4,7 +4,7 @@ scipy==1.12.0
 tqdm==4.66.5
 Pillow==10.4.0         
 scikit-learn==1.5.1    
-netrep==0.0.2          
+git+https://github.com/ahwillia/netrep.git@0186b8a77ec1ebaf541cc8f7173cb2556df8a8f0
 torch==2.5.0           
 torchvision==0.20.0    
 transformers==4.44.1

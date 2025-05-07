@@ -77,8 +77,6 @@ for dataset in "${datasets[@]}"; do
 #!/bin/bash
 #SBATCH --job-name=${job_name}
 #SBATCH --partition=gpu
-#SBATCH --mail-type=ALL
-#SBATCH --mail-user=aelhussein@nygenome.org
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=6

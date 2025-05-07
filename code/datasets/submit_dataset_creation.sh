@@ -104,8 +104,6 @@ cat << EOF > temp_submit_dataset_creation.sh
 #!/bin/bash
 #SBATCH --job-name=${job_name}
 #SBATCH --partition=gpu
-#SBATCH --mail-type=ALL
-#SBATCH --mail-user=aelhussein@nygenome.org
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
