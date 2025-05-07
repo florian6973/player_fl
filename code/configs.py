@@ -41,7 +41,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import f1_score, matthews_corrcoef, balanced_accuracy_score
 from netrep.metrics import LinearMetric  # Representation similarity metrics
-from netrep import convolve_metric  # Representation similarity metrics
+from netrep.conv_layers import convolve_metric  # Representation similarity metrics
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
