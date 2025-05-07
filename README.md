@@ -103,7 +103,7 @@ data/
 - **FED-ISIC-2019**
   - **Source**: [FLamby ISIC 2019 Dataset](https://github.com/owkin/FLamby/tree/main/flamby/datasets/fed_isic2019)
   - **Installation**: Follow FLamby installation instructions
-  - **Directory**: `data/ISIC/`
+  - **Directory**: `data_2/ISIC/`
   - **Required Files**:
     - `ISIC_2019_Training_GroundTruth.csv`: Ground truth labels from the ISIC 2019 challenge.
     - `ISIC_2019_Training_Metadata_FL.csv`: Associated metadata.
