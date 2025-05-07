@@ -57,7 +57,7 @@ PLayer-FL includes implementations of various federated learning algorithms:
 *   Create and activate a virtual environment (e.g., using `conda` or `venv`).
 *   Install required packages:
     ```bash
-    pip install -r requirements.txt
+    pip install -r requirements
     ```
 
 ### 2. Dataset Setup
