@@ -129,9 +129,9 @@ data/
 
 - **Sentiment140 (Sent-140)**
   - **Source**: [Kaggle Sentiment140 Dataset](https://www.kaggle.com/datasets/kazanova/sentiment140)
-  - **Directory**: `data/sentiment140/`
+  - **Directory**: `data_2/Sentiment/`
   - **Required File**:
-    - `data/Sentiment/sentiment.zip`: .
+    - `data_2/Sentiment/sentiment.zip`: .
 
 ---
 
