@@ -57,7 +57,7 @@ PLayer-FL includes implementations of various federated learning algorithms:
 *   Create and activate a virtual environment (e.g., using `conda` or `venv`).
 *   Install required packages:
     ```bash
-    pip install -r requirements.txt
+    pip install -r requirements
     ```
 
 ### 2. Dataset Setup
@@ -103,7 +103,7 @@ data/
 - **FED-ISIC-2019**
   - **Source**: [FLamby ISIC 2019 Dataset](https://github.com/owkin/FLamby/tree/main/flamby/datasets/fed_isic2019)
   - **Installation**: Follow FLamby installation instructions
-  - **Directory**: `data/ISIC/`
+  - **Directory**: `data_2/ISIC/`
   - **Required Files**:
     - `ISIC_2019_Training_GroundTruth.csv`: Ground truth labels from the ISIC 2019 challenge.
     - `ISIC_2019_Training_Metadata_FL.csv`: Associated metadata.
@@ -129,9 +129,9 @@ data/
 
 - **Sentiment140 (Sent-140)**
   - **Source**: [Kaggle Sentiment140 Dataset](https://www.kaggle.com/datasets/kazanova/sentiment140)
-  - **Directory**: `data/sentiment140/`
+  - **Directory**: `data_2/Sentiment/`
   - **Required File**:
-    - `data/Sentiment/sentiment.zip`: .
+    - `data_2/Sentiment/sentiment.zip`: .
 
 ---
 
